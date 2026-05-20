@@ -1,0 +1,148 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ─── Helpers ───────────────────────────────────────────────
+
+    function isAuth() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isAuth() &&
+        get(/databases/$(database)/documents/inquilinos/$(request.auth.uid)).data.rol == 'admin';
+    }
+
+    function isOwner(uid) {
+      return isAuth() && request.auth.uid == uid;
+    }
+
+    function isTenant() {
+      return isAuth() &&
+        get(/databases/$(database)/documents/inquilinos/$(request.auth.uid)).data.rol == 'inquilino';
+    }
+
+    // ─── inquilinos ────────────────────────────────────────────
+    match /inquilinos/{uid} {
+      allow read:   if isOwner(uid) || isAdmin();
+      allow create: if isAdmin();
+      allow update: if isAdmin() || (isOwner(uid) && onlyUpdatesAllowed(['telefono', 'avatar']));
+      allow delete: if isAdmin();
+    }
+
+    // ─── habitaciones ──────────────────────────────────────────
+    match /habitaciones/{habitacionId} {
+      allow read:   if isAuth();
+      allow write:  if isAdmin();
+    }
+
+    // ─── pagos ─────────────────────────────────────────────────
+    match /pagos/{pagoId} {
+      allow read:   if isAdmin() || (isAuth() && resource.data.inquilinoId == request.auth.uid);
+      allow create: if isAdmin();
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    // ─── huespedes_extra ───────────────────────────────────────
+    match /huespedes_extra/{hId} {
+      allow read:   if isAdmin() || (isAuth() && resource.data.inquilinoId == request.auth.uid);
+      allow create: if isAuth() && request.resource.data.inquilinoId == request.auth.uid;
+      allow update: if isAdmin() || (isAuth() && resource.data.inquilinoId == request.auth.uid);
+      allow delete: if isAdmin();
+    }
+
+    // ─── visitas ───────────────────────────────────────────────
+    match /visitas/{vId} {
+      allow read:   if isAdmin() || (isAuth() && resource.data.inquilinoId == request.auth.uid);
+      allow create: if isAuth() && request.resource.data.inquilinoId == request.auth.uid;
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    // ─── tickets ───────────────────────────────────────────────
+    match /tickets/{tId} {
+      allow read:   if isAdmin() || (isAuth() && resource.data.inquilinoId == request.auth.uid);
+      allow create: if isAuth() && request.resource.data.inquilinoId == request.auth.uid;
+      allow update: if isAdmin() || (isAuth() && resource.data.inquilinoId == request.auth.uid
+                       && onlyUpdatesAllowed(['descripcion', 'fotos']));
+      allow delete: if isAdmin();
+    }
+
+    // ─── limpieza ──────────────────────────────────────────────
+    match /limpieza/{lId} {
+      allow read:   if isAuth();
+      allow write:  if isAdmin();
+    }
+
+    // ─── lavanderia ────────────────────────────────────────────
+    match /lavanderia/{lId} {
+      allow read:   if isAdmin() || (isAuth() && resource.data.inquilinoId == request.auth.uid);
+      allow create: if isAuth() && request.resource.data.inquilinoId == request.auth.uid;
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    // ─── almacenamiento ────────────────────────────────────────
+    match /almacenamiento/{aId} {
+      allow read:   if isAdmin() || (isAuth() && resource.data.inquilinoId == request.auth.uid);
+      allow create: if isAuth() && request.resource.data.inquilinoId == request.auth.uid;
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    // ─── noticias ──────────────────────────────────────────────
+    match /noticias/{nId} {
+      allow read:   if isAuth() && (
+                      isAdmin() ||
+                      resource.data.destinatarios == 'todos' ||
+                      request.auth.uid in resource.data.destinatarios
+                    );
+      allow write:  if isAdmin();
+    }
+
+    // ─── chats y mensajes ──────────────────────────────────────
+    match /chats/{chatId} {
+      allow read:   if isAuth() && request.auth.uid in resource.data.participantes;
+      allow create: if isAuth() && request.auth.uid in request.resource.data.participantes;
+      allow update: if isAuth() && request.auth.uid in resource.data.participantes;
+      allow delete: if isAdmin();
+
+      match /mensajes/{msgId} {
+        allow read:   if isAuth() &&
+                        request.auth.uid in get(/databases/$(database)/documents/chats/$(chatId)).data.participantes;
+        allow create: if isAuth() &&
+                        request.auth.uid in get(/databases/$(database)/documents/chats/$(chatId)).data.participantes &&
+                        request.resource.data.autorId == request.auth.uid;
+        allow update: if isAuth() && resource.data.autorId == request.auth.uid;
+        allow delete: if isAdmin() || (isAuth() && resource.data.autorId == request.auth.uid);
+      }
+    }
+
+    // ─── sesiones ──────────────────────────────────────────────
+    match /sesiones/{sId} {
+      allow read:   if isAdmin() || (isAuth() && resource.data.usuarioId == request.auth.uid);
+      allow create: if isAuth() && request.resource.data.usuarioId == request.auth.uid;
+      allow update: if isAuth() && resource.data.usuarioId == request.auth.uid;
+      allow delete: if isAdmin() || (isAuth() && resource.data.usuarioId == request.auth.uid);
+    }
+
+    // ─── facturas ──────────────────────────────────────────────
+    match /facturas/{fId} {
+      allow read:   if isAdmin() || (isAuth() && resource.data.inquilinoId == request.auth.uid);
+      allow write:  if isAdmin();
+    }
+
+    // ─── configuracion ─────────────────────────────────────────
+    match /configuracion/{docId} {
+      allow read:   if isAuth();
+      allow write:  if isAdmin();
+    }
+
+    // ─── Helper: campos permitidos para update parcial ─────────
+    function onlyUpdatesAllowed(fields) {
+      return request.resource.data.diff(resource.data).affectedKeys().hasOnly(fields);
+    }
+  }
+}
