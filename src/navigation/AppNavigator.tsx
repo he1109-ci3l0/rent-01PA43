@@ -14,7 +14,7 @@ import SoporteScreen   from '@/screens/tenant/SoporteScreen';
 
 
 // ── Admin screens ─────────────────────────────────────────────
-import AdminHomeScreen    from '@/screens/admin/AdminHomeScreen';
+import HabitacionesScreen from '@/screens/admin/HabitacionesScreen';
 import PagosAdminScreen   from '@/screens/admin/PagosAdminScreen';
 
 type IoniconsName = React.ComponentProps<typeof Ionicons>['name'];
@@ -126,12 +126,12 @@ function AdminNavigator() {
     >
       <AdminTab.Screen
         name="Panel"
-        component={AdminHomeScreen}
+        component={HabitacionesScreen}
         options={{ tabBarIcon: tabIcon('grid-outline', 'grid') }}
       />
       <AdminTab.Screen
         name="Inquilinos"
-        component={AdminHomeScreen}
+        component={HabitacionesScreen}
         options={{ tabBarIcon: tabIcon('people-outline', 'people') }}
       />
       <AdminTab.Screen
@@ -141,12 +141,12 @@ function AdminNavigator() {
       />
       <AdminTab.Screen
         name="Tickets"
-        component={AdminHomeScreen}
+        component={HabitacionesScreen}
         options={{ tabBarIcon: tabIcon('hammer-outline', 'hammer') }}
       />
       <AdminTab.Screen
         name="Ajustes"
-        component={AdminHomeScreen}
+        component={HabitacionesScreen}
         options={{ tabBarIcon: tabIcon('settings-outline', 'settings') }}
       />
     </AdminTab.Navigator>

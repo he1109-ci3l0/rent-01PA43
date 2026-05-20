@@ -34,19 +34,33 @@ export interface Inquilino {
 export type TipoHabitacion = 'simple' | 'doble' | 'suite' | 'estudio';
 export type EstadoHabitacion = 'disponible' | 'ocupada' | 'mantenimiento' | 'reservada';
 
+export type PisoNombre = 'PB' | 'P1' | 'TP';
+export type BanoAsignacion = 'libre' | 'Baño gris' | 'Baño marrón' | 'Baño terraza';
+export type CocinaAsignacion = 'CocinaPB' | 'CocinaTP';
+
 export interface Habitacion {
   id: string;
-  numero: string;
-  piso: number;
+  numero: string;                  // '01'–'14'
+  piso: number;                    // 0=PB  1=P1  2=TP
+  pisoNombre: PisoNombre;
   tipo: TipoHabitacion;
+  tamano: string;                  // 'Pequeña' | 'Mediana' | 'Grande' | …
   estado: EstadoHabitacion;
   precioMensual: number;
   precioDeposito: number;
-  area: number;                   // m²
+  precioAlSalir?: number;          // precio cuando deja el inquilino actual (hab 13)
+  precioRemodelado?: number;       // precio si se activa módulo remodelación (hab 03)
+  area: number;                    // m²
   amenidades: string[];
-  fotos: string[];                // URLs Storage
+  fotos: string[];                 // URLs Storage
   descripcion?: string;
+  bano: BanoAsignacion;
+  cocina: CocinaAsignacion;
+  habilitada: boolean;             // false = slot inhabitado (015–045)
+  moduloRemodelacion?: boolean;    // hab 03: activable desde admin
+  remodelacionActiva?: boolean;    // estado actual del módulo
   inquilinoId: string | null;
+  inquilinoNombre?: string;        // denormalizado para display rápido
   creadoEn: Timestamp;
   actualizadoEn: Timestamp;
 }
