@@ -22,6 +22,7 @@ import type {
   Sesion,
   Factura,
   Configuracion,
+  ScoreReputacion,
 } from '@/types/firestore';
 
 export const db = getFirestore(app);
@@ -48,6 +49,7 @@ export const collections = {
   sesiones:         col<Sesion>('sesiones'),
   facturas:         col<Factura>('facturas'),
   configuracion:    col<Configuracion>('configuracion'),
+  scores:           col<ScoreReputacion>('scores'),
 } as const;
 
 // ─── Sub-colecciones ──────────────────────────────────────────
