@@ -6,16 +6,17 @@ import { useAuth } from '@/hooks/useAuth';
 import { cartasBosque } from '@/constants/colors';
 
 // ── Tenant screens ────────────────────────────────────────────
-import DossierScreen   from '@/screens/tenant/DossierScreen';
-import NoticiasScreen  from '@/screens/tenant/NoticiasScreen';
-import PagosScreen     from '@/screens/tenant/PagosScreen';
-import ServiciosScreen from '@/screens/tenant/ServiciosScreen';
-import SoporteScreen   from '@/screens/tenant/SoporteScreen';
+import DossierScreen        from '@/screens/tenant/DossierScreen';
+import NoticiasScreen       from '@/screens/tenant/NoticiasScreen';
+import PagosScreen          from '@/screens/tenant/PagosScreen';
+import HuespedExtraScreen   from '@/screens/tenant/HuespedExtraScreen';
+import SoporteScreen        from '@/screens/tenant/SoporteScreen';
 
 
 // ── Admin screens ─────────────────────────────────────────────
-import HabitacionesScreen from '@/screens/admin/HabitacionesScreen';
-import PagosAdminScreen   from '@/screens/admin/PagosAdminScreen';
+import HabitacionesScreen        from '@/screens/admin/HabitacionesScreen';
+import PagosAdminScreen          from '@/screens/admin/PagosAdminScreen';
+import HuespedExtraAdminScreen   from '@/screens/admin/HuespedExtraAdminScreen';
 
 type IoniconsName = React.ComponentProps<typeof Ionicons>['name'];
 
@@ -86,8 +87,8 @@ function TenantNavigator() {
 
       <TenantTab.Screen
         name="Servicios"
-        component={ServiciosScreen}
-        options={{ tabBarIcon: tabIcon('construct-outline', 'construct') }}
+        component={HuespedExtraScreen}
+        options={{ tabBarIcon: tabIcon('person-add-outline', 'person-add') }}
       />
       <TenantTab.Screen
         name="Soporte"
@@ -131,7 +132,7 @@ function AdminNavigator() {
       />
       <AdminTab.Screen
         name="Inquilinos"
-        component={HabitacionesScreen}
+        component={HuespedExtraAdminScreen}
         options={{ tabBarIcon: tabIcon('people-outline', 'people') }}
       />
       <AdminTab.Screen

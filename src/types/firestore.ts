@@ -125,18 +125,39 @@ export interface ScoreReputacion {
 
 // ─── 4. huespedes_extra ───────────────────────────────────────
 
+export type SemanaIngreso  = 1 | 2 | 3 | 4;
+export type EstadoHuesped  = 'pendiente_auth' | 'activo' | 'incorporado' | 'inactivo';
+export type ModalidadHuesped = 'temporal' | 'mensual';
+
 export interface HuespedExtra {
   id: string;
   inquilinoId: string;
   habitacionId: string;
+  habitacionNumero?: string;          // denormalizado
+  inquilinoNombre?: string;           // denormalizado
   nombre: string;
   apellido: string;
   documentoTipo: TipoDocumento;
   documentoNumero: string;
   parentesco?: string;
+  fotoIne?: string;                   // URL Storage
   fechaEntrada: Timestamp;
   fechaSalida: Timestamp | null;
   activo: boolean;
+  // ── módulo de cobros ──────────────────────────────────────────
+  semanaIngreso: SemanaIngreso;
+  modalidad: ModalidadHuesped;
+  estado: EstadoHuesped;
+  montoSemana: number;                // cobro del período actual
+  montoMensual: number;               // equivalente mensual (+$500)
+  promoOfrecida: boolean;
+  promoAceptada: boolean | null;      // null = no ha decidido
+  promoTimestamp: Timestamp | null;
+  requiereAuth: boolean;              // semanas 2 y 3
+  adminAuthorizadoPor: string | null;
+  adminAuthorizadoEn: Timestamp | null;
+  adminNotas?: string;
+  incorporadoExpediente: boolean;
   creadoEn: Timestamp;
 }
 

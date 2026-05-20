@@ -1,0 +1,227 @@
+import React, { useState, useEffect } from 'react';
+import {
+  View, Text, TouchableOpacity, StyleSheet, ActivityIndicator,
+} from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { Timestamp } from 'firebase/firestore';
+import { cartasBosque } from '@/constants/colors';
+import { spacing, borderRadius } from '@/constants/spacing';
+import type { SemanaIngreso } from '@/types/firestore';
+
+interface Props {
+  nombreHuesped: string;
+  semana: SemanaIngreso;
+  montoMensual: number;
+  promoTimestamp: Timestamp | null;
+  onAceptar: () => Promise<void>;
+  onRechazar: () => Promise<void>;
+}
+
+const DURACION_SEG = 600; // 10 minutos
+
+export default function PromoCard({
+  nombreHuesped,
+  semana,
+  montoMensual,
+  promoTimestamp,
+  onAceptar,
+  onRechazar,
+}: Props) {
+  const [segsRestantes, setSegsRestantes] = useState(DURACION_SEG);
+  const [accion, setAccion] = useState<'aceptar' | 'rechazar' | null>(null);
+
+  useEffect(() => {
+    if (!promoTimestamp) return;
+    const fin = promoTimestamp.toDate().getTime() + DURACION_SEG * 1000;
+
+    const actualizar = () => {
+      const resta = Math.max(0, Math.floor((fin - Date.now()) / 1000));
+      setSegsRestantes(resta);
+      return resta;
+    };
+    actualizar();
+
+    const tick = setInterval(() => {
+      if (actualizar() === 0) clearInterval(tick);
+    }, 1000);
+    return () => clearInterval(tick);
+  }, [promoTimestamp]);
+
+  const mins = Math.floor(segsRestantes / 60);
+  const segs = segsRestantes % 60;
+  const expirada = segsRestantes === 0;
+  const bloqueado = accion !== null || expirada;
+
+  async function handleAceptar() {
+    setAccion('aceptar');
+    try { await onAceptar(); } finally { setAccion(null); }
+  }
+
+  async function handleRechazar() {
+    setAccion('rechazar');
+    try { await onRechazar(); } finally { setAccion(null); }
+  }
+
+  return (
+    <View style={styles.card}>
+      {/* Header */}
+      <View style={styles.headerRow}>
+        <View style={styles.iconBox}>
+          <Ionicons name="star" size={18} color="#C8960C" />
+        </View>
+        <View style={{ flex: 1 }}>
+          <Text style={styles.badge}>OFERTA ÚNICA · NO REPETIBLE</Text>
+          <Text style={styles.titulo}>Incorporación mensual</Text>
+        </View>
+        <View style={[styles.countdown, expirada && styles.countdownExp]}>
+          <Ionicons
+            name="timer-outline"
+            size={11}
+            color={expirada ? cartasBosque.corteza : cartasBosque.musgo}
+          />
+          <Text style={[styles.countdownTxt, expirada && styles.countdownTxtExp]}>
+            {expirada ? 'Expirada' : `${mins}:${String(segs).padStart(2, '0')}`}
+          </Text>
+        </View>
+      </View>
+
+      {/* Descripción */}
+      <Text style={styles.desc}>
+        Incorpora a <Text style={styles.bold}>{nombreHuesped}</Text> como residente mensual
+        (semana {semana}) por solo{' '}
+        <Text style={styles.precio}>${montoMensual.toLocaleString('es-MX')}/mes</Text>.
+      </Text>
+
+      {/* Beneficios */}
+      {[
+        { icon: 'checkmark-circle-outline', text: 'IVA exento · Art. 20 LIVA', color: cartasBosque.musgo },
+        { icon: 'checkmark-circle-outline', text: 'Se agrega al expediente como residente permanente', color: cartasBosque.musgo },
+        { icon: 'alert-circle-outline', text: 'Esta oferta no se repetirá. Decide ahora.', color: cartasBosque.corteza },
+      ].map(({ icon, text, color }) => (
+        <View key={text} style={styles.itemRow}>
+          <Ionicons name={icon as any} size={14} color={color} />
+          <Text style={[styles.itemText, { color }]}>{text}</Text>
+        </View>
+      ))}
+
+      {/* Botones */}
+      <View style={styles.btns}>
+        <TouchableOpacity
+          style={[styles.btnRechazar, bloqueado && styles.btnDisabled]}
+          onPress={handleRechazar}
+          disabled={bloqueado}
+          activeOpacity={0.8}
+        >
+          {accion === 'rechazar'
+            ? <ActivityIndicator size="small" color={cartasBosque.musgo} />
+            : <Text style={styles.btnRechazarTxt}>Rechazar</Text>
+          }
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.btnAceptar, bloqueado && styles.btnDisabled]}
+          onPress={handleAceptar}
+          disabled={bloqueado}
+          activeOpacity={0.8}
+        >
+          {accion === 'aceptar'
+            ? <ActivityIndicator size="small" color={cartasBosque.bruma} />
+            : <Text style={styles.btnAceptarTxt}>Aceptar $500/mes</Text>
+          }
+        </TouchableOpacity>
+      </View>
+
+      {expirada && (
+        <Text style={styles.expMsg}>
+          Tiempo agotado. El huésped continúa en modalidad temporal ($700/semana).
+        </Text>
+      )}
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  card: {
+    backgroundColor: '#FFFDE7',
+    borderRadius: borderRadius.lg,
+    borderWidth: 1.5,
+    borderColor: '#F9A82560',
+    padding: spacing[5],
+    gap: spacing[3],
+  },
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing[3],
+  },
+  iconBox: {
+    width: 36, height: 36, borderRadius: 18,
+    backgroundColor: '#FFF8E1',
+    alignItems: 'center', justifyContent: 'center',
+    borderWidth: 1, borderColor: '#F9A82540',
+  },
+  badge: {
+    fontFamily: 'DMMono_400Regular',
+    fontSize: 9,
+    color: '#B07D2A',
+    letterSpacing: 1.2,
+  },
+  titulo: {
+    fontFamily: 'DMSans_700Bold',
+    fontSize: 15,
+    color: cartasBosque.tinta,
+  },
+  countdown: {
+    flexDirection: 'row', alignItems: 'center', gap: 3,
+    backgroundColor: '#F1F8E9',
+    paddingHorizontal: spacing[2],
+    paddingVertical: spacing[1],
+    borderRadius: borderRadius.full,
+    borderWidth: 1, borderColor: '#558B2F40',
+  },
+  countdownExp: { backgroundColor: '#F5DAD8', borderColor: '#A6322840' },
+  countdownTxt: {
+    fontFamily: 'DMMono_400Regular',
+    fontSize: 11,
+    color: cartasBosque.musgo,
+  },
+  countdownTxtExp: { color: cartasBosque.corteza },
+  desc: {
+    fontFamily: 'DMSans_400Regular',
+    fontSize: 14,
+    color: cartasBosque.tinta,
+    lineHeight: 20,
+  },
+  bold: { fontFamily: 'DMSans_700Bold' },
+  precio: { fontFamily: 'DMSans_700Bold', color: cartasBosque.bosque },
+  itemRow: { flexDirection: 'row', alignItems: 'flex-start', gap: spacing[2] },
+  itemText: {
+    fontFamily: 'DMMono_400Regular',
+    fontSize: 11,
+    flex: 1,
+    lineHeight: 16,
+  },
+  btns: { flexDirection: 'row', gap: spacing[3], marginTop: spacing[1] },
+  btnRechazar: {
+    flex: 1, paddingVertical: spacing[3], alignItems: 'center',
+    borderRadius: borderRadius.md,
+    borderWidth: 1, borderColor: cartasBosque.pergaminoOscuro,
+  },
+  btnRechazarTxt: {
+    fontFamily: 'DMSans_500Medium', fontSize: 14, color: cartasBosque.musgo,
+  },
+  btnAceptar: {
+    flex: 2, paddingVertical: spacing[3], alignItems: 'center',
+    borderRadius: borderRadius.md, backgroundColor: cartasBosque.bosque,
+  },
+  btnAceptarTxt: {
+    fontFamily: 'DMSans_600SemiBold', fontSize: 14, color: cartasBosque.bruma,
+  },
+  btnDisabled: { opacity: 0.4 },
+  expMsg: {
+    fontFamily: 'DMMono_400Regular',
+    fontSize: 11,
+    color: cartasBosque.corteza,
+    textAlign: 'center',
+    lineHeight: 16,
+  },
+});

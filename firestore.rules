@@ -49,7 +49,7 @@ service cloud.firestore {
     // ─── huespedes_extra ───────────────────────────────────────
     match /huespedes_extra/{hId} {
       allow read:   if isAdmin() || (isAuth() && resource.data.inquilinoId == request.auth.uid);
-      allow create: if isAuth() && request.resource.data.inquilinoId == request.auth.uid;
+      allow create: if isAdmin() || (isAuth() && request.resource.data.inquilinoId == request.auth.uid);
       allow update: if isAdmin() || (isAuth() && resource.data.inquilinoId == request.auth.uid);
       allow delete: if isAdmin();
     }
