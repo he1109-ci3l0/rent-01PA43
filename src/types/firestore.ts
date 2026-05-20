@@ -53,25 +53,60 @@ export interface Habitacion {
 
 // ─── 3. pagos ─────────────────────────────────────────────────
 
-export type EstadoPago = 'pendiente' | 'pagado' | 'vencido' | 'parcial' | 'anulado';
+export type EstadoPago =
+  | 'pendiente'      // sin comprobante
+  | 'en_revision'    // comprobante subido, esperando admin
+  | 'pagado'         // verificado por admin
+  | 'rechazado'      // comprobante rechazado por admin
+  | 'vencido'        // venció sin pagar (>3 días gracia)
+  | 'parcial'
+  | 'anulado';
+
 export type ConceptoPago = 'arriendo' | 'deposito' | 'servicio' | 'multa' | 'lavanderia' | 'almacenamiento' | 'otro';
+export type ModalidadPago = 'mensual' | 'semanal';
 
 export interface Pago {
   id: string;
   inquilinoId: string;
   habitacionId: string;
+  inquilinoNombre?: string;       // denormalizado para vistas admin
+  habitacionNumero?: string;      // denormalizado para vistas admin
   facturaId: string | null;
   monto: number;
   montoPagado: number;
   concepto: ConceptoPago;
+  modalidad: ModalidadPago;
   descripcion?: string;
   fechaVencimiento: Timestamp;
   fechaPago: Timestamp | null;
   estado: EstadoPago;
   metodoPago: MetodoPago | null;
+  // Comprobante
   comprobante?: string;           // URL Storage
+  comprobanteSubidoEn?: Timestamp;
+  // Verificación admin (límite 120 hrs móvil)
+  verificadoPor?: string;
+  verificadoEn?: Timestamp;
+  rechazadoPor?: string;
+  rechazadoEn?: Timestamp;
+  rechazadoRazon?: string;
   creadoEn: Timestamp;
   actualizadoEn: Timestamp;
+}
+
+// ─── Score de reputación ──────────────────────────────────────
+
+export type NivelScore = 'pesimo' | 'moroso' | 'regular' | 'bueno' | 'excelente';
+
+export interface ScoreReputacion {
+  id: string;
+  inquilinoId: string;
+  nivel: NivelScore;
+  puntos: number;                 // 0–100
+  ajusteManual: boolean;
+  ajustadoPor?: string;           // UID admin
+  ajustadoEn?: Timestamp;
+  ultimaActualizacion: Timestamp;
 }
 
 // ─── 4. huespedes_extra ───────────────────────────────────────

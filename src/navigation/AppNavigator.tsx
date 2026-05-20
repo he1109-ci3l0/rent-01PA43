@@ -8,12 +8,14 @@ import { cartasBosque } from '@/constants/colors';
 // ── Tenant screens ────────────────────────────────────────────
 import DossierScreen   from '@/screens/tenant/DossierScreen';
 import NoticiasScreen  from '@/screens/tenant/NoticiasScreen';
-import HomeScreen      from '@/screens/tenant/HomeScreen';
+import PagosScreen     from '@/screens/tenant/PagosScreen';
 import ServiciosScreen from '@/screens/tenant/ServiciosScreen';
 import SoporteScreen   from '@/screens/tenant/SoporteScreen';
 
+
 // ── Admin screens ─────────────────────────────────────────────
-import AdminHomeScreen from '@/screens/admin/AdminHomeScreen';
+import AdminHomeScreen    from '@/screens/admin/AdminHomeScreen';
+import PagosAdminScreen   from '@/screens/admin/PagosAdminScreen';
 
 type IoniconsName = React.ComponentProps<typeof Ionicons>['name'];
 
@@ -67,7 +69,7 @@ function TenantNavigator() {
       {/* Home — tab central con pill destacado */}
       <TenantTab.Screen
         name="Home"
-        component={HomeScreen}
+        component={PagosScreen}
         options={{
           tabBarIcon: ({ focused }) => (
             <View style={[styles.homePill, focused && styles.homePillActive]}>
@@ -134,7 +136,7 @@ function AdminNavigator() {
       />
       <AdminTab.Screen
         name="Pagos"
-        component={AdminHomeScreen}
+        component={PagosAdminScreen}
         options={{ tabBarIcon: tabIcon('card-outline', 'card') }}
       />
       <AdminTab.Screen

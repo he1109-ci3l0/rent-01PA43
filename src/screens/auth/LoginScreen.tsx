@@ -28,7 +28,6 @@ export default function LoginScreen() {
 
   const curpRef = useRef<RNTextInput>(null);
 
-
   async function handleSignIn() {
     if (!username.trim() || !curp.trim()) {
       setErrorMsg('Ingresa tu usuario y CURP.');

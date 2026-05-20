@@ -10,8 +10,10 @@ service cloud.firestore {
     }
 
     function isAdmin() {
-      return isAuth() &&
-        get(/databases/$(database)/documents/inquilinos/$(request.auth.uid)).data.rol == 'admin';
+      return isAuth() && (
+        request.auth.token.email == 'bailleur_main@antioquia43.app' ||
+        request.auth.token.email == 'bailleur_bckp@antioquia43.app'
+      );
     }
 
     function isOwner(uid) {
@@ -19,8 +21,7 @@ service cloud.firestore {
     }
 
     function isTenant() {
-      return isAuth() &&
-        get(/databases/$(database)/documents/inquilinos/$(request.auth.uid)).data.rol == 'inquilino';
+      return isAuth() && !isAdmin();
     }
 
     // ─── inquilinos ────────────────────────────────────────────
@@ -131,6 +132,12 @@ service cloud.firestore {
     // ─── facturas ──────────────────────────────────────────────
     match /facturas/{fId} {
       allow read:   if isAdmin() || (isAuth() && resource.data.inquilinoId == request.auth.uid);
+      allow write:  if isAdmin();
+    }
+
+    // ─── scores ────────────────────────────────────────────────
+    match /scores/{inquilinoId} {
+      allow read:   if isAdmin() || isOwner(inquilinoId);
       allow write:  if isAdmin();
     }
 
