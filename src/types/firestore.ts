@@ -193,23 +193,57 @@ export interface Visita {
   creadoEn: Timestamp;
 }
 
-// ─── 6. tickets ───────────────────────────────────────────────
+// ─── 6. tickets (soporte) ─────────────────────────────────────
 
-export type EstadoTicket = 'abierto' | 'en_progreso' | 'resuelto' | 'cerrado' | 'rechazado';
-export type CategoriaTicket = 'plomeria' | 'electrico' | 'gas' | 'internet' | 'muebles' | 'limpieza' | 'seguridad' | 'otro';
+export type CategoriaTicket =
+  | 'internet'
+  | 'pago'
+  | 'reporte_limpieza'
+  | 'reporte_inquilino'
+  | 'lavadora'
+  | 'almacenamiento'
+  | 'mantenimiento';
+
+export type SubcategoriaInternet      = 'senal_lenta' | 'sin_senal' | 'modem_roto';
+export type SubcategoriaPago          = 'no_registrado' | 'paso_fecha' | 'comprobante_diferente' | 'otro';
+export type SubcategoriaLimpieza      = 'bano_gris' | 'bano_marron' | 'bano_terraza' | 'cocina_pb' | 'cocina_tp' | 'pasillo' | 'escalera' | 'patio' | 'tendedero';
+export type SubcategoriaInquilino     = 'ruido' | 'basura' | 'malos_olores' | 'dano_propiedad' | 'agresion_verbal' | 'robo_hurto' | 'mascota_no_autorizada' | 'otro';
+export type SubcategoriaLavadora      = 'se_paro' | 'faltan_prendas';
+export type SubcategoriaAlmacenamiento= 'lugar_ocupado' | 'intentaron_abrir' | 'se_comieron_cosas' | 'no_puedo_abrir';
+export type SubcategoriaMantenimiento = 'electrico' | 'plomeria' | 'gas' | 'muebles' | 'cerradura' | 'ventana_puerta' | 'sucia_rota_entrega' | 'otro';
+
+export type SubcategoriaTicket =
+  | SubcategoriaInternet
+  | SubcategoriaPago
+  | SubcategoriaLimpieza
+  | SubcategoriaInquilino
+  | SubcategoriaLavadora
+  | SubcategoriaAlmacenamiento
+  | SubcategoriaMantenimiento;
+
+// Estados visibles al inquilino
+export type EstadoTicket = 'en_revision' | 'en_proceso' | 'resuelto';
+
+// Etiquetas internas admin (invisibles al inquilino)
+export type EtiquetaTicket = 'mal_uso' | 'admin_cubre' | 'sin_culpa' | 'reportar_proveedor';
 
 export interface Ticket {
   id: string;
+  folio: string;                  // [UID6]_[hab]_[AAAAMMDD]_000000001
   inquilinoId: string;
   habitacionId: string;
-  titulo: string;
-  descripcion: string;
+  habitacionNumero: string;
+  inquilinoNombre: string;
   categoria: CategoriaTicket;
-  prioridad: Prioridad;
+  subcategoria: SubcategoriaTicket;
+  descripcion: string;            // texto libre (pago:otro, mantenimiento, etc.)
+  sacasteRopa: boolean | null;    // solo lavadora:se_paro
+  fotoUrl: string | null;
   estado: EstadoTicket;
-  fotos: string[];                // URLs Storage
-  asignadoA: string | null;      // UID del técnico/admin
-  notasAdmin?: string;
+  etiquetas: EtiquetaTicket[];    // admin only
+  afectaScore: boolean;
+  afectaExpediente: boolean;
+  notasAdmin: string;
   creadoEn: Timestamp;
   actualizadoEn: Timestamp;
   resueltoEn: Timestamp | null;

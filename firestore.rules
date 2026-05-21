@@ -62,12 +62,13 @@ service cloud.firestore {
       allow delete: if isAdmin();
     }
 
-    // ─── tickets ───────────────────────────────────────────────
+    // ─── tickets (soporte) ─────────────────────────────────────
     match /tickets/{tId} {
       allow read:   if isAdmin() || (isAuth() && resource.data.inquilinoId == request.auth.uid);
       allow create: if isAuth() && request.resource.data.inquilinoId == request.auth.uid;
-      allow update: if isAdmin() || (isAuth() && resource.data.inquilinoId == request.auth.uid
-                       && onlyUpdatesAllowed(['descripcion', 'fotos']));
+      allow update: if isAdmin()
+        || (isAuth() && resource.data.inquilinoId == request.auth.uid
+            && onlyUpdatesAllowed(['descripcion','actualizadoEn']));
       allow delete: if isAdmin();
     }
 
