@@ -410,18 +410,33 @@ export interface PermutaLimpieza {
 
 // ─── 10. noticias ─────────────────────────────────────────────
 
-export type TipoNoticia = 'aviso' | 'mantenimiento' | 'pago' | 'evento' | 'regla' | 'general';
+export type TipoNoticia = 'aviso' | 'mantenimiento' | 'pago' | 'evento' | 'regla' | 'general' | 'encuesta';
+export type DuracionBanner   = '24h' | '1sem' | '1mes' | 'permanente';
+export type DuracionEncuesta = '24h' | '48h' | '72h' | '1sem';
+
+export interface OpcionEncuesta { id: string; texto: string; }
 
 export interface Noticia {
   id: string;
   titulo: string;
   contenido: string;
   tipo: TipoNoticia;
-  autorId: string;               // UID admin
-  imagen?: string;               // URL Storage
+  autorId: string;
+  imagen?: string;
+  archivo?: string;              // URL para adjunto de archivo
   activo: boolean;
   destacada: boolean;
-  destinatarios: 'todos' | string[]; // UIDs o 'todos'
+  bannerFijado: boolean;
+  duracion: DuracionBanner;
+  pushObligatorio: boolean;
+  encuesta?: {
+    opciones: OpcionEncuesta[];
+    duracion: DuracionEncuesta;
+    votos: Record<string, number>;   // opcionId → count
+    votosPor: string[];              // UIDs (no qué votaron)
+    cierraEn: Timestamp;
+  };
+  destinatarios: 'todos' | string[];
   fechaPublicacion: Timestamp;
   fechaExpiracion: Timestamp | null;
   creadoEn: Timestamp;
@@ -430,23 +445,34 @@ export interface Noticia {
 
 // ─── 11. chats ────────────────────────────────────────────────
 
-export type TipoChat = 'directo' | 'grupal' | 'soporte';
+export type TipoChat    = 'directo' | 'grupal' | 'soporte';
+export type EstadoChat  = 'activo' | 'solicitado' | 'rechazado' | 'congelado';
 
 export interface Chat {
   id: string;
   tipo: TipoChat;
-  nombre?: string;               // para grupos
-  participantes: string[];       // UIDs
+  nombre?: string;
+  participantes: string[];
   ultimoMensaje: string | null;
   ultimoMensajeEn: Timestamp | null;
   ultimoMensajePor: string | null;
-  noLeidosPor: Record<string, number>; // uid → cantidad no leídos
+  noLeidosPor: Record<string, number>;
+  estado: EstadoChat;
+  solicitadoPor?: string;        // UID para chats 'solicitado'
+  strikeCount: number;           // 0–3
+  congelado: boolean;
+  restringidos: string[];        // UIDs con restricción silenciosa
   creadoEn: Timestamp;
   actualizadoEn: Timestamp;
 }
 
-// Sub-colección: chats/{chatId}/mensajes
-export type TipoMensaje = 'texto' | 'imagen' | 'archivo' | 'sistema';
+export interface ReplyRef {
+  msgId: string;
+  autorNombre: string;
+  texto: string;
+}
+
+export type TipoMensaje = 'texto' | 'imagen' | 'archivo' | 'sistema' | 'sticker';
 
 export interface Mensaje {
   id: string;
@@ -454,10 +480,41 @@ export interface Mensaje {
   autorId: string;
   tipo: TipoMensaje;
   contenido: string;
-  adjunto?: string;              // URL Storage
-  leidoPor: string[];            // UIDs
+  adjunto?: string;
+  stickerUrl?: string;
+  stickerId?: string;
+  replyTo: ReplyRef | null;
+  mencionados: string[];
+  reacciones: Record<string, number>;  // emoji → count
+  leidoPor: string[];
   editado: boolean;
   eliminado: boolean;
+  archivadoEn: Timestamp | null;
+  creadoEn: Timestamp;
+}
+
+// ─── 11b. restricciones / apelaciones ─────────────────────────
+
+export interface Restriccion {
+  id: string;
+  uid: string;
+  nombre: string;
+  motivo?: string;
+  aplicadaPor: string;
+  creadoEn: Timestamp;
+}
+
+export type EstadoApelacion = 'pendiente' | 'aceptada' | 'rechazada' | 'ignorada';
+
+export interface Apelacion {
+  id: string;
+  chatId: string;
+  solicitanteId: string;
+  solicitanteNombre: string;
+  motivo: string;
+  estado: EstadoApelacion;
+  adminVio: boolean;
+  resueltoEn: Timestamp | null;
   creadoEn: Timestamp;
 }
 

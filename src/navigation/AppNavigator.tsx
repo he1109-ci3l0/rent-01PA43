@@ -20,6 +20,7 @@ import ServiciosAdminScreen      from '@/screens/admin/ServiciosAdminScreen';
 import VisitasAdminScreen        from '@/screens/admin/VisitasAdminScreen';
 import FacturasAdminScreen       from '@/screens/admin/FacturasAdminScreen';
 import TicketsAdminScreen        from '@/screens/admin/TicketsAdminScreen';
+import ChatAdminScreen           from '@/screens/admin/ChatAdminScreen';
 
 type IoniconsName = React.ComponentProps<typeof Ionicons>['name'];
 
@@ -111,6 +112,7 @@ type AdminTabList = {
   Inquilinos: undefined;
   Pagos: undefined;
   Tickets: undefined;
+  Chat: undefined;
   Ajustes: undefined;
 };
 
@@ -147,6 +149,11 @@ function AdminNavigator() {
         name="Tickets"
         component={TicketsAdminScreen}
         options={{ tabBarIcon: tabIcon('headset-outline', 'headset'), tabBarLabel: 'Tickets' }}
+      />
+      <AdminTab.Screen
+        name="Chat"
+        component={ChatAdminScreen}
+        options={{ tabBarIcon: tabIcon('chatbubbles-outline', 'chatbubbles'), tabBarLabel: 'Chat' }}
       />
       <AdminTab.Screen
         name="Ajustes"

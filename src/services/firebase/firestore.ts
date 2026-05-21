@@ -30,6 +30,8 @@ import type {
   CuponUso,
   Configuracion,
   ScoreReputacion,
+  Restriccion,
+  Apelacion,
 } from '@/types/firestore';
 
 export const db = getFirestore(app);
@@ -64,6 +66,8 @@ export const collections = {
   cuponesUsos:         col<CuponUso>('cupones_usos'),
   configuracion:       col<Configuracion>('configuracion'),
   scores:              col<ScoreReputacion>('scores'),
+  restricciones:       col<Restriccion>('restricciones'),
+  apelaciones:         col<Apelacion>('apelaciones'),
 } as const;
 
 // ─── Sub-colecciones ──────────────────────────────────────────

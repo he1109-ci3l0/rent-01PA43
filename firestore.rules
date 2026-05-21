@@ -105,21 +105,45 @@ service cloud.firestore {
     }
 
     // ─── chats y mensajes ──────────────────────────────────────
+    // Admin lee todos sin aparecer en participantes (invisible)
     match /chats/{chatId} {
-      allow read:   if isAuth() && request.auth.uid in resource.data.participantes;
-      allow create: if isAuth() && request.auth.uid in request.resource.data.participantes;
-      allow update: if isAuth() && request.auth.uid in resource.data.participantes;
+      allow read:   if isAdmin()
+                    || (isAuth() && (
+                         resource.data.tipo == 'grupal'
+                         || request.auth.uid in resource.data.participantes));
+      allow create: if isAdmin()
+                    || (isAuth() && request.auth.uid in request.resource.data.participantes);
+      allow update: if isAdmin()
+                    || (isAuth() && request.auth.uid in resource.data.participantes);
       allow delete: if isAdmin();
 
       match /mensajes/{msgId} {
-        allow read:   if isAuth() &&
-                        request.auth.uid in get(/databases/$(database)/documents/chats/$(chatId)).data.participantes;
-        allow create: if isAuth() &&
-                        request.auth.uid in get(/databases/$(database)/documents/chats/$(chatId)).data.participantes &&
-                        request.resource.data.autorId == request.auth.uid;
-        allow update: if isAuth() && resource.data.autorId == request.auth.uid;
-        allow delete: if isAdmin() || (isAuth() && resource.data.autorId == request.auth.uid);
+        allow read:   if isAdmin()
+                      || (isAuth() && (
+                           get(/databases/$(database)/documents/chats/$(chatId)).data.tipo == 'grupal'
+                           || request.auth.uid in get(/databases/$(database)/documents/chats/$(chatId)).data.participantes));
+        allow create: if isAuth()
+                      && (get(/databases/$(database)/documents/chats/$(chatId)).data.tipo == 'grupal'
+                          || request.auth.uid in get(/databases/$(database)/documents/chats/$(chatId)).data.participantes)
+                      && request.resource.data.autorId == request.auth.uid;
+        allow update: if isAdmin()
+                      || (isAuth() && onlyUpdatesAllowed(['reacciones','leidoPor']));
+        allow delete: if isAdmin();
       }
+    }
+
+    // ─── restricciones ─────────────────────────────────────────
+    match /restricciones/{uid} {
+      allow read:   if isAdmin() || isOwner(uid);
+      allow write:  if isAdmin();
+    }
+
+    // ─── apelaciones ───────────────────────────────────────────
+    match /apelaciones/{aId} {
+      allow read:   if isAdmin() || (isAuth() && resource.data.solicitanteId == request.auth.uid);
+      allow create: if isAuth() && request.resource.data.solicitanteId == request.auth.uid;
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
     }
 
     // ─── sesiones ──────────────────────────────────────────────
