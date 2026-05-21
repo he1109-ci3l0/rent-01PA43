@@ -25,6 +25,7 @@ export interface Inquilino {
   estado: 'activo' | 'inactivo' | 'moroso';
   avatar?: string;                // URL Storage
   rol: Rol;
+  requiresAdminAuth?: boolean;
   creadoEn: Timestamp;
   actualizadoEn: Timestamp;
 }
@@ -522,13 +523,41 @@ export interface Apelacion {
 
 export interface Sesion {
   id: string;
-  usuarioId: string;             // UID
-  dispositivo: string;           // modelo del teléfono
+  usuarioId: string;
+  dispositivo: string;           // nombre legible: "iPhone (iOS 18)"
+  dispositivoId: string;         // UUID por dispositivo (AsyncStorage)
   plataforma: 'ios' | 'android' | 'web';
-  token: string;                 // FCM push token
+  token: string;
   activa: boolean;
+  // Ubicación
+  ciudad?: string;
+  alcaldia?: string;
+  colonia?: string;
+  calle?: string;
+  cp?: string;
+  pais?: string;
+  lat?: number;
+  lng?: number;
+  // Seguridad
+  reporteRobo: boolean;
+  requiresAdminAuth: boolean;
   fechaInicio: Timestamp;
   fechaUltimaActividad: Timestamp;
+  creadoEn: Timestamp;
+}
+
+export type TipoAlerta = 'dispositivo_nuevo' | 'reporte_robo';
+
+export interface AlertaSeguridad {
+  id: string;
+  tipo: TipoAlerta;
+  inquilinoId: string;
+  inquilinoNombre: string;
+  sesionId: string;
+  dispositivo: string;
+  dispositivoId: string;
+  ubicacion: string;
+  adminVio: boolean;
   creadoEn: Timestamp;
 }
 

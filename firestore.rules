@@ -255,6 +255,14 @@ service cloud.firestore {
       allow delete: if isAdmin();
     }
 
+    // ─── alertas_seguridad ─────────────────────────────────────
+    match /alertas_seguridad/{aId} {
+      allow read:   if isAdmin();
+      allow create: if isAuth();
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+
     // ─── Helper: campos permitidos para update parcial ─────────
     function onlyUpdatesAllowed(fields) {
       return request.resource.data.diff(resource.data).affectedKeys().hasOnly(fields);

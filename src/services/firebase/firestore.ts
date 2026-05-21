@@ -7,6 +7,7 @@ import {
 } from 'firebase/firestore';
 import app from './config';
 import type {
+  AlertaSeguridad,
   Inquilino,
   Habitacion,
   Pago,
@@ -71,6 +72,7 @@ export const collections = {
   restricciones:       col<Restriccion>('restricciones'),
   apelaciones:         col<Apelacion>('apelaciones'),
   expedientes:         col<Expediente>('expedientes'),
+  alertasSeguridad:    col<AlertaSeguridad>('alertas_seguridad'),
 } as const;
 
 // ─── Sub-colecciones ──────────────────────────────────────────

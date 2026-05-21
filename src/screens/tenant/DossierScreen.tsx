@@ -12,6 +12,7 @@ import { cartasBosque } from '@/constants/colors';
 import { spacing, borderRadius } from '@/constants/spacing';
 import { useAuth } from '@/hooks/useAuth';
 import DocumentoCard from '@/components/common/DocumentoCard';
+import SesionCard from '@/components/common/SesionCard';
 import FacturacionScreen from './FacturacionScreen';
 import {
   listenExpediente, listenDocumentos, inicializarExpediente,
@@ -19,9 +20,11 @@ import {
   agregarContactoEmergencia, eliminarContactoEmergencia,
   agregarMascota, eliminarMascota,
 } from '@/services/firebase/expedientes';
+import { listenMisSesiones, cerrarSesion } from '@/services/firebase/sesiones';
+import { useSessionManager } from '@/hooks/useSessionManager';
 import type {
   Inquilino, Expediente, DocumentoExpediente,
-  HuespedExtra, ScoreReputacion, ContactoEmergencia, Mascota,
+  HuespedExtra, ScoreReputacion, ContactoEmergencia, Mascota, Sesion,
 } from '@/types/firestore';
 
 // ─── Helpers score ────────────────────────────────────────────
@@ -298,7 +301,9 @@ export default function DossierScreen() {
   const [documentos, setDocumentos]     = useState<DocumentoExpediente[]>([]);
   const [huespedes, setHuespedes]       = useState<HuespedExtra[]>([]);
   const [score, setScore]               = useState<ScoreReputacion | null>(null);
+  const [sesiones, setSesiones]         = useState<Sesion[]>([]);
   const [cargando, setCargando]         = useState(true);
+  const { sesionId, reportarDispositivoPerdido } = useSessionManager();
 
   // Inicializar expediente + listeners
   useEffect(() => {
@@ -331,8 +336,9 @@ export default function DossierScreen() {
     });
 
     const unsubDocs = listenDocumentos(uid, setDocumentos);
+    const unsubSes  = listenMisSesiones(uid, setSesiones);
 
-    return () => { unsubInq(); unsubScore(); unsubH(); unsubExp(); unsubDocs(); };
+    return () => { unsubInq(); unsubScore(); unsubH(); unsubExp(); unsubDocs(); unsubSes(); };
   }, [uid]);
 
   if (vista === 'facturacion') {
@@ -549,6 +555,37 @@ export default function DossierScreen() {
           ))
         )}
 
+        {/* ── Seguridad ── */}
+        <Seccion label={`Seguridad · ${sesiones.filter(s => s.activa).length} sesión${sesiones.filter(s => s.activa).length !== 1 ? 'es' : ''} activa${sesiones.filter(s => s.activa).length !== 1 ? 's' : ''}`} />
+        {sesiones.filter(s => s.activa).map(ses => (
+          <SesionCard
+            key={ses.id}
+            sesion={ses}
+            esActual={ses.id === sesionId}
+            onCerrar={() => cerrarSesion(ses.id).catch(() => {})}
+          />
+        ))}
+        <TouchableOpacity
+          style={s.roboBtn}
+          onPress={() =>
+            Alert.alert(
+              'Reportar robo / extravío',
+              'Se notificará al administrador y se cerrará la sesión. Tu cuenta quedará protegida.',
+              [
+                { text: 'Cancelar' },
+                {
+                  text: 'Continuar', style: 'destructive',
+                  onPress: () => reportarDispositivoPerdido().catch(() => {}),
+                },
+              ],
+            )
+          }
+          activeOpacity={0.75}
+        >
+          <Ionicons name="warning-outline" size={16} color="#A63228" />
+          <Text style={s.roboBtnText}>Reportar robo / extravío</Text>
+        </TouchableOpacity>
+
         {/* ── Accesos rápidos ── */}
         <Seccion label="Accesos rápidos" />
         <TouchableOpacity style={s.accesoCard} onPress={() => setVista('facturacion')}>
@@ -742,6 +779,16 @@ const s = StyleSheet.create({
     marginBottom: spacing[2],
   },
   mascotaText: { flex: 1, fontFamily: 'DMSans_400Regular', fontSize: 12, color: cartasBosque.tinta },
+
+  // Seguridad
+  roboBtn: {
+    flexDirection: 'row', alignItems: 'center', gap: spacing[2],
+    borderRadius: borderRadius.md, padding: spacing[3],
+    borderWidth: 1, borderColor: '#A63228' + '50',
+    backgroundColor: '#F5DAD8' + '33',
+    marginBottom: spacing[5],
+  },
+  roboBtnText: { fontFamily: 'DMSans_400Regular', fontSize: 13, color: '#A63228' },
 
   // Accesos rápidos
   accesoCard: {

@@ -1,20 +1,10 @@
 // @ts-ignore — Metro resuelve firebase/auth al build RN que sí exporta initializeAuth + getReactNativePersistence
 import { initializeAuth, getAuth, getReactNativePersistence, signInWithEmailAndPassword, signOut as firebaseSignOut, onAuthStateChanged as firebaseOnAuthStateChanged, User } from 'firebase/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Platform } from 'react-native';
-import {
-  query,
-  where,
-  getDocs,
-  addDoc,
-  deleteDoc,
-  doc,
-  serverTimestamp,
-  orderBy,
-} from 'firebase/firestore';
+import { doc, getDoc } from 'firebase/firestore';
 import app from './config';
-import { db, collections } from './firestore';
-import type { Sesion } from '@/types/firestore';
+import { db } from './firestore';
+import { crearSesion, cerrarSesion, SESSION_KEY } from './sesiones';
 
 // initializeAuth con AsyncStorage v2 — persiste la sesión entre cierres de app
 let auth: ReturnType<typeof getAuth>;
@@ -23,35 +13,25 @@ try {
     persistence: getReactNativePersistence(AsyncStorage),
   });
 } catch {
-  // En hot-reload ya está inicializado
   auth = getAuth(app);
 }
 export { auth };
 
-// ─── Constantes ────────────────────────────────────────────────
+// ─── Lockout (AsyncStorage local) ────────────────────────────
 
 const MAX_ATTEMPTS = 6;
-const LOCKOUT_MS = 24 * 60 * 1000;   // 24 minutos
-const MAX_TENANT_SESSIONS = 3;
-
-const LOCKOUT_KEY = (u: string) => `@a43/lockout_${u}`;
-const SESSION_KEY = '@a43/session_id';
-
-// ─── Lockout (AsyncStorage local) ────────────────────────────
+const LOCKOUT_MS   = 24 * 60 * 1000;
+const LOCKOUT_KEY  = (u: string) => `@a43/lockout_${u}`;
 
 interface LockoutData { count: number; lockedUntil: number | null }
 
-async function getLockout(username: string): Promise<LockoutData> {
-  const raw = await AsyncStorage.getItem(LOCKOUT_KEY(username));
+async function getLockout(u: string): Promise<LockoutData> {
+  const raw = await AsyncStorage.getItem(LOCKOUT_KEY(u));
   return raw ? JSON.parse(raw) : { count: 0, lockedUntil: null };
 }
 
-async function setLockout(username: string, data: LockoutData) {
-  await AsyncStorage.setItem(LOCKOUT_KEY(username), JSON.stringify(data));
-}
-
-async function clearLockout(username: string) {
-  await AsyncStorage.removeItem(LOCKOUT_KEY(username));
+async function clearLockout(u: string) {
+  await AsyncStorage.removeItem(LOCKOUT_KEY(u));
 }
 
 export async function checkLockout(username: string): Promise<{ locked: boolean; minutesLeft: number }> {
@@ -63,57 +43,16 @@ export async function checkLockout(username: string): Promise<{ locked: boolean;
 }
 
 async function recordFailed(username: string): Promise<{ locked: boolean; attemptsLeft: number }> {
-  const data = await getLockout(username);
+  const raw  = await AsyncStorage.getItem(LOCKOUT_KEY(username));
+  const data: LockoutData = raw ? JSON.parse(raw) : { count: 0, lockedUntil: null };
   data.count = (data.count ?? 0) + 1;
   if (data.count >= MAX_ATTEMPTS) {
     data.lockedUntil = Date.now() + LOCKOUT_MS;
-    await setLockout(username, data);
+    await AsyncStorage.setItem(LOCKOUT_KEY(username), JSON.stringify(data));
     return { locked: true, attemptsLeft: 0 };
   }
-  await setLockout(username, data);
+  await AsyncStorage.setItem(LOCKOUT_KEY(username), JSON.stringify(data));
   return { locked: false, attemptsLeft: MAX_ATTEMPTS - data.count };
-}
-
-// ─── Sesiones (Firestore) ─────────────────────────────────────
-
-type SesionInput = Omit<Sesion, 'id'>;
-
-async function registerSession(uid: string, role: 'admin' | 'inquilino'): Promise<void> {
-  if (role === 'inquilino') {
-    const snap = await getDocs(
-      query(
-        collections.sesiones,
-        where('usuarioId', '==', uid),
-        where('activa', '==', true),
-        orderBy('fechaInicio', 'asc'),
-      ),
-    );
-    if (snap.size >= MAX_TENANT_SESSIONS) {
-      await deleteDoc(doc(db, 'sesiones', snap.docs[0].id));
-    }
-  }
-
-  const data: SesionInput = {
-    usuarioId: uid,
-    dispositivo: 'Mobile',
-    plataforma: Platform.OS as 'ios' | 'android' | 'web',
-    token: '',
-    activa: true,
-    fechaInicio: serverTimestamp() as unknown as import('firebase/firestore').Timestamp,
-    fechaUltimaActividad: serverTimestamp() as unknown as import('firebase/firestore').Timestamp,
-    creadoEn: serverTimestamp() as unknown as import('firebase/firestore').Timestamp,
-  };
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const ref = await addDoc(collections.sesiones, data as any);
-  await AsyncStorage.setItem(SESSION_KEY, ref.id);
-}
-
-async function removeSession(): Promise<void> {
-  const id = await AsyncStorage.getItem(SESSION_KEY);
-  if (!id) return;
-  try { await deleteDoc(doc(db, 'sesiones', id)); } catch { /* ya eliminada */ }
-  await AsyncStorage.removeItem(SESSION_KEY);
 }
 
 // ─── API pública ──────────────────────────────────────────────
@@ -128,11 +67,25 @@ export async function signIn(username: string, curp: string): Promise<void> {
     const email = `${u}@antioquia43.app`;
     const { user } = await signInWithEmailAndPassword(auth, email, curp.trim().toUpperCase());
     await clearLockout(u);
+
     const role = u.startsWith('bailleur') ? 'admin' : 'inquilino';
-    await registerSession(user.uid, role);
+
+    // Verificar si la cuenta requiere autorización admin (protocolo robo)
+    if (role === 'inquilino') {
+      const inqSnap = await getDoc(doc(db, 'inquilinos', user.uid));
+      if (inqSnap.exists() && inqSnap.data().requiresAdminAuth) {
+        await firebaseSignOut(auth);
+        throw Object.assign(
+          new Error('Esta cuenta requiere autorización del administrador para iniciar sesión.'),
+          { code: 'REQUIRES_ADMIN_AUTH' },
+        );
+      }
+    }
+
+    await crearSesion(user.uid, role);
   } catch (err: unknown) {
     const e = err as { code?: string; minutesLeft?: number };
-    if (e.code === 'LOCKED') throw err;
+    if (e.code === 'LOCKED' || e.code === 'REQUIRES_ADMIN_AUTH') throw err;
     if (e.code === 'auth/network-request-failed') {
       throw Object.assign(new Error('Sin conexión'), { code: 'NETWORK_ERROR' });
     }
@@ -145,7 +98,8 @@ export async function signIn(username: string, curp: string): Promise<void> {
 }
 
 export async function signOut(): Promise<void> {
-  await removeSession();
+  const sesionId = await AsyncStorage.getItem(SESSION_KEY);
+  if (sesionId) await cerrarSesion(sesionId).catch(() => {});
   await firebaseSignOut(auth);
 }
 
