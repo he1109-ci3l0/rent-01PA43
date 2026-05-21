@@ -135,6 +135,28 @@ service cloud.firestore {
       allow write:  if isAdmin();
     }
 
+    // ─── solicitudes_factura ───────────────────────────────────
+    match /solicitudes_factura/{sfId} {
+      allow read:   if isAdmin() || (isAuth() && resource.data.inquilinoId == request.auth.uid);
+      allow create: if isAdmin() || (isAuth() && request.resource.data.inquilinoId == request.auth.uid);
+      allow update: if isAdmin() || (isAuth() && resource.data.inquilinoId == request.auth.uid);
+      allow delete: if isAdmin();
+    }
+
+    // ─── cupones ──────────────────────────────────────────────
+    match /cupones/{cId} {
+      allow read:   if isAuth();
+      allow write:  if isAdmin();
+    }
+
+    // ─── cupones_usos ─────────────────────────────────────────
+    match /cupones_usos/{uId} {
+      allow read:   if isAdmin() || (isAuth() && resource.data.inquilinoId == request.auth.uid);
+      allow create: if isAuth() && request.resource.data.inquilinoId == request.auth.uid;
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+
     // ─── scores ────────────────────────────────────────────────
     match /scores/{inquilinoId} {
       allow read:   if isAdmin() || isOwner(inquilinoId);

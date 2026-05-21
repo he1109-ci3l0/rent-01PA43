@@ -19,6 +19,7 @@ import HabitacionesScreen        from '@/screens/admin/HabitacionesScreen';
 import PagosAdminScreen          from '@/screens/admin/PagosAdminScreen';
 import HuespedExtraAdminScreen   from '@/screens/admin/HuespedExtraAdminScreen';
 import VisitasAdminScreen        from '@/screens/admin/VisitasAdminScreen';
+import FacturasAdminScreen       from '@/screens/admin/FacturasAdminScreen';
 
 type IoniconsName = React.ComponentProps<typeof Ionicons>['name'];
 
@@ -149,8 +150,8 @@ function AdminNavigator() {
       />
       <AdminTab.Screen
         name="Ajustes"
-        component={HabitacionesScreen}
-        options={{ tabBarIcon: tabIcon('settings-outline', 'settings') }}
+        component={FacturasAdminScreen}
+        options={{ tabBarIcon: tabIcon('receipt-outline', 'receipt'), tabBarLabel: 'Facturación' }}
       />
     </AdminTab.Navigator>
   );

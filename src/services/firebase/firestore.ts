@@ -21,6 +21,9 @@ import type {
   Mensaje,
   Sesion,
   Factura,
+  SolicitudFactura,
+  Cupon,
+  CuponUso,
   Configuracion,
   ScoreReputacion,
 } from '@/types/firestore';
@@ -47,9 +50,12 @@ export const collections = {
   noticias:         col<Noticia>('noticias'),
   chats:            col<Chat>('chats'),
   sesiones:         col<Sesion>('sesiones'),
-  facturas:         col<Factura>('facturas'),
-  configuracion:    col<Configuracion>('configuracion'),
-  scores:           col<ScoreReputacion>('scores'),
+  facturas:            col<Factura>('facturas'),
+  solicitudesFactura:  col<SolicitudFactura>('solicitudes_factura'),
+  cupones:             col<Cupon>('cupones'),
+  cuponesUsos:         col<CuponUso>('cupones_usos'),
+  configuracion:       col<Configuracion>('configuracion'),
+  scores:              col<ScoreReputacion>('scores'),
 } as const;
 
 // ─── Sub-colecciones ──────────────────────────────────────────

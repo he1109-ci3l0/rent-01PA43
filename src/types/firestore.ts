@@ -388,6 +388,15 @@ export interface ConfiguracionPagos {
   metodosHabilitados: MetodoPago[];
 }
 
+export interface DatosFiscalesEmisor {
+  razonSocial: string;
+  rfc: string;
+  regimenFiscal: string;
+  domicilioFiscal: string;
+  codigoPostal: string;
+  email: string;
+}
+
 export interface Configuracion {
   id: 'global';
   nombrePropiedad: string;
@@ -400,6 +409,81 @@ export interface Configuracion {
   pagos: ConfiguracionPagos;
   notificacionesActivas: boolean;
   modoMantenimiento: boolean;
+  // Emisores CFDI (configurables desde admin)
+  emisorFisico?: DatosFiscalesEmisor;   // Persona física RESICO, exento IVA
+  emisorEmpresa?: DatosFiscalesEmisor;  // Empresa con IVA 16%
   actualizadoEn: Timestamp;
   actualizadoPor: string;        // UID admin
+}
+
+// ─── 15. solicitudes_factura ──────────────────────────────────
+
+export type ConceptoFacturaCFDI = 'renta' | 'lavanderia' | 'almacenamiento' | 'todo';
+export type EstadoSolicitudFactura = 'pendiente' | 'procesando' | 'emitida' | 'rechazada' | 'eliminada';
+export type EmisorFacturaCFDI = 'fisica' | 'empresa';
+
+export interface DatosFiscalesInquilino {
+  rfc: string;
+  razonSocial: string;
+  regimenFiscal: string;
+  domicilioFiscal: string;
+  codigoPostal: string;
+  emailFiscal: string;
+}
+
+export interface SolicitudFactura {
+  id: string;
+  inquilinoId: string;
+  habitacionId: string;
+  habitacionNumero?: string;
+  inquilinoNombre?: string;
+  concepto: ConceptoFacturaCFDI;
+  emisor: EmisorFacturaCFDI;
+  mes: number;                   // 1–12
+  anio: number;
+  estado: EstadoSolicitudFactura;
+  datosFiscales: DatosFiscalesInquilino;
+  pdfUrl?: string;
+  descargasRestantes: number;    // máx 3 para inquilino
+  adminSubidoPor?: string;
+  adminSubidoEn?: Timestamp;
+  eliminadaEn?: Timestamp;
+  notas?: string;
+  creadoEn: Timestamp;
+}
+
+// ─── 16. cupones ──────────────────────────────────────────────
+
+export type TipoCupon = 'monto' | 'porcentaje';
+export type ConceptoCupon = 'renta' | 'servicios' | 'total';
+export type ErrorCupon = 'vencido' | 'agotado' | 'no_aplica' | 'no_disponible' | 'invalido';
+
+export interface Cupon {
+  id: string;
+  nombre: string;
+  codigo: string;
+  tipo: TipoCupon;
+  valor: number;
+  concepto: ConceptoCupon;
+  disponible: boolean;
+  reutilizable: boolean;
+  limiteUsos: number | null;
+  usosActuales: number;
+  vigenciaInicio: Timestamp;
+  vigenciaFin: Timestamp;
+  eligibilidad: 'todos' | string[];  // 'todos' o array de habitacionIds
+  apilable: boolean;
+  creadoEn: Timestamp;
+}
+
+export interface CuponUso {
+  id: string;
+  cuponId: string;
+  cuponCodigo: string;
+  inquilinoId: string;
+  habitacionId: string;
+  pagoId?: string;
+  montoDescuento: number;
+  conceptoAplicado: ConceptoCupon;
+  usadoEn: Timestamp;
 }
