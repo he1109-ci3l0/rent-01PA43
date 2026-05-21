@@ -235,6 +235,26 @@ service cloud.firestore {
       allow write:  if isAdmin();
     }
 
+    // ─── expedientes ───────────────────────────────────────────
+    match /expedientes/{uid} {
+      allow read:   if isOwner(uid) || isAdmin();
+      allow create: if isOwner(uid) || isAdmin();
+      allow update: if isAdmin()
+        || (isOwner(uid) && onlyUpdatesAllowed([
+             'firmaDigital','firmadoEn','contactosEmergencia','mascotas','actualizadoEn'
+           ]));
+      allow delete: if isAdmin();
+    }
+
+    // ─── documentos (sub-colección de inquilinos) ──────────────
+    match /inquilinos/{uid}/documentos/{docId} {
+      allow read:   if isOwner(uid) || isAdmin();
+      allow create: if isAdmin() || isOwner(uid);
+      allow update: if isAdmin()
+        || (isOwner(uid) && onlyUpdatesAllowed(['descargas']));
+      allow delete: if isAdmin();
+    }
+
     // ─── Helper: campos permitidos para update parcial ─────────
     function onlyUpdatesAllowed(fields) {
       return request.resource.data.diff(resource.data).affectedKeys().hasOnly(fields);

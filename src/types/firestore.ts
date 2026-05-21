@@ -672,3 +672,54 @@ export interface CuponUso {
   conceptoAplicado: ConceptoCupon;
   usadoEn: Timestamp;
 }
+
+// ─── 18. expedientes ──────────────────────────────────────────
+
+export type TipoDocExpediente =
+  | 'INE_FRENTE' | 'INE_REVERSO' | 'CURP' | 'COMPROBANTE_DOMICILIO'
+  | 'PRENDA_1_1' | 'PRENDA_1_2' | 'CONTRATO' | 'REGLAMENTO'
+  | 'AVISO_PRIVACIDAD' | 'ADDENDUM_SERVICIOS' | 'CLAUSULA_CUPONES';
+
+export type EstadoDocExpediente = 'pendiente' | 'subido' | 'rechazado';
+
+export interface DocumentoExpediente {
+  id: string;
+  tipo: TipoDocExpediente;
+  nombre: string;
+  url: string | null;
+  estado: EstadoDocExpediente;
+  descargas: number;
+  maxDescargas: number;
+  subidoEn: Timestamp | null;
+  subidoPor: string | null;
+}
+
+export interface ContactoEmergencia {
+  id: string;
+  nombre: string;
+  edad: number;
+  parentesco: string;
+  telefono?: string;
+  redesSociales?: string;
+  direccion?: string;
+}
+
+export interface Mascota {
+  id: string;
+  descripcion: string;
+}
+
+export interface Expediente {
+  id: string;
+  inquilinoId: string;
+  habitacionId: string | null;
+  habitacionNumero: string | null;
+  firmaDigital: string | null;  // JSON: Array<{x:number,y:number}[]>
+  firmadoEn: Timestamp | null;
+  notasAdmin: string;
+  congelado: boolean;
+  contactosEmergencia: ContactoEmergencia[];
+  mascotas: Mascota[];
+  creadoEn: Timestamp;
+  actualizadoEn: Timestamp;
+}

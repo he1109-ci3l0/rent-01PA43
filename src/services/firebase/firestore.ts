@@ -32,6 +32,8 @@ import type {
   ScoreReputacion,
   Restriccion,
   Apelacion,
+  Expediente,
+  DocumentoExpediente,
 } from '@/types/firestore';
 
 export const db = getFirestore(app);
@@ -68,12 +70,16 @@ export const collections = {
   scores:              col<ScoreReputacion>('scores'),
   restricciones:       col<Restriccion>('restricciones'),
   apelaciones:         col<Apelacion>('apelaciones'),
+  expedientes:         col<Expediente>('expedientes'),
 } as const;
 
 // ─── Sub-colecciones ──────────────────────────────────────────
 
 export const mensajesDeChat = (chatId: string): CollectionReference<Mensaje> =>
   col<Mensaje>(`chats/${chatId}/mensajes`);
+
+export const documentosDeExpediente = (uid: string): CollectionReference<DocumentoExpediente> =>
+  col<DocumentoExpediente>(`inquilinos/${uid}/documentos`);
 
 // ─── Referencias a documentos específicos ────────────────────
 

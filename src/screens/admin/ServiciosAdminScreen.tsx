@@ -7,10 +7,12 @@ import HuespedExtraAdminScreen    from '@/screens/admin/HuespedExtraAdminScreen'
 import LavanderiaAdminScreen      from '@/screens/admin/LavanderiaAdminScreen';
 import AlmacenamientoAdminScreen  from '@/screens/admin/AlmacenamientoAdminScreen';
 import LimpiezaAdminScreen        from '@/screens/admin/LimpiezaAdminScreen';
+import ExpedienteAdminScreen      from '@/screens/admin/ExpedienteAdminScreen';
 
-type Tab = 'huespedes' | 'lavanderia' | 'almacenamiento' | 'limpieza';
+type Tab = 'expedientes' | 'huespedes' | 'lavanderia' | 'almacenamiento' | 'limpieza';
 
 const TAB_LABELS: Record<Tab, string> = {
+  expedientes:    'Expedientes',
   huespedes:      'Huéspedes',
   lavanderia:     'Lavandería',
   almacenamiento: 'Almacén',
@@ -18,7 +20,7 @@ const TAB_LABELS: Record<Tab, string> = {
 };
 
 export default function ServiciosAdminScreen() {
-  const [tab, setTab] = useState<Tab>('huespedes');
+  const [tab, setTab] = useState<Tab>('expedientes');
 
   return (
     <View style={{ flex: 1, backgroundColor: cartasBosque.bruma }}>
@@ -38,6 +40,7 @@ export default function ServiciosAdminScreen() {
       </View>
       </SafeAreaView>
 
+      {tab === 'expedientes'    && <ExpedienteAdminScreen />}
       {tab === 'huespedes'      && <HuespedExtraAdminScreen />}
       {tab === 'lavanderia'     && <LavanderiaAdminScreen />}
       {tab === 'almacenamiento' && <AlmacenamientoAdminScreen />}
