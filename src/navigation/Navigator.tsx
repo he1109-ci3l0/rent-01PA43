@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, ActivityIndicator, StyleSheet } from 'react-native';
+import { View, ActivityIndicator, StyleSheet, Platform } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
@@ -7,6 +7,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { cartasBosque } from '@/constants/colors';
 import LoginScreen from '@/screens/auth/LoginScreen';
 import AppNavigator from './AppNavigator';
+import WebAdminNavigator from './WebAdminNavigator';
 
 function LoadingView() {
   return (
@@ -17,7 +18,7 @@ function LoadingView() {
 }
 
 export default function RootNavigator() {
-  const { user, loading } = useAuth();
+  const { user, loading, role } = useAuth();
 
   return (
     <SafeAreaProvider>
@@ -26,7 +27,9 @@ export default function RootNavigator() {
         {loading ? (
           <LoadingView />
         ) : user ? (
-          <AppNavigator />
+          Platform.OS === 'web' && role === 'admin'
+            ? <WebAdminNavigator />
+            : <AppNavigator />
         ) : (
           <LoginScreen />
         )}

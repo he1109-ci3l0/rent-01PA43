@@ -623,6 +623,25 @@ export interface Configuracion {
   pagos: ConfiguracionPagos;
   notificacionesActivas: boolean;
   modoMantenimiento: boolean;
+  // Cuota de limpieza
+  cuotaLimpieza?: number;
+  cuotaLimpiezaActiva?: boolean;
+  // Módulos habilitables
+  modulosHabilitados?: {
+    lavanderia?: boolean;
+    almacenamiento?: boolean;
+    huespedExtra?: boolean;
+    visitas?: boolean;
+    facturacion?: boolean;
+    scoreReputacion?: boolean;
+  };
+  // Documentos oficiales (URLs Storage)
+  documentosOficiales?: {
+    contratoUrl?: string;
+    reglamentoUrl?: string;
+    avisoPrivacidadUrl?: string;
+    addendumUrl?: string;
+  };
   // Emisores CFDI (configurables desde admin)
   emisorFisico?: DatosFiscalesEmisor;   // Persona física RESICO, exento IVA
   emisorEmpresa?: DatosFiscalesEmisor;  // Empresa con IVA 16%
