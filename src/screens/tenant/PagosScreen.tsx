@@ -3,8 +3,11 @@ import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
   ActivityIndicator, Alert, RefreshControl, Image,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
+import { useNavigation } from '@react-navigation/native';
+import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { cartasBosque } from '@/constants/colors';
 import { spacing, borderRadius } from '@/constants/spacing';
 import ScoreBadge from '@/components/common/ScoreBadge';
@@ -12,7 +15,7 @@ import {
   listenMisPagos, listenScore, registrarComprobante, calcularScore,
   seedDemoPagos,
 } from '@/services/firebase/pagos';
-import type { Pago, ScoreReputacion, NivelScore } from '@/types/firestore';
+import type { Pago, ScoreReputacion } from '@/types/firestore';
 import { useAuth } from '@/hooks/useAuth';
 
 // ─── Helpers ──────────────────────────────────────────────────
@@ -32,30 +35,43 @@ function diasDesde(ts: import('firebase/firestore').Timestamp): number {
 function estadoLabel(pago: Pago): { label: string; color: string; icon: string } {
   const diasMora = diasDesde(pago.fechaVencimiento);
   switch (pago.estado) {
-    case 'pagado':     return { label: 'Pagado',           color: '#00897B', icon: 'checkmark-circle' };
-    case 'en_revision':return { label: 'En revisión',      color: '#1565C0', icon: 'time' };
-    case 'rechazado':  return { label: 'Rechazado',        color: '#C62828', icon: 'close-circle' };
-    case 'vencido':    return { label: `Vencido (${diasMora}d)`, color: '#C62828', icon: 'alert-circle' };
+    case 'pagado':      return { label: 'Pagado',                 color: '#00897B', icon: 'checkmark-circle' };
+    case 'en_revision': return { label: 'En revisión',            color: '#1565C0', icon: 'time' };
+    case 'rechazado':   return { label: 'Rechazado',              color: '#C62828', icon: 'close-circle' };
+    case 'vencido':     return { label: `Vencido (${diasMora}d)`, color: '#C62828', icon: 'alert-circle' };
     case 'pendiente':
-      if (diasMora > 3) return { label: 'Vencido',        color: '#C62828', icon: 'alert-circle' };
-      if (diasMora > 0) return { label: `${3-diasMora}d gracia`, color: '#EF6C00', icon: 'warning' };
-      return { label: 'Por pagar',                         color: '#F9A825', icon: 'ellipse-outline' };
-    default:           return { label: pago.estado,        color: cartasBosque.musgo, icon: 'ellipse-outline' };
+      if (diasMora > 3) return { label: 'Vencido',               color: '#C62828', icon: 'alert-circle' };
+      if (diasMora > 0) return { label: `${3-diasMora}d gracia`,  color: '#EF6C00', icon: 'warning' };
+      return               { label: 'Por pagar',                  color: '#F9A825', icon: 'ellipse-outline' };
+    default:            return { label: pago.estado,              color: cartasBosque.musgo, icon: 'ellipse-outline' };
   }
 }
-
-// ─── Demo data (cuando Firestore está vacío) ──────────────────
 
 const DEMO_SCORE: ScoreReputacion = {
   id: 'demo', inquilinoId: 'demo', nivel: 'bueno', puntos: 72,
   ajusteManual: false, ultimaActualizacion: null as any,
 };
 
+type TenantNav = BottomTabNavigationProp<{
+  Dossier: undefined; Noticias: undefined; Home: undefined;
+  Servicios: undefined; Soporte: undefined;
+}>;
+
+// ─── Accesos rápidos ──────────────────────────────────────────
+
+const QUICK = [
+  { id: 'servicios', label: 'Servicios',   icon: 'apps',      route: 'Servicios' as const },
+  { id: 'noticias',  label: 'Noticias',    icon: 'megaphone', route: 'Noticias'  as const },
+  { id: 'dossier',   label: 'Mi Dossier',  icon: 'id-card',   route: 'Dossier'   as const },
+  { id: 'soporte',   label: 'Soporte',     icon: 'headset',   route: 'Soporte'   as const },
+] as const;
+
 // ─── Componente ───────────────────────────────────────────────
 
 export default function PagosScreen() {
   const { user } = useAuth();
   const uid = user?.uid ?? 'demo';
+  const nav = useNavigation<TenantNav>();
 
   const [pagos, setPagos] = useState<Pago[]>([]);
   const [score, setScore] = useState<ScoreReputacion | null>(null);
@@ -64,7 +80,6 @@ export default function PagosScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [seeded, setSeeded] = useState(false);
 
-  // Listeners en tiempo real
   useEffect(() => {
     const unsubPagos = listenMisPagos(uid, data => {
       setPagos(data);
@@ -74,7 +89,6 @@ export default function PagosScreen() {
     return () => { unsubPagos(); unsubScore(); };
   }, [uid]);
 
-  // Seed demo si Firestore vacío (solo DEV, una vez)
   useEffect(() => {
     if (!loading && pagos.length === 0 && __DEV__ && !seeded && uid !== 'demo') {
       setSeeded(true);
@@ -123,75 +137,97 @@ export default function PagosScreen() {
 
   if (loading) {
     return (
-      <View style={styles.center}>
+      <SafeAreaView style={s.loadingWrap} edges={['top']}>
         <ActivityIndicator color={cartasBosque.bosque} />
-      </View>
+      </SafeAreaView>
     );
   }
 
-  const hoy = new Date();
-  const mesActual = `${MESES[hoy.getMonth()]} ${hoy.getFullYear()}`;
+  const hora = new Date().getHours();
+  const saludo = hora < 12 ? 'Buenos días' : hora < 19 ? 'Buenas tardes' : 'Buenas noches';
 
   return (
-    <ScrollView
-      style={styles.root}
-      contentContainerStyle={styles.content}
-      showsVerticalScrollIndicator={false}
-      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={cartasBosque.musgo} />}
-    >
-      {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.eyebrow}>{mesActual}</Text>
-        <Text style={styles.title}>Mis pagos</Text>
-      </View>
-
-      {/* ── Pago actual ── */}
-      {pagoActual ? (
-        <PagoCard
-          pago={pagoActual}
-          uploading={uploading === pagoActual.id}
-          onPagar={() => handleRegistrarPago(pagoActual.id)}
-        />
-      ) : (
-        <View style={styles.emptyCard}>
-          <Ionicons name="checkmark-circle" size={32} color={cartasBosque.helecho} />
-          <Text style={styles.emptyText}>Sin pagos pendientes</Text>
+    <SafeAreaView style={s.safeArea} edges={['top']}>
+      <ScrollView
+        style={s.root}
+        contentContainerStyle={s.content}
+        showsVerticalScrollIndicator={false}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={cartasBosque.musgo} />}
+      >
+        {/* ── Header ── */}
+        <View style={s.header}>
+          <View>
+            <Text style={s.saludo}>{saludo}</Text>
+            <Text style={s.title}>Mi Hogar</Text>
+          </View>
+          <ScoreBadge nivel={scoreData.nivel} puntos={scoreData.puntos} size="sm" />
         </View>
-      )}
 
-      {/* ── Score ── */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Tu reputación</Text>
-        <View style={styles.scoreCard}>
+        {/* ── Renta actual ── */}
+        <Text style={s.sectionTitle}>Renta actual</Text>
+        {pagoActual ? (
+          <PagoCard
+            pago={pagoActual}
+            uploading={uploading === pagoActual.id}
+            onPagar={() => handleRegistrarPago(pagoActual.id)}
+          />
+        ) : (
+          <View style={s.emptyCard}>
+            <Ionicons name="checkmark-circle" size={32} color={cartasBosque.helecho} />
+            <Text style={s.emptyText}>Sin pagos pendientes</Text>
+          </View>
+        )}
+
+        {/* ── Accesos rápidos ── */}
+        <Text style={s.sectionTitle}>Accesos rápidos</Text>
+        <View style={s.quickGrid}>
+          {QUICK.map(item => (
+            <TouchableOpacity
+              key={item.id}
+              style={s.quickCard}
+              onPress={() => nav.navigate(item.route)}
+              activeOpacity={0.75}
+            >
+              <View style={s.quickIcon}>
+                <Ionicons name={item.icon as any} size={22} color={cartasBosque.bosque} />
+              </View>
+              <Text style={s.quickLabel}>{item.label}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+
+        {/* ── Reputación ── */}
+        <Text style={s.sectionTitle}>Reputación</Text>
+        <View style={s.scoreCard}>
           <ScoreBadge nivel={scoreData.nivel} puntos={scoreData.puntos} showBar size="lg" />
           {scoreData.ajusteManual && (
-            <Text style={styles.scoreAjuste}>Ajustado manualmente por admin</Text>
+            <Text style={s.scoreAjuste}>Ajustado manualmente por admin</Text>
           )}
         </View>
-      </View>
 
-      {/* ── Historial ── */}
-      {historial.length > 0 && (
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Historial</Text>
-          <View style={styles.historialList}>
-            {historial.map(p => <HistorialRow key={p.id} pago={p} />)}
-          </View>
+        {/* ── Historial ── */}
+        {historial.length > 0 && (
+          <>
+            <Text style={s.sectionTitle}>Historial</Text>
+            <View style={s.historialList}>
+              {historial.map(p => <HistorialRow key={p.id} pago={p} />)}
+            </View>
+          </>
+        )}
+
+        {/* Nota INPC */}
+        <View style={s.inpcNote}>
+          <Ionicons name="information-circle-outline" size={14} color={cartasBosque.helecho} />
+          <Text style={s.inpcText}>
+            El incremento anual INPC se notifica con 15 días de anticipación.
+          </Text>
         </View>
-      )}
-
-      {/* Nota INPC */}
-      <View style={styles.inpcNote}>
-        <Ionicons name="information-circle-outline" size={14} color={cartasBosque.helecho} />
-        <Text style={styles.inpcText}>
-          El incremento anual INPC se notifica con 15 días de anticipación.
-        </Text>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
-// ─── Sub-componentes ──────────────────────────────────────────
+// ─── PagoCard ─────────────────────────────────────────────────
 
 function PagoCard({ pago, uploading, onPagar }: {
   pago: Pago;
@@ -203,66 +239,59 @@ function PagoCard({ pago, uploading, onPagar }: {
   const enRevision = pago.estado === 'en_revision';
 
   return (
-    <View style={styles.pagoCard}>
-      {/* Monto */}
-      <View style={styles.pagoMontoRow}>
+    <View style={s.pagoCard}>
+      <View style={s.pagoMontoRow}>
         <View>
-          <Text style={styles.pagoLabel}>Renta mensual</Text>
-          <Text style={styles.pagoMonto}>
+          <Text style={s.pagoLabel}>Renta mensual</Text>
+          <Text style={s.pagoMonto}>
             ${pago.monto.toLocaleString('es-MX')}
-            <Text style={styles.pagueMXN}> MXN</Text>
+            <Text style={s.pagoMXN}> MXN</Text>
           </Text>
         </View>
-        <View style={[styles.estadoBadge, { backgroundColor: estado.color + '18' }]}>
+        <View style={[s.estadoBadge, { backgroundColor: estado.color + '18' }]}>
           <Ionicons name={estado.icon as any} size={14} color={estado.color} />
-          <Text style={[styles.estadoLabel, { color: estado.color }]}>{estado.label}</Text>
+          <Text style={[s.estadoLabel, { color: estado.color }]}>{estado.label}</Text>
         </View>
       </View>
 
-      <View style={styles.divider} />
+      <View style={s.divider} />
 
-      {/* Fechas */}
-      <View style={styles.fechasRow}>
-        <FechaItem label="Vence" value={formatFecha(pago.fechaVencimiento)} />
+      <View style={s.fechasRow}>
+        <FechaItem label="Vence"     value={formatFecha(pago.fechaVencimiento)} />
         {pago.fechaPago && <FechaItem label="Pagado" value={formatFecha(pago.fechaPago)} />}
         <FechaItem label="Modalidad" value={pago.modalidad === 'semanal' ? 'Semanal' : 'Mensual'} />
       </View>
 
-      {/* Comprobante ya subido */}
       {pago.comprobante && enRevision && (
-        <View style={styles.comprobanteRow}>
-          <Image source={{ uri: pago.comprobante }} style={styles.comprobanteMini} />
+        <View style={s.comprobanteRow}>
+          <Image source={{ uri: pago.comprobante }} style={s.comprobanteMini} />
           <View style={{ flex: 1 }}>
-            <Text style={styles.comprobanteLabel}>Comprobante enviado</Text>
-            <Text style={styles.comprobanteDate}>
-              {formatFecha(pago.comprobanteSubidoEn ?? null)}
-            </Text>
+            <Text style={s.comprobanteLabel}>Comprobante enviado</Text>
+            <Text style={s.comprobanteDate}>{formatFecha(pago.comprobanteSubidoEn ?? null)}</Text>
           </View>
-          <Ionicons name="time-outline" size={18} color='#1565C0' />
+          <Ionicons name="time-outline" size={18} color="#1565C0" />
         </View>
       )}
 
-      {/* Razón de rechazo */}
       {pago.estado === 'rechazado' && pago.rechazadoRazon && (
-        <View style={styles.rechazadoBox}>
-          <Ionicons name="close-circle-outline" size={15} color='#C62828' />
-          <Text style={styles.rechazadoText}>{pago.rechazadoRazon}</Text>
+        <View style={s.rechazadoBox}>
+          <Ionicons name="close-circle-outline" size={15} color="#C62828" />
+          <Text style={s.rechazadoText}>{pago.rechazadoRazon}</Text>
         </View>
       )}
 
-      {/* Botón */}
       {puedeSubir && (
         <TouchableOpacity
-          style={[styles.btnPagar, uploading && { opacity: 0.5 }]}
+          style={[s.btnPagar, uploading && { opacity: 0.5 }]}
           onPress={onPagar}
           disabled={uploading}
           activeOpacity={0.82}
         >
           {uploading
-            ? <ActivityIndicator size="small" color={cartasBosque.bruma} />
+            ? <ActivityIndicator size="small" color="#FFFFFF" />
             : <>
-                <Ionicons name="camera-outline" size={18} color={cartasBosque.bruma} />
-                <Text style={styles.btnPagarText}>
+                <Ionicons name="camera-outline" size={18} color="#FFFFFF" />
+                <Text style={s.btnPagarText}>
                   {pago.estado === 'rechazado' ? 'Subir nuevo comprobante' : 'Registrar pago'}
                 </Text>
               </>
@@ -276,8 +305,8 @@ function PagoCard({ pago, uploading, onPagar }: {
 function FechaItem({ label, value }: { label: string; value: string }) {
   return (
     <View>
-      <Text style={styles.fechaLabel}>{label}</Text>
-      <Text style={styles.fechaValue}>{value}</Text>
+      <Text style={s.fechaLabel}>{label}</Text>
+      <Text style={s.fechaValue}>{value}</Text>
     </View>
   );
 }
@@ -286,15 +315,13 @@ function HistorialRow({ pago }: { pago: Pago }) {
   const d = pago.fechaVencimiento.toDate();
   const mes = `${MESES[d.getMonth()]} ${d.getFullYear()}`;
   return (
-    <View style={styles.historialRow}>
-      <View style={styles.historialDot} />
+    <View style={s.historialRow}>
+      <View style={s.historialDot} />
       <View style={{ flex: 1 }}>
-        <Text style={styles.historialMes}>{mes}</Text>
-        {pago.metodoPago && (
-          <Text style={styles.historialMetodo}>{pago.metodoPago}</Text>
-        )}
+        <Text style={s.historialMes}>{mes}</Text>
+        {pago.metodoPago && <Text style={s.historialMetodo}>{pago.metodoPago}</Text>}
       </View>
-      <Text style={styles.historialMonto}>${pago.monto.toLocaleString('es-MX')}</Text>
+      <Text style={s.historialMonto}>${pago.monto.toLocaleString('es-MX')}</Text>
       <Ionicons name="checkmark-circle" size={16} color="#00897B" style={{ marginLeft: spacing[2] }} />
     </View>
   );
@@ -302,33 +329,36 @@ function HistorialRow({ pago }: { pago: Pago }) {
 
 // ─── Estilos ──────────────────────────────────────────────────
 
-const styles = StyleSheet.create({
-  root:    { flex: 1, backgroundColor: cartasBosque.pergamino },
-  content: { padding: spacing[5], paddingBottom: spacing[10] },
-  center:  { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: cartasBosque.pergamino },
+const s = StyleSheet.create({
+  safeArea:    { flex: 1, backgroundColor: cartasBosque.bruma },
+  loadingWrap: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: cartasBosque.bruma },
+  root:        { flex: 1, backgroundColor: cartasBosque.bruma },
+  content:     { padding: spacing[5], paddingBottom: spacing[10] },
 
-  header:   { marginBottom: spacing[5] },
-  eyebrow:  { fontFamily: 'DMMono_400Regular', fontSize: 11, color: cartasBosque.musgo, letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: spacing[1] },
-  title:    { fontFamily: 'DMSans_700Bold', fontSize: 26, color: cartasBosque.bosque, letterSpacing: -0.3 },
+  header:  { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: spacing[4] },
+  saludo:  { fontFamily: 'DMMono_400Regular', fontSize: 11, color: cartasBosque.musgo, letterSpacing: 1, textTransform: 'uppercase', marginBottom: 2 },
+  title:   { fontFamily: 'DMSans_700Bold', fontSize: 26, color: cartasBosque.tinta, letterSpacing: -0.3 },
+
+  sectionTitle: { fontFamily: 'DMSans_600SemiBold', fontSize: 15, color: cartasBosque.tinta, marginBottom: spacing[3], marginTop: spacing[5] },
 
   // Pago card
   pagoCard: {
-    backgroundColor: cartasBosque.bruma,
+    backgroundColor: cartasBosque.pergamino,
     borderRadius: borderRadius.xl,
     padding: spacing[5],
     borderWidth: 1,
     borderColor: cartasBosque.pergaminoOscuro,
     shadowColor: cartasBosque.tinta,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.06,
-    shadowRadius: 8,
-    elevation: 2,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.08,
+    shadowRadius: 10,
+    elevation: 3,
     gap: spacing[4],
   },
   pagoMontoRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' },
-  pagoLabel:    { fontFamily: 'DMMono_400Regular', fontSize: 10, color: cartasBosque.helecho, letterSpacing: 1, textTransform: 'uppercase', marginBottom: spacing[1] },
-  pagoMonto:    { fontFamily: 'DMSans_700Bold', fontSize: 28, color: cartasBosque.tinta, letterSpacing: -0.5 },
-  pagueMXN:     { fontFamily: 'DMSans_400Regular', fontSize: 14, color: cartasBosque.helecho },
+  pagoLabel:    { fontFamily: 'DMMono_400Regular', fontSize: 10, color: cartasBosque.musgo, letterSpacing: 1, textTransform: 'uppercase', marginBottom: spacing[1] },
+  pagoMonto:    { fontFamily: 'DMSans_700Bold', fontSize: 30, color: cartasBosque.tinta, letterSpacing: -0.5 },
+  pagoMXN:      { fontFamily: 'DMSans_400Regular', fontSize: 14, color: cartasBosque.helecho },
   estadoBadge:  { flexDirection: 'row', alignItems: 'center', gap: spacing[1], paddingHorizontal: spacing[2.5], paddingVertical: spacing[1], borderRadius: borderRadius.full },
   estadoLabel:  { fontFamily: 'DMSans_500Medium', fontSize: 12 },
   divider:      { height: 1, backgroundColor: cartasBosque.pergaminoOscuro },
@@ -336,17 +366,14 @@ const styles = StyleSheet.create({
   fechaLabel:   { fontFamily: 'DMMono_400Regular', fontSize: 9, color: cartasBosque.helecho, textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 2 },
   fechaValue:   { fontFamily: 'DMSans_500Medium', fontSize: 13, color: cartasBosque.tinta },
 
-  // Comprobante
-  comprobanteRow:  { flexDirection: 'row', alignItems: 'center', gap: spacing[3], backgroundColor: '#EEF2FF', borderRadius: borderRadius.md, padding: spacing[3] },
-  comprobanteMini: { width: 40, height: 52, borderRadius: borderRadius.sm, backgroundColor: cartasBosque.pergaminoOscuro },
-  comprobanteLabel:{ fontFamily: 'DMSans_500Medium', fontSize: 13, color: '#1565C0' },
-  comprobanteDate: { fontFamily: 'DMMono_400Regular', fontSize: 10, color: '#5C6BC0', marginTop: 2 },
+  comprobanteRow:   { flexDirection: 'row', alignItems: 'center', gap: spacing[3], backgroundColor: '#EEF2FF', borderRadius: borderRadius.md, padding: spacing[3] },
+  comprobanteMini:  { width: 40, height: 52, borderRadius: borderRadius.sm, backgroundColor: cartasBosque.pergaminoOscuro },
+  comprobanteLabel: { fontFamily: 'DMSans_500Medium', fontSize: 13, color: '#1565C0' },
+  comprobanteDate:  { fontFamily: 'DMMono_400Regular', fontSize: 10, color: '#5C6BC0', marginTop: 2 },
 
-  // Rechazo
   rechazadoBox:  { flexDirection: 'row', alignItems: 'flex-start', gap: spacing[2], backgroundColor: '#FFEBEE', borderRadius: borderRadius.md, padding: spacing[3] },
   rechazadoText: { fontFamily: 'DMSans_400Regular', fontSize: 13, color: '#C62828', flex: 1 },
 
-  // Botón pagar
   btnPagar: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
     backgroundColor: cartasBosque.bosque, borderRadius: borderRadius.md,
@@ -354,32 +381,55 @@ const styles = StyleSheet.create({
     shadowColor: cartasBosque.bosque, shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.25, shadowRadius: 6, elevation: 3,
   },
-  btnPagarText: { fontFamily: 'DMSans_600SemiBold', fontSize: 15, color: cartasBosque.bruma },
+  btnPagarText: { fontFamily: 'DMSans_600SemiBold', fontSize: 15, color: '#FFFFFF' },
 
-  // Empty
   emptyCard: {
     alignItems: 'center', justifyContent: 'center', gap: spacing[3],
-    backgroundColor: cartasBosque.bruma, borderRadius: borderRadius.xl,
+    backgroundColor: cartasBosque.pergamino, borderRadius: borderRadius.xl,
     padding: spacing[8], borderWidth: 1, borderColor: cartasBosque.pergaminoOscuro,
     borderStyle: 'dashed',
   },
   emptyText: { fontFamily: 'DMSans_400Regular', fontSize: 14, color: cartasBosque.helecho },
 
+  // Quick access
+  quickGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing[3] },
+  quickCard: {
+    width: '47%',
+    backgroundColor: cartasBosque.pergamino,
+    borderRadius: borderRadius.lg,
+    padding: spacing[4],
+    alignItems: 'center',
+    gap: spacing[2],
+    borderWidth: 1,
+    borderColor: cartasBosque.pergaminoOscuro,
+    shadowColor: cartasBosque.tinta,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.04,
+    shadowRadius: 4,
+    elevation: 1,
+  },
+  quickIcon: {
+    width: 44, height: 44, borderRadius: borderRadius.md,
+    backgroundColor: cartasBosque.bruma,
+    alignItems: 'center', justifyContent: 'center',
+  },
+  quickLabel: { fontFamily: 'DMSans_500Medium', fontSize: 13, color: cartasBosque.tinta, textAlign: 'center' },
+
   // Score
-  section:      { marginTop: spacing[6] },
-  sectionTitle: { fontFamily: 'DMSans_600SemiBold', fontSize: 16, color: cartasBosque.tinta, marginBottom: spacing[3] },
-  scoreCard:    { backgroundColor: cartasBosque.bruma, borderRadius: borderRadius.xl, padding: spacing[5], borderWidth: 1, borderColor: cartasBosque.pergaminoOscuro, gap: spacing[3] },
-  scoreAjuste:  { fontFamily: 'DMMono_400Regular', fontSize: 10, color: cartasBosque.helecho },
+  scoreCard: {
+    backgroundColor: cartasBosque.pergamino, borderRadius: borderRadius.xl,
+    padding: spacing[5], borderWidth: 1, borderColor: cartasBosque.pergaminoOscuro, gap: spacing[3],
+  },
+  scoreAjuste: { fontFamily: 'DMMono_400Regular', fontSize: 10, color: cartasBosque.helecho },
 
   // Historial
-  historialList: { gap: spacing[1] },
-  historialRow:  { flexDirection: 'row', alignItems: 'center', backgroundColor: cartasBosque.bruma, borderRadius: borderRadius.md, padding: spacing[3], gap: spacing[3] },
-  historialDot:  { width: 8, height: 8, borderRadius: 4, backgroundColor: '#00897B' },
-  historialMes:  { fontFamily: 'DMSans_500Medium', fontSize: 13, color: cartasBosque.tinta },
-  historialMetodo:{ fontFamily: 'DMMono_400Regular', fontSize: 10, color: cartasBosque.helecho, marginTop: 1 },
-  historialMonto:{ fontFamily: 'DMSans_600SemiBold', fontSize: 13, color: cartasBosque.tinta },
+  historialList:   { gap: spacing[1] },
+  historialRow:    { flexDirection: 'row', alignItems: 'center', backgroundColor: cartasBosque.pergamino, borderRadius: borderRadius.md, padding: spacing[3], gap: spacing[3] },
+  historialDot:    { width: 8, height: 8, borderRadius: 4, backgroundColor: '#00897B' },
+  historialMes:    { fontFamily: 'DMSans_500Medium', fontSize: 13, color: cartasBosque.tinta },
+  historialMetodo: { fontFamily: 'DMMono_400Regular', fontSize: 10, color: cartasBosque.helecho, marginTop: 1 },
+  historialMonto:  { fontFamily: 'DMSans_600SemiBold', fontSize: 13, color: cartasBosque.tinta },
 
-  // INPC nota
   inpcNote: { flexDirection: 'row', alignItems: 'flex-start', gap: spacing[2], marginTop: spacing[8] },
   inpcText: { fontFamily: 'DMMono_400Regular', fontSize: 10, color: cartasBosque.helecho, flex: 1, lineHeight: 16 },
 });

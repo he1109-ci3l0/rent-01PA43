@@ -491,7 +491,7 @@ const statStyles = StyleSheet.create({
 const styles = StyleSheet.create({
   root:    { flex: 1, backgroundColor: cartasBosque.pergamino },
   content: { padding: H_PADDING, paddingBottom: spacing[10], gap: spacing[5] },
-  center:  { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: cartasBosque.pergamino },
+  center:  { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: cartasBosque.bruma },
 
   header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end' },
   eyebrow: { fontFamily: 'DMMono_400Regular', fontSize: 10, color: cartasBosque.musgo, letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: spacing[0.5] },
@@ -540,7 +540,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center', marginBottom: spacing[4],
   },
 
-  catalogoModal: { flex: 1, backgroundColor: cartasBosque.pergamino },
+  catalogoModal: { flex: 1, backgroundColor: cartasBosque.bruma },
 
   // Dev
   seedBtn: { alignSelf: 'center', paddingVertical: spacing[2], paddingHorizontal: spacing[4], borderRadius: borderRadius.full, borderWidth: 1, borderColor: cartasBosque.pergaminoOscuro },

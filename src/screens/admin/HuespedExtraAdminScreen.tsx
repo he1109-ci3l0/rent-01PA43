@@ -405,7 +405,7 @@ const cardStyles = StyleSheet.create({
 // ─── Estilos pantalla ─────────────────────────────────────────
 
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: cartasBosque.pergamino },
+  root: { flex: 1, backgroundColor: cartasBosque.bruma },
   content: { padding: spacing[5], paddingBottom: spacing[12], gap: spacing[5] },
 
   header: { gap: spacing[1] },

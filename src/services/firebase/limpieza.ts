@@ -18,6 +18,8 @@ export const HORAS_LIMITE_FOTO      = 12;
 export const MAX_INCUMPLIMIENTOS_MES = 3;
 
 export const AREA_LABELS: Record<AreaLimpieza, string> = {
+  bano_1_pb:    'Baño 1 PB',
+  bano_2_pb:    'Baño 2 PB',
   bano_gris:    'Baño Gris',
   bano_marron:  'Baño Marrón',
   bano_terraza: 'Baño Terraza',
@@ -30,6 +32,8 @@ export const AREA_LABELS: Record<AreaLimpieza, string> = {
 };
 
 export const AREA_ICONS: Record<AreaLimpieza, string> = {
+  bano_1_pb:    'water-outline',
+  bano_2_pb:    'water-outline',
   bano_gris:    'water-outline',
   bano_marron:  'water-outline',
   bano_terraza: 'water-outline',
@@ -42,6 +46,8 @@ export const AREA_ICONS: Record<AreaLimpieza, string> = {
 };
 
 export const TIPO_AREA: Record<AreaLimpieza, TipoAreaLimpieza> = {
+  bano_1_pb:    'bano',
+  bano_2_pb:    'bano',
   bano_gris:    'bano',
   bano_marron:  'bano',
   bano_terraza: 'bano',

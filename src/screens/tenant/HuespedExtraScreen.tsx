@@ -476,7 +476,7 @@ function estadoStyle(estado: string) {
 // ─── Estilos ──────────────────────────────────────────────────
 
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: cartasBosque.pergamino },
+  root: { flex: 1, backgroundColor: cartasBosque.bruma },
   content: { padding: spacing[5], paddingBottom: spacing[12], gap: spacing[5] },
   centerContent: { alignItems: 'center', justifyContent: 'center', padding: spacing[6] },
 

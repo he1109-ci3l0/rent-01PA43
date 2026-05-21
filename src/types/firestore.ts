@@ -36,7 +36,7 @@ export type TipoHabitacion = 'simple' | 'doble' | 'suite' | 'estudio';
 export type EstadoHabitacion = 'disponible' | 'ocupada' | 'mantenimiento' | 'reservada';
 
 export type PisoNombre = 'PB' | 'P1' | 'TP';
-export type BanoAsignacion = 'libre' | 'Baño gris' | 'Baño marrón' | 'Baño terraza';
+export type BanoAsignacion = 'libre' | 'Baño 1 PB' | 'Baño 2 PB' | 'Baño gris' | 'Baño marrón' | 'Baño terraza';
 export type CocinaAsignacion = 'CocinaPB' | 'CocinaTP';
 
 export interface Habitacion {
@@ -368,6 +368,7 @@ export interface Almacenamiento {
 // ─── 10b. turnos_limpieza ────────────────────────────────────
 
 export type AreaLimpieza =
+  | 'bano_1_pb' | 'bano_2_pb'
   | 'bano_gris' | 'bano_marron' | 'bano_terraza'
   | 'cocina_pb' | 'cocina_tp'
   | 'pasillo' | 'escalera' | 'patio' | 'tendedero';

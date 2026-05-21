@@ -216,7 +216,7 @@ export default function LimpiezaAdminScreen() {
   const grupos = agruparPorFecha(turnosFiltrados);
 
   const ALL_AREAS: Array<AreaLimpieza | 'todas'> = [
-    'todas', 'bano_gris', 'bano_marron', 'bano_terraza',
+    'todas', 'bano_1_pb', 'bano_2_pb', 'bano_gris', 'bano_marron', 'bano_terraza',
     'cocina_pb', 'cocina_tp', 'pasillo', 'escalera', 'patio', 'tendedero',
   ];
 

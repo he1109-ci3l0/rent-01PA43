@@ -172,7 +172,7 @@ export default function LoginScreen() {
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: cartasBosque.pergamino },
+  root: { flex: 1, backgroundColor: cartasBosque.bruma },
 
   container: {
     flexGrow: 1,

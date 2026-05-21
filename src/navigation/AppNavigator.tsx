@@ -64,12 +64,12 @@ function TenantNavigator() {
       <TenantTab.Screen
         name="Dossier"
         component={DossierScreen}
-        options={{ tabBarIcon: tabIcon('document-text-outline', 'document-text') }}
+        options={{ tabBarIcon: tabIcon('id-card-outline', 'id-card') }}
       />
       <TenantTab.Screen
         name="Noticias"
         component={NoticiasScreen}
-        options={{ tabBarIcon: tabIcon('notifications-outline', 'notifications') }}
+        options={{ tabBarIcon: tabIcon('megaphone-outline', 'megaphone') }}
       />
 
       {/* Home — tab central con pill destacado */}

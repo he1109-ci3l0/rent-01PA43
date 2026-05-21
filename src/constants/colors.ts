@@ -1,15 +1,18 @@
 // Cartas Bosque — paleta principal del proyecto
 export const cartasBosque = {
-  bosque: '#2C4A2E',       // verde bosque profundo
-  musgo: '#4A6741',        // verde musgo medio
-  helecho: '#7A9E7E',      // verde helecho claro
-  niebla: '#B8CEBB',       // verde niebla suave
-  pergamino: '#F2EAD3',    // crema pergamino (fondo)
-  pergaminoOscuro: '#E4D8B4', // crema oscura / bordes
-  corteza: '#5C3D1E',      // marrón corteza
-  tierra: '#8C6239',       // marrón tierra cálido
-  tinta: '#1A1F1A',        // casi negro (texto principal)
-  bruma: '#FAFAF5',        // blanco brumoso (superficies)
+  bosque: '#305C4D',           // verde bosque (botones primarios, sidebar)
+  musgo: '#345241',            // verde musgo (texto secundario)
+  helecho: '#7A9E7E',          // verde helecho claro
+  niebla: '#B8CEBB',           // verde niebla suave
+  pergamino: '#FFFFFF',        // blanco (cards / superficies)
+  pergaminoOscuro: '#E0D8CC',  // bordes suaves
+  corteza: '#9B411F',          // terracota / error
+  tierra: '#CDB29D',           // arena cálida / acento
+  tinta: '#14352A',            // texto primario
+  bruma: '#F0EEE8',            // fondo general
+  arena: '#CDB29D',
+  terracota: '#9B411F',
+  noche: '#14352A',
 } as const;
 
 export const colors = {
@@ -48,15 +51,15 @@ export const colors = {
   gray900: cartasBosque.tinta,
 
   // Backgrounds
-  background: cartasBosque.pergamino,
-  surface: cartasBosque.bruma,
+  background: cartasBosque.bruma,
+  surface: cartasBosque.pergamino,
   surfaceSecondary: '#EDE6D0',
 
   // Text
   textPrimary: cartasBosque.tinta,
-  textSecondary: '#5A5246',
+  textSecondary: cartasBosque.musgo,
   textDisabled: '#A89E84',
-  textInverse: cartasBosque.bruma,
+  textInverse: '#FFFFFF',
   textAccent: cartasBosque.bosque,
 
   // Borders
