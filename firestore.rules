@@ -157,6 +157,21 @@ service cloud.firestore {
       allow delete: if isAdmin();
     }
 
+    // ─── espacios_almacenamiento ───────────────────────────────
+    match /espacios_almacenamiento/{eId} {
+      allow read: if isAuth();
+      allow create: if isAdmin();
+      allow update: if isAdmin()
+        || (isAuth()
+            && resource.data.estado == 'libre'
+            && request.resource.data.inquilinoId == request.auth.uid
+            && request.resource.data.estado == 'ocupado')
+        || (isAuth()
+            && resource.data.inquilinoId == request.auth.uid
+            && request.resource.data.estado == 'libre');
+      allow delete: if isAdmin();
+    }
+
     // ─── reservas_lavanderia ──────────────────────────────────
     match /reservas_lavanderia/{rId} {
       allow read:   if isAdmin() || (isAuth() && resource.data.inquilinoId == request.auth.uid);

@@ -292,6 +292,28 @@ export interface ReservaLavanderia {
 // ─── 9. almacenamiento ────────────────────────────────────────
 
 export type EstadoAlmacenamiento = 'activo' | 'liberado';
+// ─── 9b. espacios_almacenamiento ─────────────────────────────
+
+export type TipoEspacio     = 'locker' | 'refrigerador';
+export type EstadoEspacio   = 'libre'  | 'ocupado';
+export type ModalidadEspacio = 'semanal' | 'mensual';
+
+export interface EspacioAlmacenamiento {
+  id: string;
+  numero: number;               // 1–15
+  tipo: TipoEspacio;
+  estado: EstadoEspacio;
+  inquilinoId: string | null;
+  inquilinoNombre: string | null;
+  habitacionNumero: string | null;
+  modalidad: ModalidadEspacio | null;
+  fechaInicio: Timestamp | null;
+  fechaVencimiento: Timestamp | null;
+  monto: number;                // con IVA incluido
+  avisoEnviado: boolean;        // aviso 24 h antes de vencimiento
+  creadoEn: Timestamp;
+  actualizadoEn: Timestamp;
+}
 
 export interface Almacenamiento {
   id: string;

@@ -1,35 +1,44 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { cartasBosque } from '@/constants/colors';
 import { spacing } from '@/constants/spacing';
-import HuespedExtraAdminScreen from '@/screens/admin/HuespedExtraAdminScreen';
-import LavanderiaAdminScreen   from '@/screens/admin/LavanderiaAdminScreen';
+import HuespedExtraAdminScreen    from '@/screens/admin/HuespedExtraAdminScreen';
+import LavanderiaAdminScreen      from '@/screens/admin/LavanderiaAdminScreen';
+import AlmacenamientoAdminScreen  from '@/screens/admin/AlmacenamientoAdminScreen';
 
-type Tab = 'huespedes' | 'lavanderia';
+type Tab = 'huespedes' | 'lavanderia' | 'almacenamiento';
+
+const TAB_LABELS: Record<Tab, string> = {
+  huespedes:      'Huéspedes',
+  lavanderia:     'Lavandería',
+  almacenamiento: 'Almacén',
+};
 
 export default function ServiciosAdminScreen() {
   const [tab, setTab] = useState<Tab>('huespedes');
 
   return (
     <View style={{ flex: 1, backgroundColor: cartasBosque.bruma }}>
+      <SafeAreaView edges={['top']} style={{ backgroundColor: cartasBosque.bruma, zIndex: 10 }}>
       <View style={styles.tabBar}>
-        {(['huespedes', 'lavanderia'] as Tab[]).map(t => (
+        {(Object.keys(TAB_LABELS) as Tab[]).map(t => (
           <TouchableOpacity
             key={t}
             style={[styles.tabBtn, tab === t && styles.tabBtnActivo]}
             onPress={() => setTab(t)}
           >
             <Text style={[styles.tabText, tab === t && styles.tabTextActivo]}>
-              {t === 'huespedes' ? 'Huéspedes' : 'Lavandería'}
+              {TAB_LABELS[t]}
             </Text>
           </TouchableOpacity>
         ))}
       </View>
+      </SafeAreaView>
 
-      {tab === 'huespedes'
-        ? <HuespedExtraAdminScreen />
-        : <LavanderiaAdminScreen />
-      }
+      {tab === 'huespedes'      && <HuespedExtraAdminScreen />}
+      {tab === 'lavanderia'     && <LavanderiaAdminScreen />}
+      {tab === 'almacenamiento' && <AlmacenamientoAdminScreen />}
     </View>
   );
 }

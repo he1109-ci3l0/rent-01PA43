@@ -3,10 +3,11 @@ import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-na
 import { Ionicons } from '@expo/vector-icons';
 import { cartasBosque } from '@/constants/colors';
 import { spacing, borderRadius } from '@/constants/spacing';
-import HuespedExtraScreen from '@/screens/tenant/HuespedExtraScreen';
-import LavanderiaTenantScreen from '@/screens/tenant/LavanderiaTenantScreen';
+import HuespedExtraScreen        from '@/screens/tenant/HuespedExtraScreen';
+import LavanderiaTenantScreen    from '@/screens/tenant/LavanderiaTenantScreen';
+import AlmacenamientoTenantScreen from '@/screens/tenant/AlmacenamientoTenantScreen';
 
-type Seccion = 'menu' | 'huespedes' | 'lavanderia';
+type Seccion = 'menu' | 'huespedes' | 'lavanderia' | 'almacenamiento';
 
 const ENTRADAS = [
   {
@@ -20,6 +21,12 @@ const ENTRADAS = [
     icon: 'shirt-outline' as const,
     titulo: 'Lavandería',
     sub: '3 cargas incluidas al mes · $150 extra',
+  },
+  {
+    id: 'almacenamiento' as const,
+    icon: 'archive-outline' as const,
+    titulo: 'Almacenamiento',
+    sub: '15 lockers · 15 refrigeradores · desde $78/sem',
   },
 ];
 
@@ -52,6 +59,21 @@ export default function ServiciosMenuScreen() {
           <Text style={styles.subTitulo}>Lavandería</Text>
         </SafeAreaView>
         <LavanderiaTenantScreen />
+      </View>
+    );
+  }
+
+  if (seccion === 'almacenamiento') {
+    return (
+      <View style={{ flex: 1 }}>
+        <SafeAreaView style={styles.subHeader}>
+          <TouchableOpacity onPress={() => setSeccion('menu')} style={styles.backBtn}>
+            <Ionicons name="arrow-back" size={20} color={cartasBosque.tinta} />
+            <Text style={styles.backLabel}>Servicios</Text>
+          </TouchableOpacity>
+          <Text style={styles.subTitulo}>Almacenamiento</Text>
+        </SafeAreaView>
+        <AlmacenamientoTenantScreen />
       </View>
     );
   }
