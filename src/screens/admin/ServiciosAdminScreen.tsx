@@ -6,13 +6,15 @@ import { spacing } from '@/constants/spacing';
 import HuespedExtraAdminScreen    from '@/screens/admin/HuespedExtraAdminScreen';
 import LavanderiaAdminScreen      from '@/screens/admin/LavanderiaAdminScreen';
 import AlmacenamientoAdminScreen  from '@/screens/admin/AlmacenamientoAdminScreen';
+import LimpiezaAdminScreen        from '@/screens/admin/LimpiezaAdminScreen';
 
-type Tab = 'huespedes' | 'lavanderia' | 'almacenamiento';
+type Tab = 'huespedes' | 'lavanderia' | 'almacenamiento' | 'limpieza';
 
 const TAB_LABELS: Record<Tab, string> = {
   huespedes:      'Huéspedes',
   lavanderia:     'Lavandería',
   almacenamiento: 'Almacén',
+  limpieza:       'Limpieza',
 };
 
 export default function ServiciosAdminScreen() {
@@ -39,6 +41,7 @@ export default function ServiciosAdminScreen() {
       {tab === 'huespedes'      && <HuespedExtraAdminScreen />}
       {tab === 'lavanderia'     && <LavanderiaAdminScreen />}
       {tab === 'almacenamiento' && <AlmacenamientoAdminScreen />}
+      {tab === 'limpieza'       && <LimpiezaAdminScreen />}
     </View>
   );
 }

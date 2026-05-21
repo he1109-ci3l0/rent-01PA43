@@ -330,6 +330,50 @@ export interface Almacenamiento {
   actualizadoEn: Timestamp;
 }
 
+// ─── 10b. turnos_limpieza ────────────────────────────────────
+
+export type AreaLimpieza =
+  | 'bano_gris' | 'bano_marron' | 'bano_terraza'
+  | 'cocina_pb' | 'cocina_tp'
+  | 'pasillo' | 'escalera' | 'patio' | 'tendedero';
+
+export type TipoAreaLimpieza = 'bano' | 'cocina' | 'area_comun';
+export type EstadoTurno     = 'pendiente' | 'completado' | 'incumplimiento';
+
+export interface TurnoLimpieza {
+  id: string;
+  area: AreaLimpieza;
+  tipo: TipoAreaLimpieza;
+  inquilinoId: string;
+  inquilinoNombre: string;
+  habitacionNumero: string;
+  fechaProgramada: Timestamp;
+  horaInicio: string;           // '08:00'
+  estado: EstadoTurno;
+  fotoUrl: string | null;
+  fotoSubidaEn: Timestamp | null;
+  privacidad: boolean;          // ocultar nombre en vista pública
+  creadoEn: Timestamp;
+  actualizadoEn: Timestamp;
+}
+
+export interface PermutaLimpieza {
+  id: string;
+  solicitanteId: string;
+  solicitanteNombre: string;
+  solicitanteHab: string;
+  turnoOrigenId: string;
+  turnoOrigenFecha: Timestamp;
+  inquilinoDestinoId: string;
+  inquilinoDestinoNombre: string;
+  inquilinoDestinoHab: string;
+  turnoDestinoId: string | null;
+  estado: 'pendiente' | 'aprobada' | 'bloqueada';
+  adminVio: boolean;
+  creadoEn: Timestamp;
+  actualizadoEn: Timestamp;
+}
+
 // ─── 10. noticias ─────────────────────────────────────────────
 
 export type TipoNoticia = 'aviso' | 'mantenimiento' | 'pago' | 'evento' | 'regla' | 'general';

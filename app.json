@@ -28,6 +28,9 @@
     },
     "plugins": [
       "expo-font"
-    ]
+    ],
+    "experiments": {
+      "devIndicator": false
+    }
   }
 }

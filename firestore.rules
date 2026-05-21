@@ -172,6 +172,24 @@ service cloud.firestore {
       allow delete: if isAdmin();
     }
 
+    // ─── turnos_limpieza ──────────────────────────────────────
+    match /turnos_limpieza/{tId} {
+      allow read:   if isAuth();
+      allow create: if isAdmin();
+      allow update: if isAdmin()
+        || (isAuth() && resource.data.inquilinoId == request.auth.uid
+            && onlyUpdatesAllowed(['fotoUrl','fotoSubidaEn','estado','privacidad','horaInicio','actualizadoEn']));
+      allow delete: if isAdmin();
+    }
+
+    // ─── permutas_limpieza ────────────────────────────────────
+    match /permutas_limpieza/{pId} {
+      allow read:   if isAdmin() || (isAuth() && resource.data.solicitanteId == request.auth.uid);
+      allow create: if isAuth() && request.resource.data.solicitanteId == request.auth.uid;
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+
     // ─── reservas_lavanderia ──────────────────────────────────
     match /reservas_lavanderia/{rId} {
       allow read:   if isAdmin() || (isAuth() && resource.data.inquilinoId == request.auth.uid);
