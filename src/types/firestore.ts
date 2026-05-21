@@ -261,6 +261,34 @@ export interface Lavanderia {
   actualizadoEn: Timestamp;
 }
 
+// ─── 8b. reservas_lavanderia ──────────────────────────────────
+
+export type EstadoReserva =
+  | 'pendiente'       // esperando confirmación automática 6 hrs
+  | 'confirmada'      // confirmada por sistema o admin
+  | 'pendiente_auth'  // cuenta con adeudo, requiere auth manual
+  | 'cancelada'
+  | 'completada';
+
+export interface ReservaLavanderia {
+  id: string;
+  inquilinoId: string;
+  habitacionId: string;
+  habitacionNumero?: string;
+  inquilinoNombre?: string;
+  fechaReserva: Timestamp;        // inicio programado
+  duracionMin: number;            // 60 por defecto
+  estado: EstadoReserva;
+  esCargaExtra: boolean;          // supera las 3 incluidas/mes
+  monto: number;                  // 0 si incluida · 150 si extra + IVA
+  tieneAdeudo: boolean;
+  adminAuthorizadoPor?: string;
+  adminAuthorizadoEn?: Timestamp;
+  recordatorioEnviado: boolean;
+  notas?: string;
+  creadoEn: Timestamp;
+}
+
 // ─── 9. almacenamiento ────────────────────────────────────────
 
 export type EstadoAlmacenamiento = 'activo' | 'liberado';

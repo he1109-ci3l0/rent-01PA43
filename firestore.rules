@@ -157,6 +157,14 @@ service cloud.firestore {
       allow delete: if isAdmin();
     }
 
+    // ─── reservas_lavanderia ──────────────────────────────────
+    match /reservas_lavanderia/{rId} {
+      allow read:   if isAdmin() || (isAuth() && resource.data.inquilinoId == request.auth.uid);
+      allow create: if isAdmin() || (isAuth() && request.resource.data.inquilinoId == request.auth.uid);
+      allow update: if isAdmin() || (isAuth() && resource.data.inquilinoId == request.auth.uid);
+      allow delete: if isAdmin();
+    }
+
     // ─── scores ────────────────────────────────────────────────
     match /scores/{inquilinoId} {
       allow read:   if isAdmin() || isOwner(inquilinoId);

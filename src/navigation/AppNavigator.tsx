@@ -9,15 +9,13 @@ import { cartasBosque } from '@/constants/colors';
 import DossierScreen        from '@/screens/tenant/DossierScreen';
 import NoticiasScreen       from '@/screens/tenant/NoticiasScreen';
 import PagosScreen          from '@/screens/tenant/PagosScreen';
-import HuespedExtraScreen   from '@/screens/tenant/HuespedExtraScreen';
-import SoporteScreen        from '@/screens/tenant/SoporteScreen';
+import ServiciosMenuScreen  from '@/screens/tenant/ServiciosMenuScreen';
 import VisitasScreen        from '@/screens/tenant/VisitasScreen';
-
 
 // ── Admin screens ─────────────────────────────────────────────
 import HabitacionesScreen        from '@/screens/admin/HabitacionesScreen';
 import PagosAdminScreen          from '@/screens/admin/PagosAdminScreen';
-import HuespedExtraAdminScreen   from '@/screens/admin/HuespedExtraAdminScreen';
+import ServiciosAdminScreen      from '@/screens/admin/ServiciosAdminScreen';
 import VisitasAdminScreen        from '@/screens/admin/VisitasAdminScreen';
 import FacturasAdminScreen       from '@/screens/admin/FacturasAdminScreen';
 
@@ -90,8 +88,8 @@ function TenantNavigator() {
 
       <TenantTab.Screen
         name="Servicios"
-        component={HuespedExtraScreen}
-        options={{ tabBarIcon: tabIcon('person-add-outline', 'person-add') }}
+        component={ServiciosMenuScreen}
+        options={{ tabBarIcon: tabIcon('apps-outline', 'apps') }}
       />
       <TenantTab.Screen
         name="Soporte"
@@ -135,8 +133,8 @@ function AdminNavigator() {
       />
       <AdminTab.Screen
         name="Inquilinos"
-        component={HuespedExtraAdminScreen}
-        options={{ tabBarIcon: tabIcon('people-outline', 'people') }}
+        component={ServiciosAdminScreen}
+        options={{ tabBarIcon: tabIcon('apps-outline', 'apps'), tabBarLabel: 'Servicios' }}
       />
       <AdminTab.Screen
         name="Pagos"
