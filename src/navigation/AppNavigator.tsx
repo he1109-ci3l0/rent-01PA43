@@ -11,12 +11,14 @@ import NoticiasScreen       from '@/screens/tenant/NoticiasScreen';
 import PagosScreen          from '@/screens/tenant/PagosScreen';
 import HuespedExtraScreen   from '@/screens/tenant/HuespedExtraScreen';
 import SoporteScreen        from '@/screens/tenant/SoporteScreen';
+import VisitasScreen        from '@/screens/tenant/VisitasScreen';
 
 
 // ── Admin screens ─────────────────────────────────────────────
 import HabitacionesScreen        from '@/screens/admin/HabitacionesScreen';
 import PagosAdminScreen          from '@/screens/admin/PagosAdminScreen';
 import HuespedExtraAdminScreen   from '@/screens/admin/HuespedExtraAdminScreen';
+import VisitasAdminScreen        from '@/screens/admin/VisitasAdminScreen';
 
 type IoniconsName = React.ComponentProps<typeof Ionicons>['name'];
 
@@ -92,8 +94,8 @@ function TenantNavigator() {
       />
       <TenantTab.Screen
         name="Soporte"
-        component={SoporteScreen}
-        options={{ tabBarIcon: tabIcon('chatbubble-ellipses-outline', 'chatbubble-ellipses') }}
+        component={VisitasScreen}
+        options={{ tabBarIcon: tabIcon('walk-outline', 'walk'), tabBarLabel: 'Visitas' }}
       />
     </TenantTab.Navigator>
   );
@@ -142,8 +144,8 @@ function AdminNavigator() {
       />
       <AdminTab.Screen
         name="Tickets"
-        component={HabitacionesScreen}
-        options={{ tabBarIcon: tabIcon('hammer-outline', 'hammer') }}
+        component={VisitasAdminScreen}
+        options={{ tabBarIcon: tabIcon('walk-outline', 'walk'), tabBarLabel: 'Visitas' }}
       />
       <AdminTab.Screen
         name="Ajustes"

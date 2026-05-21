@@ -163,18 +163,33 @@ export interface HuespedExtra {
 
 // ─── 5. visitas ───────────────────────────────────────────────
 
+export type EstadoEstacionaria =
+  | 'normal'
+  | 'alerta_40h'
+  | 'alerta_50h'
+  | 'cargo_72h'
+  | 'deposito_102h';
+
 export interface Visita {
   id: string;
   inquilinoId: string;
   habitacionId: string;
-  nombreVisitante: string;
+  habitacionNumero?: string;
+  inquilinoNombre?: string;
+  nombreVisitante?: string;
   documentoTipo: TipoDocumento;
   documentoNumero: string;
   telefono?: string;
   motivo?: string;
   fechaEntrada: Timestamp;
   fechaSalida: Timestamp | null;
-  registradoPor: string;          // UID de quien registró
+  registradoPor: string;
+  esRecurrente: boolean;
+  estadoEstacionaria: EstadoEstacionaria;
+  cargoEstacionaria: number | null;
+  cargoEstacionariaPagado: boolean;
+  rutaElegida: 'A' | 'B' | null;
+  perfilTemporalCreado: boolean;
   creadoEn: Timestamp;
 }
 
