@@ -204,12 +204,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     marginBottom: spacing[2],
   },
-  mesTitulo: { fontFamily: 'DMSans_600SemiBold', fontSize: 15, color: cartasBosque.tinta },
+  mesTitulo: { fontFamily: 'Inter_600SemiBold', fontSize: 15, color: cartasBosque.tinta },
   navBtn: { padding: spacing[1] },
   diaSemanaRow: { flexDirection: 'row', marginBottom: spacing[1] },
   diaSemanaLabel: {
     width: CELDA_SIZE, textAlign: 'center',
-    fontFamily: 'DMMono_400Regular', fontSize: 10, color: cartasBosque.helecho,
+    fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.helecho,
   },
   grid: { flexDirection: 'row', flexWrap: 'wrap' },
   celda: {
@@ -220,16 +220,16 @@ const styles = StyleSheet.create({
   celdaHoy: { borderWidth: 1, borderColor: cartasBosque.helecho },
   celdaSelec: { backgroundColor: cartasBosque.bosque },
   celdaPasado: { opacity: 0.3 },
-  celdaNum: { fontFamily: 'DMSans_400Regular', fontSize: 13, color: cartasBosque.tinta },
+  celdaNum: { fontFamily: 'Inter_400Regular', fontSize: 13, color: cartasBosque.tinta },
   celdaNumPasado: { color: cartasBosque.niebla },
-  celdaNumSelec: { color: cartasBosque.bruma, fontFamily: 'DMSans_600SemiBold' },
+  celdaNumSelec: { color: cartasBosque.bruma, fontFamily: 'Inter_600SemiBold' },
   // Slots
   slotsContainer: { marginTop: spacing[3] },
   slotsTitulo: {
-    fontFamily: 'DMMono_400Regular', fontSize: 10, color: cartasBosque.helecho,
+    fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.helecho,
     letterSpacing: 0.4, marginBottom: spacing[2],
   },
-  slotsVacio: { fontFamily: 'DMSans_400Regular', fontSize: 12, color: cartasBosque.niebla },
+  slotsVacio: { fontFamily: 'Inter_400Regular', fontSize: 12, color: cartasBosque.niebla },
   slotsRow: { flexDirection: 'row', gap: spacing[1], paddingBottom: spacing[1] },
   slot: {
     paddingHorizontal: spacing[2], paddingVertical: spacing[1] + 2,
@@ -240,11 +240,11 @@ const styles = StyleSheet.create({
     borderColor: cartasBosque.pergaminoOscuro, backgroundColor: cartasBosque.pergaminoOscuro,
   },
   slotSelec: { backgroundColor: cartasBosque.bosque, borderColor: cartasBosque.bosque },
-  slotText: { fontFamily: 'DMMono_400Regular', fontSize: 12, color: cartasBosque.bosque },
+  slotText: { fontFamily: 'SpaceMono_400Regular', fontSize: 12, color: cartasBosque.bosque },
   slotTextBloqueado: { color: cartasBosque.niebla },
   slotTextSelec: { color: cartasBosque.bruma },
   legendaText: {
-    fontFamily: 'DMMono_400Regular', fontSize: 9, color: cartasBosque.niebla,
+    fontFamily: 'SpaceMono_400Regular', fontSize: 9, color: cartasBosque.niebla,
     marginTop: spacing[2], textAlign: 'center',
   },
 });

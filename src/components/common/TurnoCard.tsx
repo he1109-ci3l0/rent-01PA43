@@ -160,17 +160,17 @@ const styles = StyleSheet.create({
     alignItems: 'center', justifyContent: 'center',
   },
   area: {
-    fontFamily: 'DMSans_600SemiBold', fontSize: 13, color: cartasBosque.tinta,
+    fontFamily: 'Inter_600SemiBold', fontSize: 13, color: cartasBosque.tinta,
   },
   nombre: {
-    fontFamily: 'DMSans_400Regular', fontSize: 11, color: cartasBosque.helecho, marginTop: 1,
+    fontFamily: 'Inter_400Regular', fontSize: 11, color: cartasBosque.helecho, marginTop: 1,
   },
   badge: {
     paddingHorizontal: spacing[2], paddingVertical: 3,
     borderRadius: borderRadius.full,
   },
   badgeText: {
-    fontFamily: 'DMMono_400Regular', fontSize: 9, letterSpacing: 0.3,
+    fontFamily: 'SpaceMono_400Regular', fontSize: 9, letterSpacing: 0.3,
   },
   fechaRow: {
     flexDirection: 'row', alignItems: 'center', gap: 4,
@@ -178,7 +178,7 @@ const styles = StyleSheet.create({
     paddingLeft: spacing[1],
   },
   fecha: {
-    fontFamily: 'DMMono_400Regular', fontSize: 10, color: cartasBosque.helecho,
+    fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.helecho,
   },
   lockBtn: { marginLeft: spacing[1], padding: 2 },
   acciones: {
@@ -193,7 +193,7 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.sm,
   },
   btnFotoText: {
-    fontFamily: 'DMSans_600SemiBold', fontSize: 12, color: cartasBosque.bruma,
+    fontFamily: 'Inter_600SemiBold', fontSize: 12, color: cartasBosque.bruma,
   },
   btnSecundario: {
     flexDirection: 'row', alignItems: 'center', gap: spacing[1],
@@ -202,16 +202,16 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.sm,
   },
   btnSecundarioText: {
-    fontFamily: 'DMSans_400Regular', fontSize: 12, color: cartasBosque.bosque,
+    fontFamily: 'Inter_400Regular', fontSize: 12, color: cartasBosque.bosque,
   },
   hint: {
-    fontFamily: 'DMMono_400Regular', fontSize: 10, color: cartasBosque.helecho,
+    fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.helecho,
     alignSelf: 'center',
   },
   completadoRow: {
     flexDirection: 'row', alignItems: 'center', gap: spacing[1],
   },
   completadoText: {
-    fontFamily: 'DMSans_400Regular', fontSize: 12, color: '#4A5E48',
+    fontFamily: 'Inter_400Regular', fontSize: 12, color: '#4A5E48',
   },
 });

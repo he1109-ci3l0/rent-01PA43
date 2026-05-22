@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
     marginBottom: spacing[2],
   },
   titulo: {
-    fontFamily: 'DMMono_400Regular', fontSize: 10,
+    fontFamily: 'SpaceMono_400Regular', fontSize: 10,
     color: cartasBosque.helecho, letterSpacing: 0.5,
   },
   grid: {
@@ -124,10 +124,10 @@ const styles = StyleSheet.create({
     alignItems: 'center', justifyContent: 'center',
   },
   num: {
-    fontFamily: 'DMSans_600SemiBold', fontSize: 16,
+    fontFamily: 'Inter_600SemiBold', fontSize: 16,
   },
   nombre: {
-    fontFamily: 'DMMono_400Regular', fontSize: 7,
+    fontFamily: 'SpaceMono_400Regular', fontSize: 7,
     color: cartasBosque.tinta, marginTop: 1,
   },
   leyenda: {
@@ -136,6 +136,6 @@ const styles = StyleSheet.create({
   dotRow: { flexDirection: 'row', alignItems: 'center', gap: spacing[1] },
   dot: { width: 8, height: 8, borderRadius: 2 },
   dotLabel: {
-    fontFamily: 'DMMono_400Regular', fontSize: 9, color: cartasBosque.helecho,
+    fontFamily: 'SpaceMono_400Regular', fontSize: 9, color: cartasBosque.helecho,
   },
 });

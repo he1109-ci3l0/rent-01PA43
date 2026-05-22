@@ -175,7 +175,7 @@ const styles = StyleSheet.create({
   bubbleColReverse: { alignItems: 'flex-end' },
 
   autorNombre: {
-    fontFamily: 'DMSans_600SemiBold', fontSize: 11, color: cartasBosque.musgo,
+    fontFamily: 'Inter_600SemiBold', fontSize: 11, color: cartasBosque.musgo,
     marginBottom: 2, marginLeft: 2,
   },
 
@@ -188,11 +188,11 @@ const styles = StyleSheet.create({
                   borderWidth: 1, borderColor: cartasBosque.pergaminoOscuro },
 
   contenidoText: {
-    fontFamily: 'DMSans_400Regular', fontSize: 14, color: cartasBosque.tinta, lineHeight: 20,
+    fontFamily: 'Inter_400Regular', fontSize: 14, color: cartasBosque.tinta, lineHeight: 20,
   },
-  mencionText: { color: cartasBosque.musgo, fontFamily: 'DMSans_600SemiBold' },
+  mencionText: { color: cartasBosque.musgo, fontFamily: 'Inter_600SemiBold' },
 
-  hora:    { fontFamily: 'DMMono_400Regular', fontSize: 9, color: cartasBosque.helecho, marginTop: 2, marginLeft: 2 },
+  hora:    { fontFamily: 'SpaceMono_400Regular', fontSize: 9, color: cartasBosque.helecho, marginTop: 2, marginLeft: 2 },
   horaOwn: { textAlign: 'right', marginRight: 2 },
 
   sticker: { width: 140, height: 140 },
@@ -206,8 +206,8 @@ const styles = StyleSheet.create({
   },
   replyPreviewOwn: { backgroundColor: cartasBosque.bosque + '44' },
   replyBar:  { width: 3, borderRadius: 2, backgroundColor: cartasBosque.bosque },
-  replyAutor:{ fontFamily: 'DMSans_600SemiBold', fontSize: 11, color: cartasBosque.bosque },
-  replyTexto:{ fontFamily: 'DMSans_400Regular', fontSize: 11, color: cartasBosque.helecho },
+  replyAutor:{ fontFamily: 'Inter_600SemiBold', fontSize: 11, color: cartasBosque.bosque },
+  replyTexto:{ fontFamily: 'Inter_400Regular', fontSize: 11, color: cartasBosque.helecho },
 
   reaccionesRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 4, marginTop: 3 },
   reaccionChip: {
@@ -217,16 +217,16 @@ const styles = StyleSheet.create({
     borderWidth: 1, borderColor: cartasBosque.pergaminoOscuro,
   },
   reaccionEmoji: { fontSize: 12 },
-  reaccionCount: { fontFamily: 'DMMono_400Regular', fontSize: 10, color: cartasBosque.helecho },
+  reaccionCount: { fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.helecho },
 
   eliminadoText: {
-    fontFamily: 'DMSans_400Regular', fontSize: 12, color: cartasBosque.niebla,
+    fontFamily: 'Inter_400Regular', fontSize: 12, color: cartasBosque.niebla,
     fontStyle: 'italic', paddingHorizontal: spacing[4], marginBottom: spacing[1],
   },
 
   sistemaWrap: { alignItems: 'center', paddingVertical: spacing[2], paddingHorizontal: spacing[6] },
   sistemaText: {
-    fontFamily: 'DMMono_400Regular', fontSize: 11, color: cartasBosque.helecho,
+    fontFamily: 'SpaceMono_400Regular', fontSize: 11, color: cartasBosque.helecho,
     textAlign: 'center', lineHeight: 16,
   },
 
@@ -242,5 +242,5 @@ const styles = StyleSheet.create({
   emoji:     { fontSize: 24 },
   menuDivider: { height: 1, backgroundColor: cartasBosque.pergaminoOscuro, marginBottom: spacing[2] },
   menuItem:  { flexDirection: 'row', alignItems: 'center', gap: spacing[2], paddingVertical: spacing[2] },
-  menuItemText: { fontFamily: 'DMSans_400Regular', fontSize: 14, color: cartasBosque.tinta },
+  menuItemText: { fontFamily: 'Inter_400Regular', fontSize: 14, color: cartasBosque.tinta },
 });

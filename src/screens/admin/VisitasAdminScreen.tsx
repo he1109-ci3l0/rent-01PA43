@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
     borderBottomColor: cartasBosque.pergaminoOscuro,
   },
   titulo: {
-    fontFamily: 'DMSans_600SemiBold',
+    fontFamily: 'Inter_600SemiBold',
     fontSize: 18,
     color: cartasBosque.tinta,
   },
@@ -117,7 +117,7 @@ const styles = StyleSheet.create({
     paddingVertical: 3,
   },
   seedBtnText: {
-    fontFamily: 'DMMono_400Regular',
+    fontFamily: 'SpaceMono_400Regular',
     fontSize: 10,
     color: cartasBosque.helecho,
   },
@@ -138,11 +138,11 @@ const styles = StyleSheet.create({
     borderColor: cartasBosque.pergaminoOscuro,
   },
   statValor: {
-    fontFamily: 'DMSans_600SemiBold',
+    fontFamily: 'Inter_600SemiBold',
     fontSize: 22,
   },
   statLabel: {
-    fontFamily: 'DMMono_400Regular',
+    fontFamily: 'SpaceMono_400Regular',
     fontSize: 10,
     color: cartasBosque.helecho,
     marginTop: 2,
@@ -156,7 +156,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   vacioText: {
-    fontFamily: 'DMSans_400Regular',
+    fontFamily: 'Inter_400Regular',
     fontSize: 14,
     color: cartasBosque.helecho,
   },

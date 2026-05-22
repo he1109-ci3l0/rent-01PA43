@@ -178,7 +178,7 @@ const styles = StyleSheet.create({
     paddingTop: 4,
   },
   tabLabel: {
-    fontFamily: 'DMMono_400Regular',
+    fontFamily: 'SpaceMono_400Regular',
     fontSize: 9,
     letterSpacing: 0.6,
   },

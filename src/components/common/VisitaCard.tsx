@@ -158,7 +158,7 @@ export default function VisitaCard({ visita, modo = 'tenant', onActualizar }: Vi
       {activa ? (
         <View style={styles.infoRow}>
           <Text style={styles.infoLabel}>Tiempo activo</Text>
-          <Text style={[styles.infoValue, { color: colorEstado, fontFamily: 'DMMono_400Regular' }]}>
+          <Text style={[styles.infoValue, { color: colorEstado, fontFamily: 'SpaceMono_400Regular' }]}>
             {formatHoras(horas)}
           </Text>
         </View>
@@ -240,12 +240,12 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   nombre: {
-    fontFamily: 'DMSans_600SemiBold',
+    fontFamily: 'Inter_600SemiBold',
     fontSize: 15,
     color: cartasBosque.tinta,
   },
   recurrenteBadge: {
-    fontFamily: 'DMMono_400Regular',
+    fontFamily: 'SpaceMono_400Regular',
     fontSize: 10,
     color: cartasBosque.corteza,
     letterSpacing: 0.5,
@@ -257,7 +257,7 @@ const styles = StyleSheet.create({
     marginLeft: spacing[2],
   },
   estadoLabel: {
-    fontFamily: 'DMMono_400Regular',
+    fontFamily: 'SpaceMono_400Regular',
     fontSize: 10,
     color: cartasBosque.bruma,
     letterSpacing: 0.5,
@@ -268,12 +268,12 @@ const styles = StyleSheet.create({
     marginBottom: spacing[1],
   },
   infoLabel: {
-    fontFamily: 'DMMono_400Regular',
+    fontFamily: 'SpaceMono_400Regular',
     fontSize: 11,
     color: cartasBosque.helecho,
   },
   infoValue: {
-    fontFamily: 'DMSans_400Regular',
+    fontFamily: 'Inter_400Regular',
     fontSize: 12,
     color: cartasBosque.tinta,
     flexShrink: 1,
@@ -289,13 +289,13 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   alertaText: {
-    fontFamily: 'DMSans_400Regular',
+    fontFamily: 'Inter_400Regular',
     fontSize: 12,
     color: cartasBosque.tinta,
     lineHeight: 18,
   },
   verMas: {
-    fontFamily: 'DMMono_400Regular',
+    fontFamily: 'SpaceMono_400Regular',
     fontSize: 10,
     color: cartasBosque.helecho,
     marginTop: 2,
@@ -313,12 +313,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   rutaBtnText: {
-    fontFamily: 'DMSans_600SemiBold',
+    fontFamily: 'Inter_600SemiBold',
     fontSize: 12,
   },
   rutaElegida: {
     marginTop: spacing[2],
-    fontFamily: 'DMMono_400Regular',
+    fontFamily: 'SpaceMono_400Regular',
     fontSize: 11,
     color: cartasBosque.helecho,
     textAlign: 'center',
@@ -331,7 +331,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   checkoutBtnText: {
-    fontFamily: 'DMSans_600SemiBold',
+    fontFamily: 'Inter_600SemiBold',
     fontSize: 13,
     color: cartasBosque.bruma,
   },

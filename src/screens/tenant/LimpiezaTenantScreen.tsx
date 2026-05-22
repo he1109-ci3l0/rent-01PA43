@@ -321,17 +321,17 @@ const styles = StyleSheet.create({
     borderBottomWidth: 2, borderBottomColor: 'transparent',
   },
   filtroBtnActivo: { borderBottomColor: cartasBosque.bosque },
-  filtroText:       { fontFamily: 'DMMono_400Regular', fontSize: 11, color: cartasBosque.helecho },
+  filtroText:       { fontFamily: 'SpaceMono_400Regular', fontSize: 11, color: cartasBosque.helecho },
   filtroTextActivo: { color: cartasBosque.bosque },
   mesHeader: {
-    fontFamily: 'DMSans_600SemiBold', fontSize: 13, color: cartasBosque.tinta,
+    fontFamily: 'Inter_600SemiBold', fontSize: 13, color: cartasBosque.tinta,
     textTransform: 'capitalize', marginBottom: spacing[2], marginTop: spacing[3],
   },
   vacioContain: {
     flex: 1, alignItems: 'center', justifyContent: 'center', gap: spacing[2],
   },
   vacioText: {
-    fontFamily: 'DMSans_400Regular', fontSize: 14, color: cartasBosque.helecho,
+    fontFamily: 'Inter_400Regular', fontSize: 14, color: cartasBosque.helecho,
   },
   // Modales
   overlay: { flex: 1, backgroundColor: 'rgba(18,42,31,0.35)' },
@@ -341,15 +341,15 @@ const styles = StyleSheet.create({
     padding: spacing[5], paddingBottom: spacing[8],
   },
   sheetTitulo: {
-    fontFamily: 'DMSans_600SemiBold', fontSize: 18, color: cartasBosque.tinta,
+    fontFamily: 'Inter_600SemiBold', fontSize: 18, color: cartasBosque.tinta,
     marginBottom: spacing[1],
   },
   sheetSub: {
-    fontFamily: 'DMSans_400Regular', fontSize: 13, color: cartasBosque.helecho,
+    fontFamily: 'Inter_400Regular', fontSize: 13, color: cartasBosque.helecho,
     marginBottom: spacing[3],
   },
   sheetLabel: {
-    fontFamily: 'DMMono_400Regular', fontSize: 10, color: cartasBosque.helecho,
+    fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.helecho,
     letterSpacing: 0.5, marginBottom: spacing[1], marginTop: spacing[2],
   },
   horaItem: {
@@ -357,13 +357,13 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.sm, marginBottom: 2,
   },
   horaItemSel: { backgroundColor: cartasBosque.bosque },
-  horaText:    { fontFamily: 'DMMono_400Regular', fontSize: 13, color: cartasBosque.tinta },
+  horaText:    { fontFamily: 'SpaceMono_400Regular', fontSize: 13, color: cartasBosque.tinta },
   horaTextSel: { color: cartasBosque.bruma },
   btnPrimario: {
     backgroundColor: cartasBosque.bosque, borderRadius: borderRadius.sm,
     paddingVertical: spacing[3], alignItems: 'center', marginTop: spacing[3], marginBottom: spacing[2],
   },
-  btnPrimarioText: { fontFamily: 'DMSans_600SemiBold', fontSize: 14, color: cartasBosque.bruma },
+  btnPrimarioText: { fontFamily: 'Inter_600SemiBold', fontSize: 14, color: cartasBosque.bruma },
   btnSecundario:   { paddingVertical: spacing[2], alignItems: 'center' },
-  btnSecundarioText:{ fontFamily: 'DMSans_400Regular', fontSize: 13, color: cartasBosque.helecho },
+  btnSecundarioText:{ fontFamily: 'Inter_400Regular', fontSize: 13, color: cartasBosque.helecho },
 });

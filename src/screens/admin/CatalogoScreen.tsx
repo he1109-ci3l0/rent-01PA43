@@ -272,14 +272,14 @@ const styles = StyleSheet.create({
   },
   headerText: { flex: 1 },
   eyebrow: {
-    fontFamily: 'DMMono_400Regular',
+    fontFamily: 'SpaceMono_400Regular',
     fontSize: 10,
     color: cartasBosque.musgo,
     letterSpacing: 1.5,
     textTransform: 'uppercase',
   },
   title: {
-    fontFamily: 'DMSans_700Bold',
+    fontFamily: 'Inter_700Bold',
     fontSize: 24,
     color: cartasBosque.bosque,
     letterSpacing: -0.3,
@@ -294,7 +294,7 @@ const styles = StyleSheet.create({
     backgroundColor: cartasBosque.pergamino,
   },
   notaText: {
-    fontFamily: 'DMMono_400Regular',
+    fontFamily: 'SpaceMono_400Regular',
     fontSize: 10,
     color: cartasBosque.helecho,
     flex: 1,
@@ -303,7 +303,7 @@ const styles = StyleSheet.create({
 
   pisoSection: { gap: spacing[2] },
   pisoLabel: {
-    fontFamily: 'DMSans_600SemiBold',
+    fontFamily: 'Inter_600SemiBold',
     fontSize: 13,
     color: cartasBosque.musgo,
     letterSpacing: 0.3,
@@ -327,7 +327,7 @@ const styles = StyleSheet.create({
     borderColor: '#2E3C2C40',
   },
   remodelBtnText: {
-    fontFamily: 'DMMono_400Regular',
+    fontFamily: 'SpaceMono_400Regular',
     fontSize: 10,
     color: cartasBosque.helecho,
     flex: 1,
@@ -345,7 +345,7 @@ const styles = StyleSheet.create({
     borderStyle: 'dashed',
   },
   expansionText: {
-    fontFamily: 'DMMono_400Regular',
+    fontFamily: 'SpaceMono_400Regular',
     fontSize: 10,
     color: cartasBosque.helecho,
     flex: 1,
@@ -361,13 +361,13 @@ const styles = StyleSheet.create({
     borderColor: cartasBosque.pergaminoOscuro,
   },
   capacidadLabel: {
-    fontFamily: 'DMMono_400Regular',
+    fontFamily: 'SpaceMono_400Regular',
     fontSize: 9,
     color: cartasBosque.helecho,
     letterSpacing: 1,
   },
   capacidadValue: {
-    fontFamily: 'DMSans_700Bold',
+    fontFamily: 'Inter_700Bold',
     fontSize: 16,
     color: cartasBosque.bosque,
   },
@@ -401,36 +401,36 @@ const styles = StyleSheet.create({
     alignSelf: 'center', marginBottom: spacing[2],
   },
   modalHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' },
-  modalTitle: { fontFamily: 'DMSans_700Bold', fontSize: 17, color: cartasBosque.tinta },
-  modalSub: { fontFamily: 'DMMono_400Regular', fontSize: 11, color: cartasBosque.helecho, marginTop: 2 },
+  modalTitle: { fontFamily: 'Inter_700Bold', fontSize: 17, color: cartasBosque.tinta },
+  modalSub: { fontFamily: 'SpaceMono_400Regular', fontSize: 11, color: cartasBosque.helecho, marginTop: 2 },
 
   modalInfoRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  modalInfoLabel: { fontFamily: 'DMMono_400Regular', fontSize: 11, color: cartasBosque.helecho },
-  modalInfoValue: { fontFamily: 'DMSans_500Medium', fontSize: 13, color: cartasBosque.tinta },
+  modalInfoLabel: { fontFamily: 'SpaceMono_400Regular', fontSize: 11, color: cartasBosque.helecho },
+  modalInfoValue: { fontFamily: 'Inter_500Medium', fontSize: 13, color: cartasBosque.tinta },
 
-  inputLabel: { fontFamily: 'DMMono_400Regular', fontSize: 11, color: cartasBosque.musgo, letterSpacing: 0.5 },
+  inputLabel: { fontFamily: 'SpaceMono_400Regular', fontSize: 11, color: cartasBosque.musgo, letterSpacing: 0.5 },
   inputRow: {
     flexDirection: 'row', alignItems: 'center', gap: spacing[2],
     borderWidth: 1, borderColor: cartasBosque.pergaminoOscuro,
     borderRadius: borderRadius.md, paddingHorizontal: spacing[3],
     backgroundColor: cartasBosque.pergamino,
   },
-  inputPrefix: { fontFamily: 'DMSans_600SemiBold', fontSize: 16, color: cartasBosque.musgo },
+  inputPrefix: { fontFamily: 'Inter_600SemiBold', fontSize: 16, color: cartasBosque.musgo },
   input: {
     flex: 1, paddingVertical: spacing[3],
-    fontFamily: 'DMSans_600SemiBold', fontSize: 20, color: cartasBosque.tinta,
+    fontFamily: 'Inter_600SemiBold', fontSize: 20, color: cartasBosque.tinta,
   },
-  inputSuffix: { fontFamily: 'DMMono_400Regular', fontSize: 11, color: cartasBosque.helecho },
+  inputSuffix: { fontFamily: 'SpaceMono_400Regular', fontSize: 11, color: cartasBosque.helecho },
 
   modalBtns: { flexDirection: 'row', gap: spacing[3] },
   modalBtnCancel: {
     flex: 1, paddingVertical: spacing[3], alignItems: 'center',
     borderRadius: borderRadius.md, borderWidth: 1, borderColor: cartasBosque.pergaminoOscuro,
   },
-  modalBtnCancelText: { fontFamily: 'DMSans_500Medium', fontSize: 14, color: cartasBosque.musgo },
+  modalBtnCancelText: { fontFamily: 'Inter_500Medium', fontSize: 14, color: cartasBosque.musgo },
   modalBtnSave: {
     flex: 1, paddingVertical: spacing[3], alignItems: 'center',
     borderRadius: borderRadius.md, backgroundColor: cartasBosque.bosque,
   },
-  modalBtnSaveText: { fontFamily: 'DMSans_600SemiBold', fontSize: 14, color: cartasBosque.bruma },
+  modalBtnSaveText: { fontFamily: 'Inter_600SemiBold', fontSize: 14, color: cartasBosque.bruma },
 });

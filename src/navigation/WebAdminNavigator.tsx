@@ -192,14 +192,14 @@ const s = StyleSheet.create({
     backgroundColor: '#122A1F',
     alignItems: 'center', justifyContent: 'center',
   },
-  brandLogoText: { fontFamily: 'DMSans_700Bold', fontSize: 18, color: '#A8D5B5' },
-  brandNombre:   { fontFamily: 'DMSans_600SemiBold', fontSize: 14, color: '#E8EBE0' },
-  brandRol:      { fontFamily: 'DMMono_400Regular', fontSize: 9, color: SIDEBAR_TEXT, letterSpacing: 0.8, textTransform: 'uppercase', marginTop: 2 },
+  brandLogoText: { fontFamily: 'Inter_700Bold', fontSize: 18, color: '#A8D5B5' },
+  brandNombre:   { fontFamily: 'Inter_600SemiBold', fontSize: 14, color: '#E8EBE0' },
+  brandRol:      { fontFamily: 'SpaceMono_400Regular', fontSize: 9, color: SIDEBAR_TEXT, letterSpacing: 0.8, textTransform: 'uppercase', marginTop: 2 },
 
   navScroll: { flex: 1, paddingTop: spacing[3] },
 
   navGroup: {
-    fontFamily: 'DMMono_400Regular', fontSize: 9, color: '#4A6B55',
+    fontFamily: 'SpaceMono_400Regular', fontSize: 9, color: '#4A6B55',
     letterSpacing: 1, textTransform: 'uppercase',
     paddingHorizontal: spacing[4], paddingTop: spacing[3], paddingBottom: spacing[1],
   },
@@ -220,15 +220,15 @@ const s = StyleSheet.create({
     backgroundColor: '#6DBF8C',
     borderRadius: 2,
   },
-  navLabel:       { fontFamily: 'DMSans_400Regular', fontSize: 13, color: SIDEBAR_TEXT },
-  navLabelActive: { fontFamily: 'DMSans_600SemiBold', color: SIDEBAR_ACTIVE_TEXT },
+  navLabel:       { fontFamily: 'Inter_400Regular', fontSize: 13, color: SIDEBAR_TEXT },
+  navLabelActive: { fontFamily: 'Inter_600SemiBold', color: SIDEBAR_ACTIVE_TEXT },
 
   signOut: {
     flexDirection: 'row', alignItems: 'center', gap: spacing[2],
     paddingHorizontal: spacing[5], paddingVertical: spacing[4],
     borderTopWidth: 1, borderTopColor: '#122A1F',
   },
-  signOutText: { fontFamily: 'DMSans_400Regular', fontSize: 13, color: SIDEBAR_TEXT },
+  signOutText: { fontFamily: 'Inter_400Regular', fontSize: 13, color: SIDEBAR_TEXT },
 
   // ── Content
   content: {

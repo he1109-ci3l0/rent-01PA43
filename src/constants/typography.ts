@@ -1,80 +1,133 @@
 import { TextStyle } from 'react-native';
 
+export const fonts = {
+  sans:       'Inter_400Regular',
+  sansMedium: 'Inter_500Medium',
+  sansSemi:   'Inter_600SemiBold',
+  sansBold:   'Inter_700Bold',
+  mono:       'SpaceMono_400Regular',
+  monoBold:   'SpaceMono_700Bold',
+} as const;
+
 export const fontSizes = {
-  xs: 11,
-  sm: 13,
-  md: 15,
-  lg: 17,
-  xl: 20,
-  '2xl': 24,
-  '3xl': 30,
-  '4xl': 36,
+  xs:    10,
+  sm:    11,
+  base:  12,
+  md:    14,
+  lg:    18,
+  xl:    20,
+  '2xl': 28,
+  '3xl': 32,
 } as const;
 
 export const fontWeights = {
-  regular: '400',
-  medium: '500',
+  regular:  '400',
+  medium:   '500',
   semibold: '600',
-  bold: '700',
+  bold:     '700',
 } as const;
 
 export const lineHeights = {
-  tight: 1.2,
-  snug: 1.375,
-  normal: 1.5,
+  tight:   1.2,
+  snug:    1.375,
+  normal:  1.5,
   relaxed: 1.625,
 } as const;
 
 export const typography = {
+  // Títulos principales
   h1: {
-    fontSize: fontSizes['3xl'],
-    fontWeight: fontWeights.bold,
-    lineHeight: fontSizes['3xl'] * lineHeights.tight,
+    fontFamily:  fonts.sansBold,
+    fontSize:    fontSizes['3xl'],
+    fontWeight:  fontWeights.bold,
+    lineHeight:  fontSizes['3xl'] * lineHeights.tight,
+    letterSpacing: 0,
   } as TextStyle,
   h2: {
-    fontSize: fontSizes['2xl'],
-    fontWeight: fontWeights.bold,
-    lineHeight: fontSizes['2xl'] * lineHeights.tight,
+    fontFamily:  fonts.sansBold,
+    fontSize:    fontSizes['2xl'],
+    fontWeight:  fontWeights.bold,
+    lineHeight:  fontSizes['2xl'] * lineHeights.tight,
+    letterSpacing: 0,
   } as TextStyle,
+
+  // Títulos secundarios
   h3: {
-    fontSize: fontSizes.xl,
-    fontWeight: fontWeights.semibold,
-    lineHeight: fontSizes.xl * lineHeights.snug,
+    fontFamily:  fonts.sansMedium,
+    fontSize:    fontSizes.xl,
+    fontWeight:  fontWeights.medium,
+    lineHeight:  fontSizes.xl * lineHeights.snug,
   } as TextStyle,
   h4: {
-    fontSize: fontSizes.lg,
-    fontWeight: fontWeights.semibold,
-    lineHeight: fontSizes.lg * lineHeights.snug,
+    fontFamily:  fonts.sansMedium,
+    fontSize:    fontSizes.lg,
+    fontWeight:  fontWeights.medium,
+    lineHeight:  fontSizes.lg * lineHeights.snug,
   } as TextStyle,
-  bodyLg: {
-    fontSize: fontSizes.lg,
-    fontWeight: fontWeights.regular,
-    lineHeight: fontSizes.lg * lineHeights.normal,
-  } as TextStyle,
-  body: {
-    fontSize: fontSizes.md,
-    fontWeight: fontWeights.regular,
-    lineHeight: fontSizes.md * lineHeights.normal,
-  } as TextStyle,
-  bodySm: {
-    fontSize: fontSizes.sm,
-    fontWeight: fontWeights.regular,
-    lineHeight: fontSizes.sm * lineHeights.normal,
-  } as TextStyle,
+
+  // Labels de sección
   label: {
-    fontSize: fontSizes.sm,
-    fontWeight: fontWeights.medium,
-    lineHeight: fontSizes.sm * lineHeights.snug,
+    fontFamily:    fonts.sans,
+    fontSize:      fontSizes.sm,
+    fontWeight:    fontWeights.regular,
+    letterSpacing: 0.08 * fontSizes.sm,
+    lineHeight:    fontSizes.sm * lineHeights.snug,
   } as TextStyle,
+
+  // Cuerpo
+  body: {
+    fontFamily:  fonts.sans,
+    fontSize:    fontSizes.md,
+    fontWeight:  fontWeights.regular,
+    lineHeight:  fontSizes.md * lineHeights.normal,
+  } as TextStyle,
+
+  // Metadatos / texto pequeño
   caption: {
-    fontSize: fontSizes.xs,
-    fontWeight: fontWeights.regular,
-    lineHeight: fontSizes.xs * lineHeights.normal,
+    fontFamily:  fonts.sans,
+    fontSize:    fontSizes.base,
+    fontWeight:  fontWeights.regular,
+    lineHeight:  fontSizes.base * lineHeights.normal,
   } as TextStyle,
+
+  // Monoespaciado — montos grandes
+  monoLg: {
+    fontFamily:  fonts.monoBold,
+    fontSize:    fontSizes['2xl'],
+    fontWeight:  fontWeights.bold,
+    lineHeight:  fontSizes['2xl'] * lineHeights.tight,
+  } as TextStyle,
+
+  // Monoespaciado — montos pequeños / fechas
+  monoSm: {
+    fontFamily:  fonts.mono,
+    fontSize:    fontSizes.md,
+    fontWeight:  fontWeights.regular,
+    lineHeight:  fontSizes.md * lineHeights.normal,
+  } as TextStyle,
+
+  // Botones
   button: {
-    fontSize: fontSizes.md,
-    fontWeight: fontWeights.semibold,
-    lineHeight: fontSizes.md * lineHeights.snug,
+    fontFamily:  fonts.sansMedium,
+    fontSize:    fontSizes.md,
+    fontWeight:  fontWeights.medium,
+    lineHeight:  fontSizes.md * lineHeights.snug,
+  } as TextStyle,
+
+  // Nav bar activo
+  navActive: {
+    fontFamily:    fonts.sansSemi,
+    fontSize:      fontSizes.xs,
+    fontWeight:    fontWeights.semibold,
+    letterSpacing: 0.6,
+  } as TextStyle,
+
+  // Nav bar inactivo
+  navInactive: {
+    fontFamily:    fonts.sans,
+    fontSize:      fontSizes.xs,
+    fontWeight:    fontWeights.regular,
+    letterSpacing: 0.6,
   } as TextStyle,
 } as const;
 

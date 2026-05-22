@@ -1,35 +1,35 @@
 import { useEffect } from 'react';
 import * as SplashScreen from 'expo-splash-screen';
 import {
-  DMSans_400Regular,
-  DMSans_500Medium,
-  DMSans_600SemiBold,
-  DMSans_700Bold,
-  useFonts as useDMSans,
-} from '@expo-google-fonts/dm-sans';
+  Inter_400Regular,
+  Inter_500Medium,
+  Inter_600SemiBold,
+  Inter_700Bold,
+  useFonts as useInter,
+} from '@expo-google-fonts/inter';
 import {
-  DMMono_400Regular,
-  DMMono_500Medium,
-  useFonts as useDMMono,
-} from '@expo-google-fonts/dm-mono';
+  SpaceMono_400Regular,
+  SpaceMono_700Bold,
+  useFonts as useSpaceMono,
+} from '@expo-google-fonts/space-mono';
 import RootNavigator from './src/navigation';
 
 SplashScreen.preventAutoHideAsync();
 
 export default function App() {
-  const [sansLoaded, sansError] = useDMSans({
-    DMSans_400Regular,
-    DMSans_500Medium,
-    DMSans_600SemiBold,
-    DMSans_700Bold,
+  const [interLoaded, interError] = useInter({
+    Inter_400Regular,
+    Inter_500Medium,
+    Inter_600SemiBold,
+    Inter_700Bold,
   });
-  const [monoLoaded, monoError] = useDMMono({
-    DMMono_400Regular,
-    DMMono_500Medium,
+  const [monoLoaded, monoError] = useSpaceMono({
+    SpaceMono_400Regular,
+    SpaceMono_700Bold,
   });
 
-  const loaded = sansLoaded && monoLoaded;
-  const error = sansError ?? monoError;
+  const loaded = interLoaded && monoLoaded;
+  const error  = interError ?? monoError;
 
   useEffect(() => {
     if (loaded || error) SplashScreen.hideAsync();

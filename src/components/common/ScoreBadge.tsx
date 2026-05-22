@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
   pillSm: { paddingHorizontal: spacing[2], paddingVertical: spacing[0.5] },
   dot: { width: 7, height: 7, borderRadius: 4 },
   pillLabel: {
-    fontFamily: 'DMSans_600SemiBold',
+    fontFamily: 'Inter_600SemiBold',
     fontSize: 13,
   },
   pillLabelSm: { fontSize: 11 },
@@ -135,12 +135,12 @@ const styles = StyleSheet.create({
     marginTop: spacing[1.5],
   },
   extremoText: {
-    fontFamily: 'DMMono_400Regular',
+    fontFamily: 'SpaceMono_400Regular',
     fontSize: 9,
     letterSpacing: 0.5,
   },
   puntos: {
-    fontFamily: 'DMMono_500Medium',
+    fontFamily: 'SpaceMono_400Regular',
     fontSize: 12,
     letterSpacing: 0.5,
   },

@@ -252,7 +252,7 @@ const styles = StyleSheet.create({
     borderBottomColor: cartasBosque.pergaminoOscuro,
   },
   titulo: {
-    fontFamily: 'DMSans_600SemiBold',
+    fontFamily: 'Inter_600SemiBold',
     fontSize: 18,
     color: cartasBosque.tinta,
   },
@@ -266,7 +266,7 @@ const styles = StyleSheet.create({
     paddingVertical: spacing[1] + 2,
   },
   btnNuevaText: {
-    fontFamily: 'DMSans_600SemiBold',
+    fontFamily: 'Inter_600SemiBold',
     fontSize: 13,
     color: cartasBosque.bruma,
   },
@@ -274,7 +274,7 @@ const styles = StyleSheet.create({
     padding: spacing[4],
   },
   seccionTitulo: {
-    fontFamily: 'DMMono_400Regular',
+    fontFamily: 'SpaceMono_400Regular',
     fontSize: 11,
     color: cartasBosque.helecho,
     letterSpacing: 0.8,
@@ -293,19 +293,19 @@ const styles = StyleSheet.create({
     marginTop: spacing[8],
   },
   vacioText: {
-    fontFamily: 'DMSans_600SemiBold',
+    fontFamily: 'Inter_600SemiBold',
     fontSize: 16,
     color: cartasBosque.tinta,
   },
   vacioSub: {
-    fontFamily: 'DMSans_400Regular',
+    fontFamily: 'Inter_400Regular',
     fontSize: 13,
     color: cartasBosque.helecho,
     textAlign: 'center',
   },
   // Form
   label: {
-    fontFamily: 'DMMono_400Regular',
+    fontFamily: 'SpaceMono_400Regular',
     fontSize: 11,
     color: cartasBosque.helecho,
     letterSpacing: 0.5,
@@ -325,7 +325,7 @@ const styles = StyleSheet.create({
     borderColor: cartasBosque.pergaminoOscuro,
     paddingHorizontal: spacing[3],
     paddingVertical: spacing[2] + 2,
-    fontFamily: 'DMSans_400Regular',
+    fontFamily: 'Inter_400Regular',
     fontSize: 14,
     color: cartasBosque.tinta,
   },
@@ -347,7 +347,7 @@ const styles = StyleSheet.create({
     borderColor: cartasBosque.bosque,
   },
   chipText: {
-    fontFamily: 'DMMono_400Regular',
+    fontFamily: 'SpaceMono_400Regular',
     fontSize: 12,
     color: cartasBosque.tinta,
   },
@@ -355,7 +355,7 @@ const styles = StyleSheet.create({
     color: cartasBosque.bruma,
   },
   errorText: {
-    fontFamily: 'DMSans_400Regular',
+    fontFamily: 'Inter_400Regular',
     fontSize: 13,
     color: cartasBosque.corteza,
     marginTop: spacing[2],
@@ -368,7 +368,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   btnPrimarioText: {
-    fontFamily: 'DMSans_600SemiBold',
+    fontFamily: 'Inter_600SemiBold',
     fontSize: 14,
     color: cartasBosque.bruma,
   },
@@ -381,7 +381,7 @@ const styles = StyleSheet.create({
     borderColor: cartasBosque.pergaminoOscuro,
   },
   btnSecundarioText: {
-    fontFamily: 'DMSans_400Regular',
+    fontFamily: 'Inter_400Regular',
     fontSize: 13,
     color: cartasBosque.tinta,
   },
@@ -391,12 +391,12 @@ const styles = StyleSheet.create({
     paddingTop: spacing[8],
   },
   exitoTitulo: {
-    fontFamily: 'DMSans_600SemiBold',
+    fontFamily: 'Inter_600SemiBold',
     fontSize: 20,
     color: cartasBosque.tinta,
   },
   exitoSub: {
-    fontFamily: 'DMSans_400Regular',
+    fontFamily: 'Inter_400Regular',
     fontSize: 14,
     color: cartasBosque.helecho,
     textAlign: 'center',

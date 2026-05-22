@@ -97,22 +97,22 @@ const styles = StyleSheet.create({
   },
   headerRow: { flexDirection: 'row', alignItems: 'center', gap: spacing[2], flexWrap: 'wrap', marginBottom: 2 },
   dispositivo: {
-    fontFamily: 'DMSans_600SemiBold', fontSize: 13, color: cartasBosque.tinta,
+    fontFamily: 'Inter_600SemiBold', fontSize: 13, color: cartasBosque.tinta,
     flexShrink: 1,
   },
   actualBadge: {
     paddingHorizontal: spacing[2], paddingVertical: 2,
     backgroundColor: '#E8EBE0', borderRadius: borderRadius.full,
   },
-  actualText: { fontFamily: 'DMMono_400Regular', fontSize: 9, color: '#4A5E48' },
+  actualText: { fontFamily: 'SpaceMono_400Regular', fontSize: 9, color: '#4A5E48' },
   roboBadge: {
     paddingHorizontal: spacing[2], paddingVertical: 2,
     backgroundColor: 'rgba(103,0,16,0.15)', borderRadius: borderRadius.full,
   },
-  roboText: { fontFamily: 'DMMono_400Regular', fontSize: 9, color: '#960018' },
-  ubicacion: { fontFamily: 'DMSans_400Regular', fontSize: 12, color: cartasBosque.tinta },
-  meta:      { fontFamily: 'DMMono_400Regular', fontSize: 10, color: cartasBosque.helecho, marginTop: 1 },
-  fecha:     { fontFamily: 'DMMono_400Regular', fontSize: 10, color: cartasBosque.helecho, marginTop: 2 },
+  roboText: { fontFamily: 'SpaceMono_400Regular', fontSize: 9, color: '#960018' },
+  ubicacion: { fontFamily: 'Inter_400Regular', fontSize: 12, color: cartasBosque.tinta },
+  meta:      { fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.helecho, marginTop: 1 },
+  fecha:     { fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.helecho, marginTop: 2 },
   cerrarBtn: {
     width: 30, height: 30, borderRadius: 15,
     alignItems: 'center', justifyContent: 'center',

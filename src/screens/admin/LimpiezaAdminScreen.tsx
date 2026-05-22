@@ -387,7 +387,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 2, borderBottomColor: 'transparent',
   },
   tabBtnActivo: { borderBottomColor: cartasBosque.bosque },
-  tabText:      { fontFamily: 'DMMono_400Regular', fontSize: 9, color: cartasBosque.helecho },
+  tabText:      { fontFamily: 'SpaceMono_400Regular', fontSize: 9, color: cartasBosque.helecho },
   tabTextActivo:{ color: cartasBosque.bosque },
   areaScroll: { borderBottomWidth: 1, borderBottomColor: cartasBosque.pergaminoOscuro, maxHeight: 52 },
   areaChip: {
@@ -398,10 +398,10 @@ const styles = StyleSheet.create({
     backgroundColor: cartasBosque.pergamino,
   },
   areaChipActivo: { backgroundColor: cartasBosque.bosque, borderColor: cartasBosque.bosque },
-  areaChipText:   { fontFamily: 'DMMono_400Regular', fontSize: 10, color: cartasBosque.bosque },
+  areaChipText:   { fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.bosque },
   areaChipTextActivo: { color: cartasBosque.bruma },
   fechaHeader: {
-    fontFamily: 'DMSans_600SemiBold', fontSize: 13, color: cartasBosque.tinta,
+    fontFamily: 'Inter_600SemiBold', fontSize: 13, color: cartasBosque.tinta,
     marginBottom: spacing[2], marginTop: spacing[3],
   },
   btnIncumplimiento: {
@@ -409,10 +409,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing[2], paddingVertical: 3,
   },
   btnIncumplimientoText: {
-    fontFamily: 'DMMono_400Regular', fontSize: 9, color: '#960018', letterSpacing: 0.2,
+    fontFamily: 'SpaceMono_400Regular', fontSize: 9, color: '#960018', letterSpacing: 0.2,
   },
   vacio: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: spacing[2], marginTop: spacing[10] },
-  vacioText: { fontFamily: 'DMSans_400Regular', fontSize: 14, color: cartasBosque.helecho },
+  vacioText: { fontFamily: 'Inter_400Regular', fontSize: 14, color: cartasBosque.helecho },
   // Permuta
   permutaCard: {
     backgroundColor: cartasBosque.pergamino,
@@ -421,8 +421,8 @@ const styles = StyleSheet.create({
     padding: spacing[3], marginBottom: spacing[2],
   },
   permutaTop:    { flexDirection: 'row', alignItems: 'flex-start', marginBottom: spacing[2] },
-  permutaTitle:  { fontFamily: 'DMSans_600SemiBold', fontSize: 13, color: cartasBosque.tinta },
-  permutaSub:    { fontFamily: 'DMSans_400Regular', fontSize: 11, color: cartasBosque.helecho, marginTop: 2 },
+  permutaTitle:  { fontFamily: 'Inter_600SemiBold', fontSize: 13, color: cartasBosque.tinta },
+  permutaSub:    { fontFamily: 'Inter_400Regular', fontSize: 11, color: cartasBosque.helecho, marginTop: 2 },
   permutaAcciones: { flexDirection: 'row', gap: spacing[2] },
   btnAprobar: {
     flexDirection: 'row', alignItems: 'center', gap: spacing[1],
@@ -430,16 +430,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing[3], paddingVertical: spacing[1] + 2,
     borderRadius: borderRadius.sm,
   },
-  btnAprobarText: { fontFamily: 'DMSans_600SemiBold', fontSize: 12, color: cartasBosque.bruma },
+  btnAprobarText: { fontFamily: 'Inter_600SemiBold', fontSize: 12, color: cartasBosque.bruma },
   btnBloquear: {
     flexDirection: 'row', alignItems: 'center', gap: spacing[1],
     borderWidth: 1, borderColor: cartasBosque.pergaminoOscuro,
     paddingHorizontal: spacing[2], paddingVertical: spacing[1] + 1,
     borderRadius: borderRadius.sm,
   },
-  btnBloquearText: { fontFamily: 'DMSans_400Regular', fontSize: 12, color: cartasBosque.helecho },
+  btnBloquearText: { fontFamily: 'Inter_400Regular', fontSize: 12, color: cartasBosque.helecho },
   badge: { paddingHorizontal: spacing[2], paddingVertical: 3, borderRadius: borderRadius.full },
-  badgeText: { fontFamily: 'DMMono_400Regular', fontSize: 9, letterSpacing: 0.3 },
+  badgeText: { fontFamily: 'SpaceMono_400Regular', fontSize: 9, letterSpacing: 0.3 },
   // Incumplimiento
   incumpCard: {
     flexDirection: 'row', alignItems: 'center',
@@ -448,8 +448,8 @@ const styles = StyleSheet.create({
     borderWidth: 1, borderColor: cartasBosque.pergaminoOscuro,
     padding: spacing[3], marginBottom: spacing[2],
   },
-  incumpNombre: { fontFamily: 'DMSans_600SemiBold', fontSize: 13, color: cartasBosque.tinta },
-  incumpSub:    { fontFamily: 'DMSans_400Regular', fontSize: 11, color: cartasBosque.helecho, marginTop: 2 },
+  incumpNombre: { fontFamily: 'Inter_600SemiBold', fontSize: 13, color: cartasBosque.tinta },
+  incumpSub:    { fontFamily: 'Inter_400Regular', fontSize: 11, color: cartasBosque.helecho, marginTop: 2 },
   // Modal
   overlay: { flex: 1, backgroundColor: 'rgba(18,42,31,0.35)' },
   sheet: {
@@ -457,21 +457,21 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: borderRadius.xl, borderTopRightRadius: borderRadius.xl,
     padding: spacing[5], paddingBottom: spacing[8],
   },
-  sheetTitulo: { fontFamily: 'DMSans_600SemiBold', fontSize: 18, color: cartasBosque.tinta, marginBottom: spacing[1] },
-  sheetSub:    { fontFamily: 'DMSans_400Regular', fontSize: 13, color: cartasBosque.helecho, marginBottom: spacing[3] },
-  sheetLabel:  { fontFamily: 'DMMono_400Regular', fontSize: 10, color: cartasBosque.helecho, letterSpacing: 0.5, marginBottom: spacing[1], marginTop: spacing[2] },
+  sheetTitulo: { fontFamily: 'Inter_600SemiBold', fontSize: 18, color: cartasBosque.tinta, marginBottom: spacing[1] },
+  sheetSub:    { fontFamily: 'Inter_400Regular', fontSize: 13, color: cartasBosque.helecho, marginBottom: spacing[3] },
+  sheetLabel:  { fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.helecho, letterSpacing: 0.5, marginBottom: spacing[1], marginTop: spacing[2] },
   stepper:     { flexDirection: 'row', alignItems: 'center', gap: spacing[4], marginBottom: spacing[2] },
   stepBtn:     { padding: spacing[2] },
-  stepValue:   { fontFamily: 'DMMono_400Regular', fontSize: 18, color: cartasBosque.tinta, minWidth: 32, textAlign: 'center' },
+  stepValue:   { fontFamily: 'SpaceMono_400Regular', fontSize: 18, color: cartasBosque.tinta, minWidth: 32, textAlign: 'center' },
   horaItem:    { paddingVertical: spacing[2], paddingHorizontal: spacing[3], borderRadius: borderRadius.sm, marginBottom: 2 },
   horaItemSel: { backgroundColor: cartasBosque.bosque },
-  horaText:    { fontFamily: 'DMMono_400Regular', fontSize: 13, color: cartasBosque.tinta },
+  horaText:    { fontFamily: 'SpaceMono_400Regular', fontSize: 13, color: cartasBosque.tinta },
   horaTextSel: { color: cartasBosque.bruma },
   btnPrimario: {
     backgroundColor: cartasBosque.bosque, borderRadius: borderRadius.sm,
     paddingVertical: spacing[3], alignItems: 'center', marginTop: spacing[3], marginBottom: spacing[2],
   },
-  btnPrimarioText: { fontFamily: 'DMSans_600SemiBold', fontSize: 14, color: cartasBosque.bruma },
+  btnPrimarioText: { fontFamily: 'Inter_600SemiBold', fontSize: 14, color: cartasBosque.bruma },
   btnSecundario: { paddingVertical: spacing[2], alignItems: 'center' },
-  btnSecundarioText: { fontFamily: 'DMSans_400Regular', fontSize: 13, color: cartasBosque.helecho },
+  btnSecundarioText: { fontFamily: 'Inter_400Regular', fontSize: 13, color: cartasBosque.helecho },
 });

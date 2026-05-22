@@ -638,11 +638,11 @@ const s = StyleSheet.create({
     paddingBottom: spacing[5],
   },
   headerHola: {
-    fontFamily: 'DMSans_700Bold', fontSize: 24, color: cartasBosque.bruma,
+    fontFamily: 'Inter_700Bold', fontSize: 24, color: cartasBosque.bruma,
     marginTop: spacing[4], letterSpacing: -0.3,
   },
   headerHab: {
-    fontFamily: 'DMMono_400Regular', fontSize: 10, color: cartasBosque.niebla,
+    fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.niebla,
     letterSpacing: 1.5, marginTop: 2, marginBottom: spacing[4],
   },
   headerRentaRow: {
@@ -651,15 +651,15 @@ const s = StyleSheet.create({
   },
   headerField: { gap: 2 },
   headerFieldLabel: {
-    fontFamily: 'DMMono_400Regular', fontSize: 9, color: cartasBosque.niebla,
+    fontFamily: 'SpaceMono_400Regular', fontSize: 9, color: cartasBosque.niebla,
     letterSpacing: 1,
   },
   headerMonto: {
-    fontFamily: 'DMSans_700Bold', fontSize: 30, color: cartasBosque.bruma,
+    fontFamily: 'Inter_700Bold', fontSize: 30, color: cartasBosque.bruma,
     letterSpacing: -0.5, lineHeight: 34,
   },
   headerVenceVal: {
-    fontFamily: 'DMSans_600SemiBold', fontSize: 18, color: cartasBosque.bruma, lineHeight: 34,
+    fontFamily: 'Inter_600SemiBold', fontSize: 18, color: cartasBosque.bruma, lineHeight: 34,
   },
   headerBadgeWrap: { flex: 1, alignItems: 'flex-end', paddingBottom: 6 },
 
@@ -669,7 +669,7 @@ const s = StyleSheet.create({
     paddingHorizontal: spacing[2], paddingVertical: 3,
     borderRadius: borderRadius.sm, borderWidth: 1,
   },
-  badgeText: { fontFamily: 'DMMono_400Regular', fontSize: 9, letterSpacing: 0.3 },
+  badgeText: { fontFamily: 'SpaceMono_400Regular', fontSize: 9, letterSpacing: 0.3 },
   badgeRojo:    { backgroundColor: 'rgba(103,0,16,0.4)', borderColor: '#CDB29D' + '88' },
   badgeNaranja: { backgroundColor: 'rgba(205,178,157,0.15)', borderColor: '#CDB29D' + '66' },
   badgeVerde:   { backgroundColor: 'rgba(74,94,72,0.2)', borderColor: '#4A5E48' + '66' },
@@ -678,7 +678,7 @@ const s = StyleSheet.create({
     flexDirection: 'row', gap: spacing[4], marginBottom: spacing[3],
   },
   headerInfoText: {
-    fontFamily: 'DMMono_400Regular', fontSize: 10, color: cartasBosque.niebla, letterSpacing: 0.5,
+    fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.niebla, letterSpacing: 0.5,
   },
 
   // Alerta card (header)
@@ -688,7 +688,7 @@ const s = StyleSheet.create({
     padding: spacing[3], marginBottom: spacing[3],
   },
   alertaText: {
-    flex: 1, fontFamily: 'DMSans_400Regular', fontSize: 12, lineHeight: 17,
+    flex: 1, fontFamily: 'Inter_400Regular', fontSize: 12, lineHeight: 17,
   },
 
   // Botón principal (bosque)
@@ -698,7 +698,7 @@ const s = StyleSheet.create({
     alignItems: 'center', marginBottom: spacing[2],
   },
   btnPrincipalText: {
-    fontFamily: 'DMSans_600SemiBold', fontSize: 15, color: cartasBosque.bruma, letterSpacing: 0.1,
+    fontFamily: 'Inter_600SemiBold', fontSize: 15, color: cartasBosque.bruma, letterSpacing: 0.1,
   },
 
   // Botón dejar correr (borde rosa)
@@ -709,7 +709,7 @@ const s = StyleSheet.create({
     marginBottom: spacing[2],
   },
   btnDepositoText: {
-    fontFamily: 'DMSans_400Regular', fontSize: 12, color: '#CDB29D',
+    fontFamily: 'Inter_400Regular', fontSize: 12, color: '#CDB29D',
     textAlign: 'center', lineHeight: 18,
   },
 
@@ -722,39 +722,39 @@ const s = StyleSheet.create({
     gap: spacing[2],
   },
   cardLabel: {
-    fontFamily: 'DMMono_400Regular', fontSize: 9, color: cartasBosque.helecho,
+    fontFamily: 'SpaceMono_400Regular', fontSize: 9, color: cartasBosque.helecho,
     letterSpacing: 1, textTransform: 'uppercase', marginBottom: 2,
   },
   cardHeaderRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   cardAccion: {
-    fontFamily: 'DMSans_600SemiBold', fontSize: 13, color: cartasBosque.bosque,
+    fontFamily: 'Inter_600SemiBold', fontSize: 13, color: cartasBosque.bosque,
   },
   cardRow: { flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap' },
-  cardVal: { fontFamily: 'DMSans_400Regular', fontSize: 13, color: cartasBosque.tinta },
-  cardDivider: { fontFamily: 'DMSans_400Regular', fontSize: 13, color: cartasBosque.pergaminoOscuro },
-  boldVal:  { fontFamily: 'DMSans_700Bold', fontSize: 13, color: cartasBosque.tinta },
-  alertVal: { fontFamily: 'DMSans_700Bold', fontSize: 13, color: '#960018' },
-  okVal:    { fontFamily: 'DMSans_700Bold', fontSize: 13, color: '#4A5E48' },
+  cardVal: { fontFamily: 'Inter_400Regular', fontSize: 13, color: cartasBosque.tinta },
+  cardDivider: { fontFamily: 'Inter_400Regular', fontSize: 13, color: cartasBosque.pergaminoOscuro },
+  boldVal:  { fontFamily: 'Inter_700Bold', fontSize: 13, color: cartasBosque.tinta },
+  alertVal: { fontFamily: 'Inter_700Bold', fontSize: 13, color: '#960018' },
+  okVal:    { fontFamily: 'Inter_700Bold', fontSize: 13, color: '#4A5E48' },
 
   // Visita card rows
   visitaRow: {
     flexDirection: 'row', alignItems: 'center', gap: spacing[3],
     paddingTop: spacing[2],
   },
-  visitaNombre: { fontFamily: 'DMSans_600SemiBold', fontSize: 13, color: cartasBosque.tinta },
-  visitaMeta:   { fontFamily: 'DMMono_400Regular', fontSize: 10, color: cartasBosque.helecho },
+  visitaNombre: { fontFamily: 'Inter_600SemiBold', fontSize: 13, color: cartasBosque.tinta },
+  visitaMeta:   { fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.helecho },
   btnSalida: {
     paddingHorizontal: spacing[2], paddingVertical: spacing[1] + 1,
     borderRadius: borderRadius.sm, borderWidth: 1,
     borderColor: cartasBosque.pergaminoOscuro,
   },
-  btnSalidaText: { fontFamily: 'DMMono_400Regular', fontSize: 10, color: cartasBosque.tinta },
+  btnSalidaText: { fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.tinta },
   btnNuevaVisita: {
     alignItems: 'center', paddingVertical: spacing[2], marginTop: spacing[1],
     borderTopWidth: 1, borderTopColor: cartasBosque.pergaminoOscuro,
   },
   btnNuevaVisitaText: {
-    fontFamily: 'DMSans_400Regular', fontSize: 13, color: cartasBosque.bosque,
+    fontFamily: 'Inter_400Regular', fontSize: 13, color: cartasBosque.bosque,
   },
 
   // ── GRID 2×2 ──
@@ -769,13 +769,13 @@ const s = StyleSheet.create({
     borderWidth: 1, borderColor: cartasBosque.pergaminoOscuro,
     gap: 4,
   },
-  gridTitulo: { fontFamily: 'DMSans_600SemiBold', fontSize: 14, color: cartasBosque.tinta },
-  gridSub:    { fontFamily: 'DMMono_400Regular',  fontSize: 10, color: cartasBosque.helecho, lineHeight: 13 },
+  gridTitulo: { fontFamily: 'Inter_600SemiBold', fontSize: 14, color: cartasBosque.tinta },
+  gridSub:    { fontFamily: 'SpaceMono_400Regular',  fontSize: 10, color: cartasBosque.helecho, lineHeight: 13 },
 
   // ── SECCIONES ──
   seccion: { paddingHorizontal: spacing[4], marginTop: spacing[5] },
   seccionLabel: {
-    fontFamily: 'DMMono_400Regular', fontSize: 10, color: cartasBosque.helecho,
+    fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.helecho,
     letterSpacing: 0.8, textTransform: 'uppercase', marginBottom: spacing[3],
   },
 
@@ -792,7 +792,7 @@ const s = StyleSheet.create({
     borderWidth: 1, borderColor: cartasBosque.pergaminoOscuro,
     borderStyle: 'dashed',
   },
-  actividadVacioText: { fontFamily: 'DMSans_400Regular', fontSize: 12, color: cartasBosque.helecho },
+  actividadVacioText: { fontFamily: 'Inter_400Regular', fontSize: 12, color: cartasBosque.helecho },
   actividadRow: {
     flexDirection: 'row', alignItems: 'center', gap: spacing[3],
     paddingHorizontal: spacing[3], paddingVertical: spacing[3],
@@ -800,9 +800,9 @@ const s = StyleSheet.create({
   actividadDivider: { height: 1, backgroundColor: cartasBosque.pergaminoOscuro, marginHorizontal: spacing[3] },
   actividadDot: { width: 8, height: 8, borderRadius: 4 },
   actividadTexto: {
-    flex: 1, fontFamily: 'DMSans_400Regular', fontSize: 12, color: cartasBosque.tinta,
+    flex: 1, fontFamily: 'Inter_400Regular', fontSize: 12, color: cartasBosque.tinta,
   },
   actividadFecha: {
-    fontFamily: 'DMMono_400Regular', fontSize: 9, color: cartasBosque.niebla,
+    fontFamily: 'SpaceMono_400Regular', fontSize: 9, color: cartasBosque.niebla,
   },
 });

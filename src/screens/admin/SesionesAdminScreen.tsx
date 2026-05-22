@@ -244,14 +244,14 @@ const s = StyleSheet.create({
     paddingHorizontal: spacing[4], paddingVertical: spacing[3],
     borderBottomWidth: 1, borderBottomColor: cartasBosque.pergaminoOscuro,
   },
-  headerTitulo: { fontFamily: 'DMSans_600SemiBold', fontSize: 18, color: cartasBosque.tinta },
+  headerTitulo: { fontFamily: 'Inter_600SemiBold', fontSize: 18, color: cartasBosque.tinta },
   badge: {
     minWidth: 20, height: 20, borderRadius: 10,
     backgroundColor: '#960018',
     alignItems: 'center', justifyContent: 'center',
     paddingHorizontal: 5,
   },
-  badgeText: { fontFamily: 'DMMono_400Regular', fontSize: 11, color: '#FFFFFF' },
+  badgeText: { fontFamily: 'SpaceMono_400Regular', fontSize: 11, color: '#FFFFFF' },
 
   tabRow: {
     flexDirection: 'row',
@@ -263,8 +263,8 @@ const s = StyleSheet.create({
     borderBottomWidth: 2, borderBottomColor: 'transparent',
   },
   tabBtnActive: { borderBottomColor: cartasBosque.bosque },
-  tabLabel:     { fontFamily: 'DMMono_400Regular', fontSize: 11, color: cartasBosque.helecho },
-  tabLabelActive: { color: cartasBosque.bosque, fontFamily: 'DMSans_600SemiBold', fontSize: 11 },
+  tabLabel:     { fontFamily: 'SpaceMono_400Regular', fontSize: 11, color: cartasBosque.helecho },
+  tabLabelActive: { color: cartasBosque.bosque, fontFamily: 'Inter_600SemiBold', fontSize: 11 },
 
   scroll: { padding: spacing[4] },
 
@@ -274,7 +274,7 @@ const s = StyleSheet.create({
     alignItems: 'center', marginTop: spacing[4],
     borderWidth: 1, borderColor: cartasBosque.pergaminoOscuro,
   },
-  emptyText: { fontFamily: 'DMSans_400Regular', fontSize: 13, color: cartasBosque.helecho },
+  emptyText: { fontFamily: 'Inter_400Regular', fontSize: 13, color: cartasBosque.helecho },
 
   // Grupos de sesiones
   grupoCard: {
@@ -288,14 +288,14 @@ const s = StyleSheet.create({
     flexDirection: 'row', alignItems: 'center',
     marginBottom: spacing[3],
   },
-  grupoNombre: { fontFamily: 'DMSans_600SemiBold', fontSize: 14, color: cartasBosque.tinta },
-  grupoMeta:   { fontFamily: 'DMMono_400Regular', fontSize: 10, color: cartasBosque.helecho, marginTop: 1 },
+  grupoNombre: { fontFamily: 'Inter_600SemiBold', fontSize: 14, color: cartasBosque.tinta },
+  grupoMeta:   { fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.helecho, marginTop: 1 },
   cerrarTodasBtn: {
     paddingHorizontal: spacing[3], paddingVertical: spacing[1] + 2,
     borderRadius: borderRadius.full,
     borderWidth: 1, borderColor: '#960018' + '80',
   },
-  cerrarTodasText: { fontFamily: 'DMMono_400Regular', fontSize: 10, color: '#960018' },
+  cerrarTodasText: { fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: '#960018' },
 
   liberarBtn: {
     flexDirection: 'row', alignItems: 'center', gap: spacing[1] + 2,
@@ -303,7 +303,7 @@ const s = StyleSheet.create({
     borderRadius: borderRadius.sm, padding: spacing[2],
     marginBottom: spacing[2],
   },
-  liberarText: { flex: 1, fontFamily: 'DMSans_400Regular', fontSize: 12, color: '#960018' },
+  liberarText: { flex: 1, fontFamily: 'Inter_400Regular', fontSize: 12, color: '#960018' },
 
   // Alertas
   alertaCard: {
@@ -323,9 +323,9 @@ const s = StyleSheet.create({
     flexShrink: 0,
   },
   alertaHeaderRow: { flexDirection: 'row', alignItems: 'center', gap: spacing[2] },
-  alertaTipo:   { fontFamily: 'DMSans_600SemiBold', fontSize: 12, color: cartasBosque.tinta },
+  alertaTipo:   { fontFamily: 'Inter_600SemiBold', fontSize: 12, color: cartasBosque.tinta },
   dotNoVisto:   { width: 7, height: 7, borderRadius: 4, backgroundColor: cartasBosque.bosque },
-  alertaNombre: { fontFamily: 'DMMono_400Regular', fontSize: 11, color: cartasBosque.musgo, marginTop: 2 },
-  alertaMeta:   { fontFamily: 'DMMono_400Regular', fontSize: 10, color: cartasBosque.helecho, marginTop: 1 },
-  alertaFecha:  { fontFamily: 'DMMono_400Regular', fontSize: 10, color: cartasBosque.helecho + 'AA', marginTop: 2 },
+  alertaNombre: { fontFamily: 'SpaceMono_400Regular', fontSize: 11, color: cartasBosque.musgo, marginTop: 2 },
+  alertaMeta:   { fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.helecho, marginTop: 1 },
+  alertaFecha:  { fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.helecho + 'AA', marginTop: 2 },
 });

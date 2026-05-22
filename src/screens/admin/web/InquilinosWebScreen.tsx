@@ -261,7 +261,7 @@ const s = StyleSheet.create({
     borderBottomWidth: 2, borderBottomColor: 'transparent',
   },
   tabActivo:      { borderBottomColor: cartasBosque.bosque },
-  tabText:        { fontFamily: 'DMSans_500Medium', fontSize: 13, color: cartasBosque.helecho },
+  tabText:        { fontFamily: 'Inter_500Medium', fontSize: 13, color: cartasBosque.helecho },
   tabTextActivo:  { color: cartasBosque.bosque },
 });
 
@@ -269,33 +269,33 @@ const f = StyleSheet.create({
   scroll:   { flex: 1, backgroundColor: cartasBosque.bruma },
   content:  { maxWidth: 620, padding: spacing[6], paddingBottom: spacing[12] },
 
-  heading: { fontFamily: 'DMSans_700Bold', fontSize: 22, color: cartasBosque.tinta, marginBottom: spacing[1] },
-  sub:     { fontFamily: 'DMSans_400Regular', fontSize: 13, color: cartasBosque.musgo, marginBottom: spacing[6], lineHeight: 20 },
+  heading: { fontFamily: 'Inter_700Bold', fontSize: 22, color: cartasBosque.tinta, marginBottom: spacing[1] },
+  sub:     { fontFamily: 'Inter_400Regular', fontSize: 13, color: cartasBosque.musgo, marginBottom: spacing[6], lineHeight: 20 },
 
   row:       { marginBottom: spacing[4] },
-  rowLabel:  { fontFamily: 'DMMono_400Regular', fontSize: 11, color: cartasBosque.musgo, letterSpacing: 0.5, textTransform: 'uppercase', marginBottom: spacing[1.5] },
+  rowLabel:  { fontFamily: 'SpaceMono_400Regular', fontSize: 11, color: cartasBosque.musgo, letterSpacing: 0.5, textTransform: 'uppercase', marginBottom: spacing[1.5] },
   input: {
     backgroundColor: cartasBosque.pergamino, borderRadius: borderRadius.md,
     borderWidth: 1, borderColor: cartasBosque.pergaminoOscuro,
     paddingHorizontal: spacing[3], paddingVertical: spacing[2] + 2,
-    fontFamily: 'DMSans_400Regular', fontSize: 14, color: cartasBosque.tinta,
+    fontFamily: 'Inter_400Regular', fontSize: 14, color: cartasBosque.tinta,
   },
 
   habsGrid:        { flexDirection: 'row', flexWrap: 'wrap', gap: spacing[2] },
   habChip:         { paddingHorizontal: spacing[3], paddingVertical: spacing[1.5], borderRadius: borderRadius.sm, borderWidth: 1, borderColor: cartasBosque.pergaminoOscuro, backgroundColor: cartasBosque.pergamino },
   habChipActivo:   { backgroundColor: cartasBosque.bosque, borderColor: cartasBosque.bosque },
-  habChipText:     { fontFamily: 'DMMono_400Regular', fontSize: 12, color: cartasBosque.musgo },
+  habChipText:     { fontFamily: 'SpaceMono_400Regular', fontSize: 12, color: cartasBosque.musgo },
   habChipTextActivo:{ color: '#FFFFFF' },
 
   previewBox:   { backgroundColor: cartasBosque.pergamino, borderRadius: borderRadius.md, borderWidth: 1, borderColor: cartasBosque.pergaminoOscuro, padding: spacing[4], marginBottom: spacing[4] },
-  previewTitle: { fontFamily: 'DMSans_600SemiBold', fontSize: 14, color: cartasBosque.tinta, marginBottom: spacing[2] },
-  previewRow:   { fontFamily: 'DMSans_400Regular', fontSize: 13, color: cartasBosque.musgo, marginBottom: spacing[1] },
-  previewVal:   { fontFamily: 'DMMono_400Regular', color: cartasBosque.bosque },
-  previewNote:  { fontFamily: 'DMSans_400Regular', fontSize: 11, color: cartasBosque.helecho, marginTop: spacing[2], lineHeight: 16 },
+  previewTitle: { fontFamily: 'Inter_600SemiBold', fontSize: 14, color: cartasBosque.tinta, marginBottom: spacing[2] },
+  previewRow:   { fontFamily: 'Inter_400Regular', fontSize: 13, color: cartasBosque.musgo, marginBottom: spacing[1] },
+  previewVal:   { fontFamily: 'SpaceMono_400Regular', color: cartasBosque.bosque },
+  previewNote:  { fontFamily: 'Inter_400Regular', fontSize: 11, color: cartasBosque.helecho, marginTop: spacing[2], lineHeight: 16 },
 
   btnRow:        { flexDirection: 'row', gap: spacing[3], marginTop: spacing[4] },
   btnSecundario: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: spacing[2], paddingVertical: spacing[3], borderRadius: borderRadius.md, borderWidth: 1, borderColor: cartasBosque.bosque, backgroundColor: 'transparent' },
-  btnSecundarioText: { fontFamily: 'DMSans_600SemiBold', fontSize: 14, color: cartasBosque.bosque },
+  btnSecundarioText: { fontFamily: 'Inter_600SemiBold', fontSize: 14, color: cartasBosque.bosque },
   btnPrimario:   { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: spacing[2], paddingVertical: spacing[3], borderRadius: borderRadius.md, backgroundColor: cartasBosque.bosque },
-  btnPrimarioText:{ fontFamily: 'DMSans_600SemiBold', fontSize: 14, color: '#FFFFFF' },
+  btnPrimarioText:{ fontFamily: 'Inter_600SemiBold', fontSize: 14, color: '#FFFFFF' },
 });

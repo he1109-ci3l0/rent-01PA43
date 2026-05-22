@@ -284,12 +284,12 @@ function PisoSection({
 const pisoStyles = StyleSheet.create({
   section: { gap: spacing[2] },
   label: {
-    fontFamily: 'DMSans_600SemiBold',
+    fontFamily: 'Inter_600SemiBold',
     fontSize: 15,
     color: cartasBosque.tinta,
   },
   sublabel: {
-    fontFamily: 'DMMono_400Regular',
+    fontFamily: 'SpaceMono_400Regular',
     fontSize: 9,
     color: cartasBosque.helecho,
     letterSpacing: 0.4,
@@ -423,9 +423,9 @@ const detStyles = StyleSheet.create({
     width: 52, height: 52, borderRadius: borderRadius.lg,
     alignItems: 'center', justifyContent: 'center',
   },
-  numText: { fontFamily: 'DMSans_700Bold', fontSize: 22, color: cartasBosque.tinta },
-  tamano: { fontFamily: 'DMSans_600SemiBold', fontSize: 16, color: cartasBosque.tinta },
-  pisoStr: { fontFamily: 'DMMono_400Regular', fontSize: 10, color: cartasBosque.helecho, marginTop: 2 },
+  numText: { fontFamily: 'Inter_700Bold', fontSize: 22, color: cartasBosque.tinta },
+  tamano: { fontFamily: 'Inter_600SemiBold', fontSize: 16, color: cartasBosque.tinta },
+  pisoStr: { fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.helecho, marginTop: 2 },
 
   estadoBadge: {
     flexDirection: 'row', alignItems: 'center', gap: spacing[2],
@@ -433,18 +433,18 @@ const detStyles = StyleSheet.create({
     borderRadius: borderRadius.full, marginBottom: spacing[3],
   },
   estadoDot: { width: 8, height: 8, borderRadius: 4 },
-  estadoText: { fontFamily: 'DMSans_600SemiBold', fontSize: 13 },
+  estadoText: { fontFamily: 'Inter_600SemiBold', fontSize: 13 },
 
   infoRow: { flexDirection: 'row', alignItems: 'center', gap: spacing[2], marginBottom: spacing[2] },
-  infoText: { fontFamily: 'DMSans_500Medium', fontSize: 14, color: cartasBosque.tinta },
+  infoText: { fontFamily: 'Inter_500Medium', fontSize: 14, color: cartasBosque.tinta },
 
   infoGrid: { gap: spacing[2.5], marginBottom: spacing[4] },
   infoItem: { flexDirection: 'row', alignItems: 'flex-start', gap: spacing[2] },
-  infoLabel: { fontFamily: 'DMMono_400Regular', fontSize: 9, color: cartasBosque.helecho, letterSpacing: 0.5 },
-  infoValue: { fontFamily: 'DMSans_500Medium', fontSize: 13, color: cartasBosque.tinta },
+  infoLabel: { fontFamily: 'SpaceMono_400Regular', fontSize: 9, color: cartasBosque.helecho, letterSpacing: 0.5 },
+  infoValue: { fontFamily: 'Inter_500Medium', fontSize: 13, color: cartasBosque.tinta },
 
   cambiarLabel: {
-    fontFamily: 'DMMono_400Regular', fontSize: 10,
+    fontFamily: 'SpaceMono_400Regular', fontSize: 10,
     color: cartasBosque.helecho, letterSpacing: 0.8,
     textTransform: 'uppercase', marginBottom: spacing[2],
   },
@@ -454,14 +454,14 @@ const detStyles = StyleSheet.create({
     borderRadius: borderRadius.full,
   },
   estadoChipActive: { shadowColor: '#122A1F', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.15, shadowRadius: 3, elevation: 2 },
-  estadoChipText: { fontFamily: 'DMSans_500Medium', fontSize: 12 },
+  estadoChipText: { fontFamily: 'Inter_500Medium', fontSize: 12 },
 
   remodelBox: {
     flexDirection: 'row', alignItems: 'flex-start', gap: spacing[2],
     backgroundColor: 'rgba(205,178,157,0.12)', borderRadius: borderRadius.md,
     padding: spacing[3], marginBottom: spacing[2],
   },
-  remodelText: { fontFamily: 'DMMono_400Regular', fontSize: 10, color: cartasBosque.musgo, flex: 1, lineHeight: 16 },
+  remodelText: { fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.musgo, flex: 1, lineHeight: 16 },
 });
 
 // ─── StatPill ─────────────────────────────────────────────────
@@ -482,8 +482,8 @@ const statStyles = StyleSheet.create({
     borderRadius: borderRadius.lg, paddingVertical: spacing[2.5],
     borderWidth: 1, borderColor: cartasBosque.pergaminoOscuro,
   },
-  value: { fontFamily: 'DMSans_700Bold', fontSize: 18 },
-  label: { fontFamily: 'DMMono_400Regular', fontSize: 9, color: cartasBosque.helecho, letterSpacing: 0.3 },
+  value: { fontFamily: 'Inter_700Bold', fontSize: 18 },
+  label: { fontFamily: 'SpaceMono_400Regular', fontSize: 9, color: cartasBosque.helecho, letterSpacing: 0.3 },
 });
 
 // ─── Estilos principales ──────────────────────────────────────
@@ -494,8 +494,8 @@ const styles = StyleSheet.create({
   center:  { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: cartasBosque.bruma },
 
   header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end' },
-  eyebrow: { fontFamily: 'DMMono_400Regular', fontSize: 10, color: cartasBosque.musgo, letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: spacing[0.5] },
-  title:   { fontFamily: 'DMSans_700Bold', fontSize: 26, color: cartasBosque.bosque, letterSpacing: -0.3 },
+  eyebrow: { fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.musgo, letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: spacing[0.5] },
+  title:   { fontFamily: 'Inter_700Bold', fontSize: 26, color: cartasBosque.bosque, letterSpacing: -0.3 },
 
   catalogoBtn: {
     flexDirection: 'row', alignItems: 'center', gap: spacing[1.5],
@@ -503,18 +503,18 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.full, borderWidth: 1.5,
     borderColor: cartasBosque.bosque,
   },
-  catalogoBtnText: { fontFamily: 'DMSans_600SemiBold', fontSize: 13, color: cartasBosque.bosque },
+  catalogoBtnText: { fontFamily: 'Inter_600SemiBold', fontSize: 13, color: cartasBosque.bosque },
 
   statsRow: { flexDirection: 'row', gap: spacing[2] },
 
   leyenda: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing[3] },
   leyendaItem: { flexDirection: 'row', alignItems: 'center', gap: spacing[1.5] },
   leyendaDot: { width: 10, height: 10, borderRadius: 5, borderWidth: 1, borderColor: 'rgba(18,42,31,0.08)' },
-  leyendaLabel: { fontFamily: 'DMMono_400Regular', fontSize: 10, color: cartasBosque.helecho },
+  leyendaLabel: { fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.helecho },
 
   // Slots deshabilitados
   slotsSection: { gap: spacing[2] },
-  slotsLabel: { fontFamily: 'DMMono_400Regular', fontSize: 10, color: cartasBosque.helecho, letterSpacing: 0.8, textTransform: 'uppercase' },
+  slotsLabel: { fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.helecho, letterSpacing: 0.8, textTransform: 'uppercase' },
   slotsRow: { flexDirection: 'row', flexWrap: 'wrap', gap: GAP },
   slotChip: {
     height: 36, borderRadius: borderRadius.md,
@@ -522,7 +522,7 @@ const styles = StyleSheet.create({
     borderWidth: 1, borderColor: '#D8D8D0', borderStyle: 'dashed',
   },
   slotEtc: { backgroundColor: 'transparent', borderColor: '#E8EBE0' },
-  slotText: { fontFamily: 'DMMono_400Regular', fontSize: 10, color: '#A8A8A0' },
+  slotText: { fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: '#A8A8A0' },
 
   // Modales
   modalOverlay: { flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(18,42,31,0.4)' },
@@ -544,5 +544,5 @@ const styles = StyleSheet.create({
 
   // Dev
   seedBtn: { alignSelf: 'center', paddingVertical: spacing[2], paddingHorizontal: spacing[4], borderRadius: borderRadius.full, borderWidth: 1, borderColor: cartasBosque.pergaminoOscuro },
-  seedText: { fontFamily: 'DMMono_400Regular', fontSize: 10, color: cartasBosque.helecho },
+  seedText: { fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.helecho },
 });

@@ -57,6 +57,6 @@ const s = StyleSheet.create({
     borderBottomWidth: 2, borderBottomColor: 'transparent',
   },
   tabBtnActivo: { borderBottomColor: cartasBosque.bosque },
-  tabText:      { fontFamily: 'DMMono_400Regular', fontSize: 10, color: cartasBosque.helecho },
+  tabText:      { fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.helecho },
   tabTextActivo:{ color: cartasBosque.bosque },
 });

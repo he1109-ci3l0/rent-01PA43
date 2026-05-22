@@ -108,15 +108,15 @@ const styles = StyleSheet.create({
     alignItems: 'center', justifyContent: 'center',
   },
   info:     { flex: 1 },
-  folio:    { fontFamily: 'DMMono_400Regular', fontSize: 10, color: cartasBosque.helecho, letterSpacing: 0.3 },
-  categoria:{ fontFamily: 'DMSans_600SemiBold', fontSize: 13, color: cartasBosque.tinta },
+  folio:    { fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.helecho, letterSpacing: 0.3 },
+  categoria:{ fontFamily: 'Inter_600SemiBold', fontSize: 13, color: cartasBosque.tinta },
   estadoBadge: {
     paddingHorizontal: spacing[2], paddingVertical: 2,
     borderRadius: borderRadius.sm,
   },
-  estadoText:  { fontFamily: 'DMMono_400Regular', fontSize: 10, letterSpacing: 0.2 },
+  estadoText:  { fontFamily: 'SpaceMono_400Regular', fontSize: 10, letterSpacing: 0.2 },
   sub: {
-    fontFamily: 'DMSans_400Regular', fontSize: 12, color: cartasBosque.helecho,
+    fontFamily: 'Inter_400Regular', fontSize: 12, color: cartasBosque.helecho,
     marginTop: spacing[1], marginLeft: 36 + spacing[2],
   },
   thumb: {
@@ -130,7 +130,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing[2], paddingVertical: 2, borderRadius: borderRadius.sm,
   },
   etiquetaText: {
-    fontFamily: 'DMMono_400Regular', fontSize: 9, color: cartasBosque.tinta, letterSpacing: 0.2,
+    fontFamily: 'SpaceMono_400Regular', fontSize: 9, color: cartasBosque.tinta, letterSpacing: 0.2,
   },
-  meta: { fontFamily: 'DMMono_400Regular', fontSize: 10, color: cartasBosque.helecho },
+  meta: { fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.helecho },
 });

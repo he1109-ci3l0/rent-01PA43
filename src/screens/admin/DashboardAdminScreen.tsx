@@ -216,15 +216,15 @@ const s = StyleSheet.create({
   content:  { padding: spacing[5], paddingBottom: spacing[10] },
 
   header:  { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: spacing[4] },
-  eyebrow: { fontFamily: 'DMMono_400Regular', fontSize: 10, color: cartasBosque.musgo, letterSpacing: 1, textTransform: 'uppercase', marginBottom: 2 },
-  title:   { fontFamily: 'DMSans_700Bold', fontSize: 26, color: cartasBosque.tinta, letterSpacing: -0.3 },
+  eyebrow: { fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.musgo, letterSpacing: 1, textTransform: 'uppercase', marginBottom: 2 },
+  title:   { fontFamily: 'Inter_700Bold', fontSize: 26, color: cartasBosque.tinta, letterSpacing: -0.3 },
 
   alertaBanner: {
     flexDirection: 'row', alignItems: 'center', gap: spacing[2],
     backgroundColor: cartasBosque.corteza, borderRadius: borderRadius.md,
     padding: spacing[3], marginBottom: spacing[4],
   },
-  alertaBannerText: { fontFamily: 'DMSans_500Medium', fontSize: 13, color: '#FFFFFF', flex: 1 },
+  alertaBannerText: { fontFamily: 'Inter_500Medium', fontSize: 13, color: '#FFFFFF', flex: 1 },
 
   metricsGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing[3], marginBottom: spacing[2] },
   metricCard:  {
@@ -235,11 +235,11 @@ const s = StyleSheet.create({
     shadowOpacity: 0.05, shadowRadius: 4, elevation: 1,
   },
   metricIcon:  { width: 36, height: 36, borderRadius: borderRadius.sm, alignItems: 'center', justifyContent: 'center', marginBottom: spacing[2] },
-  metricValue: { fontFamily: 'DMSans_700Bold', fontSize: 24, letterSpacing: -0.5 },
-  metricLabel: { fontFamily: 'DMMono_400Regular', fontSize: 10, color: cartasBosque.musgo, letterSpacing: 0.5, marginTop: 2 },
-  metricSub:   { fontFamily: 'DMMono_400Regular', fontSize: 9, color: cartasBosque.helecho, marginTop: 2 },
+  metricValue: { fontFamily: 'Inter_700Bold', fontSize: 24, letterSpacing: -0.5 },
+  metricLabel: { fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.musgo, letterSpacing: 0.5, marginTop: 2 },
+  metricSub:   { fontFamily: 'SpaceMono_400Regular', fontSize: 9, color: cartasBosque.helecho, marginTop: 2 },
 
-  sectionTitle: { fontFamily: 'DMSans_600SemiBold', fontSize: 15, color: cartasBosque.tinta, marginTop: spacing[5], marginBottom: spacing[3] },
+  sectionTitle: { fontFamily: 'Inter_600SemiBold', fontSize: 15, color: cartasBosque.tinta, marginTop: spacing[5], marginBottom: spacing[3] },
 
   scoresRow: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing[2] },
   scoreChip: {
@@ -247,8 +247,8 @@ const s = StyleSheet.create({
     paddingHorizontal: spacing[2.5], paddingVertical: spacing[1],
     borderRadius: borderRadius.full, borderWidth: 1,
   },
-  scoreChipNum: { fontFamily: 'DMSans_700Bold', fontSize: 13 },
-  scoreChipLbl: { fontFamily: 'DMMono_400Regular', fontSize: 10, textTransform: 'capitalize' },
+  scoreChipNum: { fontFamily: 'Inter_700Bold', fontSize: 13 },
+  scoreChipLbl: { fontFamily: 'SpaceMono_400Regular', fontSize: 10, textTransform: 'capitalize' },
 
   quickGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing[3] },
   quickCard: {
@@ -258,5 +258,5 @@ const s = StyleSheet.create({
     borderWidth: 1, borderColor: cartasBosque.pergaminoOscuro,
   },
   quickIcon:  { width: 42, height: 42, borderRadius: borderRadius.md, alignItems: 'center', justifyContent: 'center' },
-  quickLabel: { fontFamily: 'DMSans_500Medium', fontSize: 13, color: cartasBosque.tinta, textAlign: 'center' },
+  quickLabel: { fontFamily: 'Inter_500Medium', fontSize: 13, color: cartasBosque.tinta, textAlign: 'center' },
 });

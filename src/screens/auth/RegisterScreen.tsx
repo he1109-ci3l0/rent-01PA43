@@ -271,14 +271,14 @@ const styles = StyleSheet.create({
   header: { marginBottom: spacing[8] },
   backBtn: { marginBottom: spacing[4] },
   title: {
-    fontFamily: 'DMSans_700Bold',
+    fontFamily: 'Inter_700Bold',
     fontSize: 28,
     color: cartasBosque.bosque,
     letterSpacing: -0.3,
     marginBottom: spacing[1.5],
   },
   subtitle: {
-    fontFamily: 'DMSans_400Regular',
+    fontFamily: 'Inter_400Regular',
     fontSize: 14,
     color: cartasBosque.musgo,
   },
@@ -287,7 +287,7 @@ const styles = StyleSheet.create({
   form: { gap: spacing[4] },
   field: { gap: spacing[1.5] },
   label: {
-    fontFamily: 'DMSans_500Medium',
+    fontFamily: 'Inter_500Medium',
     fontSize: 13,
     color: cartasBosque.tinta,
   },
@@ -298,7 +298,7 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.md,
     paddingHorizontal: spacing[4],
     paddingVertical: spacing[3],
-    fontFamily: 'DMSans_400Regular',
+    fontFamily: 'Inter_400Regular',
     fontSize: 15,
     color: cartasBosque.tinta,
   },
@@ -315,7 +315,7 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.md,
   },
   hint: {
-    fontFamily: 'DMSans_400Regular',
+    fontFamily: 'Inter_400Regular',
     fontSize: 11,
     color: cartasBosque.helecho,
     marginTop: spacing[0.5],
@@ -332,12 +332,12 @@ const styles = StyleSheet.create({
   },
   keepTextCol: { flex: 1 },
   keepLabel: {
-    fontFamily: 'DMSans_500Medium',
+    fontFamily: 'Inter_500Medium',
     fontSize: 14,
     color: cartasBosque.tinta,
   },
   keepSub: {
-    fontFamily: 'DMSans_400Regular',
+    fontFamily: 'Inter_400Regular',
     fontSize: 12,
     color: cartasBosque.musgo,
     marginTop: spacing[0.5],
@@ -353,7 +353,7 @@ const styles = StyleSheet.create({
     padding: spacing[3],
   },
   errorText: {
-    fontFamily: 'DMSans_400Regular',
+    fontFamily: 'Inter_400Regular',
     fontSize: 13,
     color: cartasBosque.corteza,
     flex: 1,
@@ -374,7 +374,7 @@ const styles = StyleSheet.create({
   },
   buttonDisabled: { opacity: 0.45 },
   buttonText: {
-    fontFamily: 'DMSans_600SemiBold',
+    fontFamily: 'Inter_600SemiBold',
     fontSize: 16,
     color: cartasBosque.bruma,
     letterSpacing: 0.3,
@@ -383,19 +383,19 @@ const styles = StyleSheet.create({
   // Volver
   backRow: { alignItems: 'center', paddingTop: spacing[2] },
   backText: {
-    fontFamily: 'DMSans_400Regular',
+    fontFamily: 'Inter_400Regular',
     fontSize: 14,
     color: cartasBosque.musgo,
   },
   backLink: {
-    fontFamily: 'DMSans_600SemiBold',
+    fontFamily: 'Inter_600SemiBold',
     color: cartasBosque.bosque,
     textDecorationLine: 'underline',
   },
 
   // Footer
   footer: {
-    fontFamily: 'DMMono_400Regular',
+    fontFamily: 'SpaceMono_400Regular',
     fontSize: 10,
     color: cartasBosque.helecho,
     textAlign: 'center',
@@ -413,13 +413,13 @@ const styles = StyleSheet.create({
   },
   successIcon: { marginBottom: spacing[2] },
   successTitle: {
-    fontFamily: 'DMSans_700Bold',
+    fontFamily: 'Inter_700Bold',
     fontSize: 26,
     color: cartasBosque.bosque,
     letterSpacing: -0.3,
   },
   successBody: {
-    fontFamily: 'DMSans_400Regular',
+    fontFamily: 'Inter_400Regular',
     fontSize: 14,
     color: cartasBosque.musgo,
     textAlign: 'center',
@@ -434,20 +434,20 @@ const styles = StyleSheet.create({
     gap: spacing[1.5],
   },
   usernameLabel: {
-    fontFamily: 'DMSans_500Medium',
+    fontFamily: 'Inter_500Medium',
     fontSize: 12,
     color: cartasBosque.musgo,
     textTransform: 'uppercase',
     letterSpacing: 1,
   },
   usernameValue: {
-    fontFamily: 'DMMono_400Regular',
+    fontFamily: 'SpaceMono_400Regular',
     fontSize: 18,
     color: cartasBosque.bosque,
     letterSpacing: 1,
   },
   passwordHint: {
-    fontFamily: 'DMSans_400Regular',
+    fontFamily: 'Inter_400Regular',
     fontSize: 12,
     color: cartasBosque.musgo,
     marginTop: spacing[1],
