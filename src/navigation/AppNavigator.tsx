@@ -28,11 +28,11 @@ type IoniconsName = React.ComponentProps<typeof Ionicons>['name'];
 // ─────────────────────────────────────────────────────────────
 
 type TenantTabList = {
-  Dossier: undefined;
-  Noticias: undefined;
-  Home: undefined;
+  Dossier:   undefined;
+  Comunidad: undefined;
+  Home:      undefined;
   Servicios: undefined;
-  Soporte: undefined;
+  Soporte:   undefined;
 };
 
 const TenantTab = createBottomTabNavigator<TenantTabList>();
@@ -65,9 +65,9 @@ function TenantNavigator() {
         options={{ tabBarIcon: tabIcon('id-card-outline', 'id-card') }}
       />
       <TenantTab.Screen
-        name="Noticias"
+        name="Comunidad"
         component={NoticiasScreen}
-        options={{ tabBarIcon: tabIcon('megaphone-outline', 'megaphone') }}
+        options={{ tabBarIcon: tabIcon('chatbubbles-outline', 'chatbubbles'), tabBarLabel: 'Comunidad' }}
       />
 
       {/* Home — tab central con pill destacado */}

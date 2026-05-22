@@ -29,7 +29,7 @@ import type {
 // ─── Nav type ─────────────────────────────────────────────────
 
 type TenantTabList = {
-  Dossier: undefined; Noticias: undefined; Home: undefined;
+  Dossier: undefined; Comunidad: undefined; Home: undefined;
   Servicios: undefined; Soporte: undefined;
 };
 type NavProp = BottomTabNavigationProp<TenantTabList, 'Home'>;
