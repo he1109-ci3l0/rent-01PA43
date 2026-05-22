@@ -47,9 +47,9 @@ const CATEGORIA_SUBTITULO: Record<CategoriaTicket, string> = {
 };
 
 const ESTADO_COLORES: Record<string, { bg: string; text: string }> = {
-  en_revision: { bg: '#D6E8F5', text: '#2A5EB0' },
-  en_proceso:  { bg: '#FFF0E0', text: '#C05A00' },
-  resuelto:    { bg: '#D6EDD9', text: '#3A7D44' },
+  en_revision: { bg: '#E8EBE0', text: '#4A5E48' },
+  en_proceso:  { bg: 'rgba(138,106,114,0.1)', text: '#8A6A72' },
+  resuelto:    { bg: '#E8EBE0', text: '#4A5E48' },
 };
 
 const PASOS_CONFIRMACION = [
@@ -199,17 +199,17 @@ export default function SoporteScreen() {
             {PASOS_CONFIRMACION.map((p, i) => {
               const activo  = i === 1; // "En revisión" es el estado inicial
               const hecho   = i === 0; // "Ticket enviado" ya está hecho
-              const color   = hecho ? '#3A7D44' : activo ? '#2A5EB0' : cartasBosque.pergaminoOscuro;
-              const bgStep  = hecho ? '#D6EDD9' : activo ? '#D6E8F5' : cartasBosque.pergamino;
+              const color   = hecho ? '#4A5E48' : activo ? '#4A5E48' : cartasBosque.pergaminoOscuro;
+              const bgStep  = hecho ? '#E8EBE0' : activo ? '#E8EBE0' : cartasBosque.pergamino;
               return (
                 <React.Fragment key={p.key}>
                   {i > 0 && (
-                    <View style={[styles.trackerLine, { backgroundColor: i <= 1 ? '#3A7D44' : cartasBosque.pergaminoOscuro }]} />
+                    <View style={[styles.trackerLine, { backgroundColor: i <= 1 ? '#4A5E48' : cartasBosque.pergaminoOscuro }]} />
                   )}
                   <View style={styles.trackerStep}>
                     <View style={[styles.trackerDot, { backgroundColor: bgStep, borderColor: color }]}>
-                      {hecho && <Ionicons name="checkmark" size={10} color="#3A7D44" />}
-                      {activo && <View style={[styles.trackerDotInner, { backgroundColor: '#2A5EB0' }]} />}
+                      {hecho && <Ionicons name="checkmark" size={10} color="#4A5E48" />}
+                      {activo && <View style={[styles.trackerDotInner, { backgroundColor: '#4A5E48' }]} />}
                     </View>
                     <Text style={[styles.trackerLabel, { color }]}>{p.label}</Text>
                   </View>
@@ -350,7 +350,7 @@ export default function SoporteScreen() {
 
           {/* Aviso */}
           <View style={styles.aviso}>
-            <Ionicons name="information-circle-outline" size={16} color="#B07D2A" />
+            <Ionicons name="information-circle-outline" size={16} color="#8A6A72" />
             <Text style={styles.avisoText}>
               Importante: Sigue las indicaciones del área y en breve nos comunicaremos contigo.
             </Text>
@@ -688,11 +688,11 @@ const styles = StyleSheet.create({
     width: 88,
     height: 88,
     borderRadius: 44,
-    backgroundColor: '#3A7D44',
+    backgroundColor: '#4A5E48',
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: spacing[2],
-    shadowColor: '#3A7D44',
+    shadowColor: '#4A5E48',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 10,

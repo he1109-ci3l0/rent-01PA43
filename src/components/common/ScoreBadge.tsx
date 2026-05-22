@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
     borderColor: cartasBosque.tinta,
     marginLeft: -7,
     top: -3,
-    shadowColor: '#000',
+    shadowColor: '#122A1F',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.2,
     shadowRadius: 2,

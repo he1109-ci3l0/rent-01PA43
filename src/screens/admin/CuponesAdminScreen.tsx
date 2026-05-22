@@ -24,7 +24,7 @@ function estadoCupon(c: Cupon): { label: string; color: string } {
   if (!c.disponible) return { label: 'inactivo', color: cartasBosque.niebla };
   const ahora = Date.now();
   if (c.vigenciaFin.toDate().getTime() < ahora) return { label: 'vencido', color: cartasBosque.corteza };
-  if (c.limiteUsos !== null && c.usosActuales >= c.limiteUsos) return { label: 'agotado', color: '#C0392B' };
+  if (c.limiteUsos !== null && c.usosActuales >= c.limiteUsos) return { label: 'agotado', color: '#670010' };
   return { label: 'activo', color: cartasBosque.bosque };
 }
 

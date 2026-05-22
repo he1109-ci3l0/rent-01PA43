@@ -35,14 +35,14 @@ function diasDesde(ts: import('firebase/firestore').Timestamp): number {
 function estadoLabel(pago: Pago): { label: string; color: string; icon: string } {
   const diasMora = diasDesde(pago.fechaVencimiento);
   switch (pago.estado) {
-    case 'pagado':      return { label: 'Pagado',                 color: '#00897B', icon: 'checkmark-circle' };
-    case 'en_revision': return { label: 'En revisión',            color: '#1565C0', icon: 'time' };
-    case 'rechazado':   return { label: 'Rechazado',              color: '#C62828', icon: 'close-circle' };
-    case 'vencido':     return { label: `Vencido (${diasMora}d)`, color: '#C62828', icon: 'alert-circle' };
+    case 'pagado':      return { label: 'Pagado',                 color: '#4A5E48', icon: 'checkmark-circle' };
+    case 'en_revision': return { label: 'En revisión',            color: '#4A5E48', icon: 'time' };
+    case 'rechazado':   return { label: 'Rechazado',              color: '#670010', icon: 'close-circle' };
+    case 'vencido':     return { label: `Vencido (${diasMora}d)`, color: '#670010', icon: 'alert-circle' };
     case 'pendiente':
-      if (diasMora > 3) return { label: 'Vencido',               color: '#C62828', icon: 'alert-circle' };
-      if (diasMora > 0) return { label: `${3-diasMora}d gracia`,  color: '#EF6C00', icon: 'warning' };
-      return               { label: 'Por pagar',                  color: '#F9A825', icon: 'ellipse-outline' };
+      if (diasMora > 3) return { label: 'Vencido',               color: '#670010', icon: 'alert-circle' };
+      if (diasMora > 0) return { label: `${3-diasMora}d gracia`,  color: '#8A6A72', icon: 'warning' };
+      return               { label: 'Por pagar',                  color: '#CDB29D', icon: 'ellipse-outline' };
     default:            return { label: pago.estado,              color: cartasBosque.musgo, icon: 'ellipse-outline' };
   }
 }
@@ -269,13 +269,13 @@ function PagoCard({ pago, uploading, onPagar }: {
             <Text style={s.comprobanteLabel}>Comprobante enviado</Text>
             <Text style={s.comprobanteDate}>{formatFecha(pago.comprobanteSubidoEn ?? null)}</Text>
           </View>
-          <Ionicons name="time-outline" size={18} color="#1565C0" />
+          <Ionicons name="time-outline" size={18} color="#4A5E48" />
         </View>
       )}
 
       {pago.estado === 'rechazado' && pago.rechazadoRazon && (
         <View style={s.rechazadoBox}>
-          <Ionicons name="close-circle-outline" size={15} color="#C62828" />
+          <Ionicons name="close-circle-outline" size={15} color="#670010" />
           <Text style={s.rechazadoText}>{pago.rechazadoRazon}</Text>
         </View>
       )}
@@ -322,7 +322,7 @@ function HistorialRow({ pago }: { pago: Pago }) {
         {pago.metodoPago && <Text style={s.historialMetodo}>{pago.metodoPago}</Text>}
       </View>
       <Text style={s.historialMonto}>${pago.monto.toLocaleString('es-MX')}</Text>
-      <Ionicons name="checkmark-circle" size={16} color="#00897B" style={{ marginLeft: spacing[2] }} />
+      <Ionicons name="checkmark-circle" size={16} color="#4A5E48" style={{ marginLeft: spacing[2] }} />
     </View>
   );
 }
@@ -366,13 +366,13 @@ const s = StyleSheet.create({
   fechaLabel:   { fontFamily: 'DMMono_400Regular', fontSize: 9, color: cartasBosque.helecho, textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 2 },
   fechaValue:   { fontFamily: 'DMSans_500Medium', fontSize: 13, color: cartasBosque.tinta },
 
-  comprobanteRow:   { flexDirection: 'row', alignItems: 'center', gap: spacing[3], backgroundColor: '#EEF2FF', borderRadius: borderRadius.md, padding: spacing[3] },
+  comprobanteRow:   { flexDirection: 'row', alignItems: 'center', gap: spacing[3], backgroundColor: '#E8EBE0', borderRadius: borderRadius.md, padding: spacing[3] },
   comprobanteMini:  { width: 40, height: 52, borderRadius: borderRadius.sm, backgroundColor: cartasBosque.pergaminoOscuro },
-  comprobanteLabel: { fontFamily: 'DMSans_500Medium', fontSize: 13, color: '#1565C0' },
-  comprobanteDate:  { fontFamily: 'DMMono_400Regular', fontSize: 10, color: '#5C6BC0', marginTop: 2 },
+  comprobanteLabel: { fontFamily: 'DMSans_500Medium', fontSize: 13, color: '#4A5E48' },
+  comprobanteDate:  { fontFamily: 'DMMono_400Regular', fontSize: 10, color: '#4A5E48', marginTop: 2 },
 
-  rechazadoBox:  { flexDirection: 'row', alignItems: 'flex-start', gap: spacing[2], backgroundColor: '#FFEBEE', borderRadius: borderRadius.md, padding: spacing[3] },
-  rechazadoText: { fontFamily: 'DMSans_400Regular', fontSize: 13, color: '#C62828', flex: 1 },
+  rechazadoBox:  { flexDirection: 'row', alignItems: 'flex-start', gap: spacing[2], backgroundColor: 'rgba(103,0,16,0.2)', borderRadius: borderRadius.md, padding: spacing[3] },
+  rechazadoText: { fontFamily: 'DMSans_400Regular', fontSize: 13, color: '#670010', flex: 1 },
 
   btnPagar: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
@@ -425,7 +425,7 @@ const s = StyleSheet.create({
   // Historial
   historialList:   { gap: spacing[1] },
   historialRow:    { flexDirection: 'row', alignItems: 'center', backgroundColor: cartasBosque.pergamino, borderRadius: borderRadius.md, padding: spacing[3], gap: spacing[3] },
-  historialDot:    { width: 8, height: 8, borderRadius: 4, backgroundColor: '#00897B' },
+  historialDot:    { width: 8, height: 8, borderRadius: 4, backgroundColor: '#4A5E48' },
   historialMes:    { fontFamily: 'DMSans_500Medium', fontSize: 13, color: cartasBosque.tinta },
   historialMetodo: { fontFamily: 'DMMono_400Regular', fontSize: 10, color: cartasBosque.helecho, marginTop: 1 },
   historialMonto:  { fontFamily: 'DMSans_600SemiBold', fontSize: 13, color: cartasBosque.tinta },

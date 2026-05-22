@@ -149,7 +149,7 @@ function NavBtn({ item, active, onPress }: { item: NavItem; active: boolean; onP
       <Ionicons
         name={(active ? item.iconActive : item.icon) as any}
         size={17}
-        color={active ? '#E8F5EB' : '#7FA98A'}
+        color={active ? '#E8EBE0' : '#8A9E80'}
       />
       <Text style={[s.navLabel, active && s.navLabelActive]}>{item.label}</Text>
     </TouchableOpacity>
@@ -158,16 +158,16 @@ function NavBtn({ item, active, onPress }: { item: NavItem; active: boolean; onP
 
 // ─── Styles ───────────────────────────────────────────────────
 
-const SIDEBAR_BG     = '#14352A';
+const SIDEBAR_BG     = '#122A1F';
 const SIDEBAR_ACTIVE = '#1A4233';
-const SIDEBAR_TEXT   = '#7FA98A';
-const SIDEBAR_ACTIVE_TEXT = '#E8F5EB';
+const SIDEBAR_TEXT   = '#8A9E80';
+const SIDEBAR_ACTIVE_TEXT = '#E8EBE0';
 
 const s = StyleSheet.create({
   root: {
     flex: 1,
     flexDirection: 'row',
-    backgroundColor: '#F0EEE8',
+    backgroundColor: '#F5F2EC',
   },
 
   // ── Sidebar
@@ -185,15 +185,15 @@ const s = StyleSheet.create({
     paddingTop: spacing[5],
     paddingBottom: spacing[4],
     borderBottomWidth: 1,
-    borderBottomColor: '#1F4D3A',
+    borderBottomColor: '#122A1F',
   },
   brandLogo: {
     width: 36, height: 36, borderRadius: 10,
-    backgroundColor: '#1F4D3A',
+    backgroundColor: '#122A1F',
     alignItems: 'center', justifyContent: 'center',
   },
   brandLogoText: { fontFamily: 'DMSans_700Bold', fontSize: 18, color: '#A8D5B5' },
-  brandNombre:   { fontFamily: 'DMSans_600SemiBold', fontSize: 14, color: '#E8F5EB' },
+  brandNombre:   { fontFamily: 'DMSans_600SemiBold', fontSize: 14, color: '#E8EBE0' },
   brandRol:      { fontFamily: 'DMMono_400Regular', fontSize: 9, color: SIDEBAR_TEXT, letterSpacing: 0.8, textTransform: 'uppercase', marginTop: 2 },
 
   navScroll: { flex: 1, paddingTop: spacing[3] },
@@ -226,7 +226,7 @@ const s = StyleSheet.create({
   signOut: {
     flexDirection: 'row', alignItems: 'center', gap: spacing[2],
     paddingHorizontal: spacing[5], paddingVertical: spacing[4],
-    borderTopWidth: 1, borderTopColor: '#1F4D3A',
+    borderTopWidth: 1, borderTopColor: '#122A1F',
   },
   signOutText: { fontFamily: 'DMSans_400Regular', fontSize: 13, color: SIDEBAR_TEXT },
 
@@ -234,6 +234,6 @@ const s = StyleSheet.create({
   content: {
     flex: 1,
     overflow: 'auto' as any,
-    backgroundColor: '#F0EEE8',
+    backgroundColor: '#F5F2EC',
   },
 });

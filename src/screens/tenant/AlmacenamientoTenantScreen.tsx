@@ -231,7 +231,7 @@ const styles = StyleSheet.create({
   content: { padding: spacing[4], paddingBottom: spacing[10] },
   avisoBanner: {
     flexDirection: 'row', alignItems: 'center', gap: spacing[2],
-    backgroundColor: '#FFF3CD', borderRadius: borderRadius.md,
+    backgroundColor: 'rgba(205,178,157,0.15)', borderRadius: borderRadius.md,
     padding: spacing[3], marginBottom: spacing[3],
     borderWidth: 1, borderColor: '#FFEAA7',
   },
@@ -264,7 +264,7 @@ const styles = StyleSheet.create({
     fontFamily: 'DMMono_400Regular', fontSize: 9, color: cartasBosque.niebla,
     textAlign: 'center', marginTop: spacing[2],
   },
-  overlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.35)' },
+  overlay: { flex: 1, backgroundColor: 'rgba(18,42,31,0.35)' },
   sheet: {
     backgroundColor: cartasBosque.bruma,
     borderTopLeftRadius: borderRadius.xl, borderTopRightRadius: borderRadius.xl,

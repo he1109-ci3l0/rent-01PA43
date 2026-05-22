@@ -15,9 +15,9 @@ import {
 
 const ESTADO_COLORS: Record<EstadoEstacionaria, string> = {
   normal:        cartasBosque.helecho,
-  alerta_40h:    '#D4A017',
+  alerta_40h:    '#CDB29D',
   alerta_50h:    '#C87941',
-  cargo_72h:     '#C0392B',
+  cargo_72h:     '#670010',
   deposito_102h: cartasBosque.corteza,
 };
 

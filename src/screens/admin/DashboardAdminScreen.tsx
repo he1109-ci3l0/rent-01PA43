@@ -28,7 +28,7 @@ interface Stats {
 }
 
 const NIVEL_COLOR: Record<string, string> = {
-  pesimo: '#A63228', moroso: '#B07D2A', regular: cartasBosque.helecho,
+  pesimo: '#960018', moroso: '#8A6A72', regular: cartasBosque.helecho,
   bueno:  cartasBosque.musgo, excelente: cartasBosque.bosque,
 };
 
@@ -123,13 +123,13 @@ export default function DashboardAdminScreen() {
             label="Pagos pend."
             value={String(stats.pagosPendientes)}
             sub={stats.pagosVencidos > 0 ? `${stats.pagosVencidos} vencidos` : undefined}
-            color={stats.pagosVencidos > 0 ? cartasBosque.corteza : '#D4A017'}
+            color={stats.pagosVencidos > 0 ? cartasBosque.corteza : '#CDB29D'}
             icon="card"
           />
           <MetricCard
             label="Tickets"
             value={String(stats.ticketsAbiertos)}
-            color="#1565C0"
+            color="#4A5E48"
             icon="headset"
           />
           <MetricCard
@@ -191,7 +191,7 @@ export default function DashboardAdminScreen() {
 const ACCESOS = [
   { id: 'pagos',     label: 'Pagos',      icon: 'card',     color: cartasBosque.bosque,  route: 'Pagos' },
   { id: 'inq',       label: 'Inquilinos', icon: 'people',   color: cartasBosque.musgo,   route: 'Inquilinos' },
-  { id: 'tickets',   label: 'Tickets',    icon: 'headset',  color: '#1565C0',            route: 'Tickets' },
+  { id: 'tickets',   label: 'Tickets',    icon: 'headset',  color: '#4A5E48',            route: 'Tickets' },
   { id: 'config',    label: 'Config',     icon: 'settings', color: cartasBosque.helecho, route: 'Config' },
 ];
 

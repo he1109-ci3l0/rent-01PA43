@@ -29,7 +29,7 @@ const TIPO_LABEL: Record<string, string> = {
 
 const TIPO_COLOR: Record<string, string> = {
   dispositivo_nuevo: cartasBosque.bosque,
-  reporte_robo:      '#A63228',
+  reporte_robo:      '#960018',
 };
 
 function formatFechaCorta(ts: any): string {
@@ -174,9 +174,9 @@ export default function SesionesAdminScreen() {
                     onPress={() => handleLiberarCuenta(uid)}
                     activeOpacity={0.75}
                   >
-                    <Ionicons name="shield-checkmark-outline" size={15} color="#A63228" />
+                    <Ionicons name="shield-checkmark-outline" size={15} color="#960018" />
                     <Text style={s.liberarText}>Autorizar acceso (protocolo robo activo)</Text>
-                    <Ionicons name="chevron-forward" size={13} color="#A63228" />
+                    <Ionicons name="chevron-forward" size={13} color="#960018" />
                   </TouchableOpacity>
                 )}
 
@@ -247,11 +247,11 @@ const s = StyleSheet.create({
   headerTitulo: { fontFamily: 'DMSans_600SemiBold', fontSize: 18, color: cartasBosque.tinta },
   badge: {
     minWidth: 20, height: 20, borderRadius: 10,
-    backgroundColor: '#A63228',
+    backgroundColor: '#960018',
     alignItems: 'center', justifyContent: 'center',
     paddingHorizontal: 5,
   },
-  badgeText: { fontFamily: 'DMMono_400Regular', fontSize: 11, color: '#fff' },
+  badgeText: { fontFamily: 'DMMono_400Regular', fontSize: 11, color: '#FFFFFF' },
 
   tabRow: {
     flexDirection: 'row',
@@ -293,17 +293,17 @@ const s = StyleSheet.create({
   cerrarTodasBtn: {
     paddingHorizontal: spacing[3], paddingVertical: spacing[1] + 2,
     borderRadius: borderRadius.full,
-    borderWidth: 1, borderColor: '#A63228' + '80',
+    borderWidth: 1, borderColor: '#960018' + '80',
   },
-  cerrarTodasText: { fontFamily: 'DMMono_400Regular', fontSize: 10, color: '#A63228' },
+  cerrarTodasText: { fontFamily: 'DMMono_400Regular', fontSize: 10, color: '#960018' },
 
   liberarBtn: {
     flexDirection: 'row', alignItems: 'center', gap: spacing[1] + 2,
-    backgroundColor: '#F5DAD8' + '66',
+    backgroundColor: 'rgba(103,0,16,0.15)' + '66',
     borderRadius: borderRadius.sm, padding: spacing[2],
     marginBottom: spacing[2],
   },
-  liberarText: { flex: 1, fontFamily: 'DMSans_400Regular', fontSize: 12, color: '#A63228' },
+  liberarText: { flex: 1, fontFamily: 'DMSans_400Regular', fontSize: 12, color: '#960018' },
 
   // Alertas
   alertaCard: {
@@ -315,7 +315,7 @@ const s = StyleSheet.create({
   },
   alertaCardNoVista: {
     borderColor: cartasBosque.musgo + '55',
-    backgroundColor: '#D6EDD9' + '22',
+    backgroundColor: '#E8EBE0' + '22',
   },
   alertaIconBox: {
     width: 36, height: 36, borderRadius: 18,

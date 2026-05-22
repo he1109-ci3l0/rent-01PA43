@@ -14,7 +14,7 @@ export const ESTADO_COLOR: Record<EstadoHabitacion, string> = {
   disponible:    cartasBosque.pergamino,
   ocupada:       cartasBosque.bosque,
   mantenimiento: '#795548',
-  reservada:     '#1565C0',
+  reservada:     '#4A5E48',
 };
 
 export const ESTADO_LABEL: Record<EstadoHabitacion, string> = {

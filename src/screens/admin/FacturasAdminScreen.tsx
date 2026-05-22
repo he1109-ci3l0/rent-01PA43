@@ -18,7 +18,7 @@ type Tab = 'facturas' | 'cupones';
 type SubTab = 'pendientes' | 'emitidas' | 'papelera';
 
 const ESTADO_COLOR: Record<SolicitudFactura['estado'], string> = {
-  pendiente:   '#D4A017',
+  pendiente:   '#CDB29D',
   procesando:  cartasBosque.musgo,
   emitida:     cartasBosque.bosque,
   rechazada:   cartasBosque.corteza,
@@ -366,7 +366,7 @@ const styles = StyleSheet.create({
 const panelStyles = StyleSheet.create({
   overlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(26,31,26,0.5)',
+    backgroundColor: 'rgba(18,42,31,0.5)',
     justifyContent: 'flex-end',
   },
   panel: {

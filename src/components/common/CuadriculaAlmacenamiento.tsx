@@ -9,7 +9,7 @@ import type { EspacioAlmacenamiento, TipoEspacio } from '@/types/firestore';
 
 // ─── Colores cuadrícula ───────────────────────────────────────
 
-export const COLOR_LIBRE   = '#7A9E7E';   // verde oliva
+export const COLOR_LIBRE   = '#8A9E80';   // verde oliva
 export const COLOR_OCUPADO = '#9B8EC4';   // lila
 export const COLOR_MIO     = '#CDB29D';   // arena
 

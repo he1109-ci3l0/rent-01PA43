@@ -54,7 +54,7 @@ function VistaChat({ chat, onBack }: { chat: Chat; onBack: () => void }) {
               style={styles.strikeBtn}
               onPress={() => { setStrikeNum((chat.strikeCount + 1) as Strike); setModalStrike(true); }}
             >
-              <Ionicons name="warning-outline" size={14} color="#B07D2A" />
+              <Ionicons name="warning-outline" size={14} color="#8A6A72" />
               <Text style={styles.strikeBtnText}>Strike {chat.strikeCount + 1}</Text>
             </TouchableOpacity>
           )}
@@ -257,19 +257,19 @@ export default function ChatAdminScreen() {
               </Text>
               <View style={styles.apelacionBtns}>
                 <TouchableOpacity
-                  style={[styles.apelacionBtn, { backgroundColor: '#D6EDD9' }]}
+                  style={[styles.apelacionBtn, { backgroundColor: '#E8EBE0' }]}
                   onPress={() => Alert.alert('Aceptar', '¿Reabrir el chat?', [
                     { text: 'Cancelar', style: 'cancel' },
                     { text: 'Aceptar', onPress: () => resolverApelacion(a.id, a.chatId, 'aceptada').catch(() => {}) },
                   ])}
                 >
-                  <Text style={[styles.apelacionBtnText, { color: '#3A7D44' }]}>Aceptar</Text>
+                  <Text style={[styles.apelacionBtnText, { color: '#4A5E48' }]}>Aceptar</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                  style={[styles.apelacionBtn, { backgroundColor: '#F5DAD8' }]}
+                  style={[styles.apelacionBtn, { backgroundColor: 'rgba(103,0,16,0.15)' }]}
                   onPress={() => resolverApelacion(a.id, a.chatId, 'rechazada').catch(() => {})}
                 >
-                  <Text style={[styles.apelacionBtnText, { color: '#A63228' }]}>Rechazar (12d)</Text>
+                  <Text style={[styles.apelacionBtnText, { color: '#960018' }]}>Rechazar (12d)</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={[styles.apelacionBtn, { backgroundColor: cartasBosque.niebla + '55' }]}
@@ -358,8 +358,8 @@ const styles = StyleSheet.create({
   chatNombre: { fontFamily: 'DMSans_600SemiBold', fontSize: 14, color: cartasBosque.tinta },
   chatUltimo: { fontFamily: 'DMSans_400Regular', fontSize: 12, color: cartasBosque.helecho, marginTop: 1 },
   chatFecha:  { fontFamily: 'DMMono_400Regular', fontSize: 9, color: cartasBosque.niebla },
-  strikeBadge:     { backgroundColor: '#F5E8C8', borderRadius: borderRadius.sm, paddingHorizontal: spacing[1] },
-  strikeBadgeText: { fontFamily: 'DMMono_400Regular', fontSize: 9, color: '#B07D2A' },
+  strikeBadge:     { backgroundColor: '#E8EBE0', borderRadius: borderRadius.sm, paddingHorizontal: spacing[1] },
+  strikeBadgeText: { fontFamily: 'DMMono_400Regular', fontSize: 9, color: '#8A6A72' },
 
   chatAdminHeader: {
     flexDirection: 'row', alignItems: 'center', gap: spacing[3],
@@ -371,16 +371,16 @@ const styles = StyleSheet.create({
   chatAdminAcciones: { flexDirection: 'row', gap: spacing[2] },
   strikeBtn: {
     flexDirection: 'row', alignItems: 'center', gap: spacing[1],
-    backgroundColor: '#F5E8C8', borderRadius: borderRadius.sm,
+    backgroundColor: '#E8EBE0', borderRadius: borderRadius.sm,
     paddingHorizontal: spacing[2], paddingVertical: spacing[1],
   },
-  strikeBtnText:    { fontFamily: 'DMMono_400Regular', fontSize: 10, color: '#B07D2A' },
+  strikeBtnText:    { fontFamily: 'DMMono_400Regular', fontSize: 10, color: '#8A6A72' },
   congeladoBadge:   { flexDirection: 'row', alignItems: 'center', gap: spacing[1],
-                      backgroundColor: '#F5E8C8', borderRadius: borderRadius.sm, paddingHorizontal: spacing[2], paddingVertical: spacing[1] },
+                      backgroundColor: '#E8EBE0', borderRadius: borderRadius.sm, paddingHorizontal: spacing[2], paddingVertical: spacing[1] },
   congeladoBadgeText:{ fontFamily: 'DMMono_400Regular', fontSize: 9, color: cartasBosque.tierra },
 
   // Strike modal
-  overlay:   { flex: 1, backgroundColor: 'rgba(0,0,0,0.35)' },
+  overlay:   { flex: 1, backgroundColor: 'rgba(18,42,31,0.35)' },
   sheet: {
     backgroundColor: cartasBosque.bruma,
     borderTopLeftRadius: borderRadius.xl, borderTopRightRadius: borderRadius.xl,
@@ -394,9 +394,9 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.sm, borderWidth: 1, borderColor: cartasBosque.pergaminoOscuro,
     backgroundColor: cartasBosque.pergamino,
   },
-  strikePillSel:     { backgroundColor: '#F5E8C8', borderColor: '#B07D2A' },
+  strikePillSel:     { backgroundColor: '#E8EBE0', borderColor: '#8A6A72' },
   strikePillText:    { fontFamily: 'DMMono_400Regular', fontSize: 11, color: cartasBosque.helecho },
-  strikePillTextSel: { color: '#B07D2A' },
+  strikePillTextSel: { color: '#8A6A72' },
   btnPrimario: {
     backgroundColor: cartasBosque.bosque, borderRadius: borderRadius.sm,
     paddingVertical: spacing[3], alignItems: 'center', marginBottom: spacing[2],
@@ -430,7 +430,7 @@ const styles = StyleSheet.create({
   },
   noticiaAdminRow:   { flexDirection: 'row', alignItems: 'center', gap: spacing[2], marginBottom: spacing[1] },
   noticiaEstado:     { width: 8, height: 8, borderRadius: 4, backgroundColor: cartasBosque.niebla },
-  noticiaActiva:     { backgroundColor: '#3A7D44' },
+  noticiaActiva:     { backgroundColor: '#4A5E48' },
   noticiaAdminTitulo:{ flex: 1, fontFamily: 'DMSans_600SemiBold', fontSize: 13, color: cartasBosque.tinta },
   noticiaAdminTipo:  { fontFamily: 'DMMono_400Regular', fontSize: 9, color: cartasBosque.helecho, letterSpacing: 0.3 },
   noticiaAdminFecha: { fontFamily: 'DMMono_400Regular', fontSize: 9, color: cartasBosque.niebla, marginTop: 2 },

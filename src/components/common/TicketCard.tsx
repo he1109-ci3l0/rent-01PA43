@@ -10,16 +10,16 @@ import {
 import type { Ticket } from '@/types/firestore';
 
 const ESTADO_COLORES: Record<string, { bg: string; text: string }> = {
-  en_revision: { bg: '#D6E8F5', text: '#2A5EB0' },
-  en_proceso:  { bg: '#FFF0E0', text: '#C05A00' },
-  resuelto:    { bg: '#D6EDD9', text: '#3A7D44' },
+  en_revision: { bg: '#E8EBE0', text: '#4A5E48' },
+  en_proceso:  { bg: 'rgba(138,106,114,0.1)', text: '#8A6A72' },
+  resuelto:    { bg: '#E8EBE0', text: '#4A5E48' },
 };
 
 const ETIQUETA_COLORES: Record<string, string> = {
-  mal_uso:            '#F5DAD8',
-  admin_cubre:        '#D6E8F5',
-  sin_culpa:          '#D6EDD9',
-  reportar_proveedor: '#EEE5F8',
+  mal_uso:            'rgba(103,0,16,0.15)',
+  admin_cubre:        '#E8EBE0',
+  sin_culpa:          '#E8EBE0',
+  reportar_proveedor: '#E8EBE0',
 };
 
 interface Props {
@@ -74,8 +74,8 @@ export default function TicketCard({ ticket, esAdmin = false, onPress }: Props) 
             </View>
           ))}
           {ticket.afectaScore && (
-            <View style={[styles.etiqueta, { backgroundColor: '#F5DAD8' }]}>
-              <Text style={[styles.etiquetaText, { color: '#A63228' }]}>Score ↓</Text>
+            <View style={[styles.etiqueta, { backgroundColor: 'rgba(103,0,16,0.15)' }]}>
+              <Text style={[styles.etiquetaText, { color: '#960018' }]}>Score ↓</Text>
             </View>
           )}
         </View>

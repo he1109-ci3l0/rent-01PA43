@@ -43,7 +43,7 @@ export default function SesionCard({ sesion, esActual = false, onCerrar }: Props
         <Ionicons
           name={plataformaIcon(sesion.plataforma)}
           size={20}
-          color={sesion.reporteRobo ? '#A63228' : cartasBosque.bosque}
+          color={sesion.reporteRobo ? '#960018' : cartasBosque.bosque}
         />
       </View>
 
@@ -84,11 +84,11 @@ const styles = StyleSheet.create({
   },
   cardActual: {
     borderColor: cartasBosque.musgo + '80',
-    backgroundColor: '#D6EDD9' + '33',
+    backgroundColor: '#E8EBE0' + '33',
   },
   cardRobo: {
-    borderColor: '#A63228' + '60',
-    backgroundColor: '#F5DAD8' + '33',
+    borderColor: '#960018' + '60',
+    backgroundColor: 'rgba(103,0,16,0.15)' + '33',
   },
   iconBox: {
     width: 36, height: 36, borderRadius: 18,
@@ -102,14 +102,14 @@ const styles = StyleSheet.create({
   },
   actualBadge: {
     paddingHorizontal: spacing[2], paddingVertical: 2,
-    backgroundColor: '#D6EDD9', borderRadius: borderRadius.full,
+    backgroundColor: '#E8EBE0', borderRadius: borderRadius.full,
   },
-  actualText: { fontFamily: 'DMMono_400Regular', fontSize: 9, color: '#3A7D44' },
+  actualText: { fontFamily: 'DMMono_400Regular', fontSize: 9, color: '#4A5E48' },
   roboBadge: {
     paddingHorizontal: spacing[2], paddingVertical: 2,
-    backgroundColor: '#F5DAD8', borderRadius: borderRadius.full,
+    backgroundColor: 'rgba(103,0,16,0.15)', borderRadius: borderRadius.full,
   },
-  roboText: { fontFamily: 'DMMono_400Regular', fontSize: 9, color: '#A63228' },
+  roboText: { fontFamily: 'DMMono_400Regular', fontSize: 9, color: '#960018' },
   ubicacion: { fontFamily: 'DMSans_400Regular', fontSize: 12, color: cartasBosque.tinta },
   meta:      { fontFamily: 'DMMono_400Regular', fontSize: 10, color: cartasBosque.helecho, marginTop: 1 },
   fecha:     { fontFamily: 'DMMono_400Regular', fontSize: 10, color: cartasBosque.helecho, marginTop: 2 },

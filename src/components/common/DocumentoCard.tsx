@@ -29,8 +29,8 @@ const ESTADO_LABEL: Record<DocumentoExpediente['estado'], string> = {
 
 const ESTADO_COLORS: Record<DocumentoExpediente['estado'], { bg: string; text: string }> = {
   pendiente: { bg: cartasBosque.niebla + '55', text: cartasBosque.helecho },
-  subido:    { bg: '#D6EDD9',                  text: '#3A7D44'            },
-  rechazado: { bg: '#F5DAD8',                  text: '#A63228'            },
+  subido:    { bg: '#E8EBE0',                  text: '#4A5E48'            },
+  rechazado: { bg: 'rgba(103,0,16,0.15)',                  text: '#960018'            },
 };
 
 interface Props {
@@ -66,7 +66,7 @@ export default function DocumentoCard({
               </Text>
             </View>
             {disponible && !esAdmin && (
-              <Text style={[styles.restante, agotado && { color: '#A63228' }]}>
+              <Text style={[styles.restante, agotado && { color: '#960018' }]}>
                 {agotado
                   ? 'Límite alcanzado'
                   : `${restantes} descarga${restantes !== 1 ? 's' : ''} restante${restantes !== 1 ? 's' : ''}`

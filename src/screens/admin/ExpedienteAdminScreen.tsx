@@ -29,7 +29,7 @@ function formatFecha(ts: any): string {
 }
 
 const NIVEL_COLOR: Record<string, string> = {
-  pesimo: '#A63228', moroso: '#B07D2A', regular: '#7A9E7E',
+  pesimo: '#960018', moroso: '#8A6A72', regular: '#8A9E80',
   bueno: cartasBosque.musgo,  excelente: cartasBosque.bosque,
 };
 const NIVEL_LABEL: Record<string, string> = {
@@ -164,9 +164,9 @@ function DetalleExpediente({
           <Ionicons
             name={expediente?.congelado ? 'lock-closed' : 'lock-open-outline'}
             size={16}
-            color={expediente?.congelado ? '#A63228' : cartasBosque.helecho}
+            color={expediente?.congelado ? '#960018' : cartasBosque.helecho}
           />
-          <Text style={[d.congelarText, expediente?.congelado && { color: '#A63228' }]}>
+          <Text style={[d.congelarText, expediente?.congelado && { color: '#960018' }]}>
             {expediente?.congelado ? 'Congelada' : 'Congelar'}
           </Text>
         </TouchableOpacity>
@@ -304,7 +304,7 @@ function DetalleExpediente({
         <View style={d.firmaCard}>
           {expediente?.firmaDigital ? (
             <View style={d.firmaSignedRow}>
-              <Ionicons name="checkmark-circle" size={16} color="#3A7D44" />
+              <Ionicons name="checkmark-circle" size={16} color="#4A5E48" />
               <Text style={d.firmaSignedText}>Firmado el {formatFecha(expediente.firmadoEn)}</Text>
             </View>
           ) : (
@@ -418,9 +418,9 @@ export default function ExpedienteAdminScreen() {
                 </Text>
               </View>
               <View style={[l.estadoChip,
-                inq.estado === 'moroso' && { backgroundColor: '#F5E8C8' }]}>
+                inq.estado === 'moroso' && { backgroundColor: '#E8EBE0' }]}>
                 <Text style={[l.estadoText,
-                  inq.estado === 'moroso' && { color: '#B07D2A' }]}>
+                  inq.estado === 'moroso' && { color: '#8A6A72' }]}>
                   {inq.estado}
                 </Text>
               </View>
@@ -458,7 +458,7 @@ const d = StyleSheet.create({
     paddingHorizontal: spacing[2] + 2, paddingVertical: spacing[1] + 2,
     borderRadius: borderRadius.full, borderWidth: 1, borderColor: cartasBosque.pergaminoOscuro,
   },
-  congelarBtnActivo: { borderColor: '#A63228', backgroundColor: '#F5DAD8' },
+  congelarBtnActivo: { borderColor: '#960018', backgroundColor: 'rgba(103,0,16,0.15)' },
   congelarText: { fontFamily: 'DMMono_400Regular', fontSize: 10, color: cartasBosque.helecho },
   scroll: { padding: spacing[4] },
 
@@ -494,12 +494,12 @@ const d = StyleSheet.create({
 
   cfdiCard: {
     flexDirection: 'row', alignItems: 'center', gap: spacing[3],
-    backgroundColor: '#F5E8C8', borderRadius: borderRadius.md,
+    backgroundColor: '#E8EBE0', borderRadius: borderRadius.md,
     padding: spacing[3], marginBottom: spacing[2],
     borderWidth: 1, borderColor: cartasBosque.pergaminoOscuro,
   },
   cfdiTitulo: { fontFamily: 'DMSans_600SemiBold', fontSize: 12, color: cartasBosque.tinta },
-  cfdiMeta:   { fontFamily: 'DMMono_400Regular',  fontSize: 10, color: '#B07D2A' },
+  cfdiMeta:   { fontFamily: 'DMMono_400Regular',  fontSize: 10, color: '#8A6A72' },
   cfdiBtn: {
     flexDirection: 'row', alignItems: 'center', gap: 4,
     backgroundColor: cartasBosque.bosque, borderRadius: borderRadius.md,
@@ -537,11 +537,11 @@ const d = StyleSheet.create({
     marginBottom: spacing[5],
   },
   firmaSignedRow: { flexDirection: 'row', alignItems: 'center', gap: spacing[2] },
-  firmaSignedText:{ fontFamily: 'DMMono_400Regular', fontSize: 11, color: '#3A7D44' },
+  firmaSignedText:{ fontFamily: 'DMMono_400Regular', fontSize: 11, color: '#4A5E48' },
   firmaPendiente: { fontFamily: 'DMSans_400Regular', fontSize: 12, color: cartasBosque.helecho, fontStyle: 'italic' },
 
   overlay: {
-    flex: 1, backgroundColor: 'rgba(0,0,0,0.45)', justifyContent: 'flex-end',
+    flex: 1, backgroundColor: 'rgba(18,42,31,0.45)', justifyContent: 'flex-end',
   },
 });
 
@@ -572,9 +572,9 @@ const l = StyleSheet.create({
   estadoChip: {
     paddingHorizontal: spacing[2], paddingVertical: 2,
     borderRadius: borderRadius.full,
-    backgroundColor: '#D6EDD9',
+    backgroundColor: '#E8EBE0',
   },
-  estadoText: { fontFamily: 'DMMono_400Regular', fontSize: 9, color: '#3A7D44' },
+  estadoText: { fontFamily: 'DMMono_400Regular', fontSize: 9, color: '#4A5E48' },
   empty:     { alignItems: 'center', marginTop: spacing[12] },
   emptyText: { fontFamily: 'DMSans_400Regular', fontSize: 13, color: cartasBosque.helecho },
 });

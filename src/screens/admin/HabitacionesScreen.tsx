@@ -394,7 +394,7 @@ function DetalleHabitacion({
       {/* Módulo remodelación */}
       {room.moduloRemodelacion && (
         <View style={detStyles.remodelBox}>
-          <Ionicons name="construct-outline" size={14} color="#F9A825" />
+          <Ionicons name="construct-outline" size={14} color="#CDB29D" />
           <Text style={detStyles.remodelText}>
             Módulo remodelación disponible · Pequeña → Grande $3,600/mes.
             {'\n'}Gestionar desde Catálogo.
@@ -453,12 +453,12 @@ const detStyles = StyleSheet.create({
     paddingHorizontal: spacing[3], paddingVertical: spacing[2],
     borderRadius: borderRadius.full,
   },
-  estadoChipActive: { shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.15, shadowRadius: 3, elevation: 2 },
+  estadoChipActive: { shadowColor: '#122A1F', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.15, shadowRadius: 3, elevation: 2 },
   estadoChipText: { fontFamily: 'DMSans_500Medium', fontSize: 12 },
 
   remodelBox: {
     flexDirection: 'row', alignItems: 'flex-start', gap: spacing[2],
-    backgroundColor: '#FFFDE7', borderRadius: borderRadius.md,
+    backgroundColor: 'rgba(205,178,157,0.12)', borderRadius: borderRadius.md,
     padding: spacing[3], marginBottom: spacing[2],
   },
   remodelText: { fontFamily: 'DMMono_400Regular', fontSize: 10, color: cartasBosque.musgo, flex: 1, lineHeight: 16 },
@@ -509,7 +509,7 @@ const styles = StyleSheet.create({
 
   leyenda: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing[3] },
   leyendaItem: { flexDirection: 'row', alignItems: 'center', gap: spacing[1.5] },
-  leyendaDot: { width: 10, height: 10, borderRadius: 5, borderWidth: 1, borderColor: 'rgba(0,0,0,0.08)' },
+  leyendaDot: { width: 10, height: 10, borderRadius: 5, borderWidth: 1, borderColor: 'rgba(18,42,31,0.08)' },
   leyendaLabel: { fontFamily: 'DMMono_400Regular', fontSize: 10, color: cartasBosque.helecho },
 
   // Slots deshabilitados
@@ -521,11 +521,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#EAEAE4', alignItems: 'center', justifyContent: 'center',
     borderWidth: 1, borderColor: '#D8D8D0', borderStyle: 'dashed',
   },
-  slotEtc: { backgroundColor: 'transparent', borderColor: '#C8C8C0' },
+  slotEtc: { backgroundColor: 'transparent', borderColor: '#E8EBE0' },
   slotText: { fontFamily: 'DMMono_400Regular', fontSize: 10, color: '#A8A8A0' },
 
   // Modales
-  modalOverlay: { flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0,0,0,0.4)' },
+  modalOverlay: { flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(18,42,31,0.4)' },
   detailSheet: {
     backgroundColor: cartasBosque.bruma,
     borderTopLeftRadius: borderRadius['2xl'],

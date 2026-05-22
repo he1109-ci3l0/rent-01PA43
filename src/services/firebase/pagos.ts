@@ -22,15 +22,15 @@ export const SCORE_CONFIG: Record<NivelScore, {
   bg: string;
   puntos: [number, number];
 }> = {
-  pesimo:    { label: 'Pésimo',    color: '#C62828', bg: '#FFEBEE', puntos: [0,  20] },
-  moroso:    { label: 'Moroso',    color: '#EF6C00', bg: '#FFF3E0', puntos: [20, 40] },
-  regular:   { label: 'Regular',   color: '#F9A825', bg: '#FFFDE7', puntos: [40, 60] },
-  bueno:     { label: 'Bueno',     color: '#558B2F', bg: '#F1F8E9', puntos: [60, 80] },
-  excelente: { label: 'Excelente', color: '#00897B', bg: '#E0F2F1', puntos: [80, 100] },
+  pesimo:    { label: 'Pésimo',    color: '#670010', bg: 'rgba(103,0,16,0.2)', puntos: [0,  20] },
+  moroso:    { label: 'Moroso',    color: '#8A6A72', bg: 'rgba(205,178,157,0.15)', puntos: [20, 40] },
+  regular:   { label: 'Regular',   color: '#CDB29D', bg: 'rgba(205,178,157,0.12)', puntos: [40, 60] },
+  bueno:     { label: 'Bueno',     color: '#2E3C2C', bg: '#E8EBE0', puntos: [60, 80] },
+  excelente: { label: 'Excelente', color: '#4A5E48', bg: '#E0F2F1', puntos: [80, 100] },
 };
 
 export const GRADIENT_COLORS = [
-  '#C62828', '#EF6C00', '#F9A825', '#558B2F', '#00897B',
+  '#670010', '#8A6A72', '#CDB29D', '#2E3C2C', '#4A5E48',
 ] as const;
 
 // ─── Score calculation ────────────────────────────────────────

@@ -450,19 +450,19 @@ const ESTADO_LABEL: Record<string, string> = {
 function estadoStyle(estado: string) {
   const colors: Record<string, { badge: object; txt: object; avatar: object }> = {
     pendiente_auth: {
-      badge:  { backgroundColor: '#FFF3CD', borderColor: '#FFCD39' + '60' },
-      txt:    { color: '#856404' },
+      badge:  { backgroundColor: 'rgba(205,178,157,0.15)', borderColor: '#FFCD39' + '60' },
+      txt:    { color: '#8A6A72' },
       avatar: { backgroundColor: cartasBosque.tierra + '20' },
     },
     activo: {
-      badge:  { backgroundColor: '#D6EDD9', borderColor: '#3A7D4460' },
-      txt:    { color: '#1C5631' },
+      badge:  { backgroundColor: '#E8EBE0', borderColor: '#4A5E4840' },
+      txt:    { color: '#122A1F' },
       avatar: { backgroundColor: cartasBosque.bosque + '20' },
     },
     incorporado: {
-      badge:  { backgroundColor: '#D1E8FF', borderColor: '#1565C060' },
-      txt:    { color: '#0D3C6E' },
-      avatar: { backgroundColor: '#1565C020' },
+      badge:  { backgroundColor: '#E8EBE0', borderColor: '#4A5E4840' },
+      txt:    { color: '#122A1F' },
+      avatar: { backgroundColor: '#4A5E4820' },
     },
     inactivo: {
       badge:  { backgroundColor: cartasBosque.pergaminoOscuro, borderColor: cartasBosque.helecho + '60' },
@@ -492,7 +492,7 @@ const styles = StyleSheet.create({
 
   warningBox: {
     flexDirection: 'row', alignItems: 'flex-start', gap: spacing[2],
-    backgroundColor: '#FFF3E0', borderRadius: borderRadius.md,
+    backgroundColor: 'rgba(205,178,157,0.15)', borderRadius: borderRadius.md,
     borderWidth: 1, borderColor: '#FB8C0040',
     padding: spacing[3],
   },
@@ -555,7 +555,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing[4], paddingVertical: spacing[3],
     borderTopWidth: 1, borderTopColor: cartasBosque.pergaminoOscuro,
   },
-  tablaRowFinal: { backgroundColor: '#F1F8E9' },
+  tablaRowFinal: { backgroundColor: '#E8EBE0' },
   tablaCellBold: {
     fontFamily: 'DMSans_600SemiBold', fontSize: 12, color: cartasBosque.tinta,
   },
@@ -573,7 +573,7 @@ const styles = StyleSheet.create({
 
   // Aviso
   avisoBox: {
-    backgroundColor: '#FFF8F0',
+    backgroundColor: '#F5F2EC',
     borderRadius: borderRadius.lg,
     borderWidth: 1, borderColor: cartasBosque.corteza + '30',
     padding: spacing[5], gap: spacing[4],
@@ -581,7 +581,7 @@ const styles = StyleSheet.create({
   },
   avisoIconWrap: {
     width: 60, height: 60, borderRadius: 30,
-    backgroundColor: '#FFF3E0',
+    backgroundColor: 'rgba(205,178,157,0.15)',
     alignItems: 'center', justifyContent: 'center',
   },
   avisoTitle: {
@@ -648,7 +648,7 @@ const styles = StyleSheet.create({
     alignItems: 'center', justifyContent: 'center',
     marginBottom: spacing[5],
   },
-  confirmIconOk: { backgroundColor: '#D6EDD9' },
+  confirmIconOk: { backgroundColor: '#E8EBE0' },
   confirmTitle: {
     fontFamily: 'DMSans_700Bold', fontSize: 24,
     color: cartasBosque.tinta, marginBottom: spacing[3], textAlign: 'center',

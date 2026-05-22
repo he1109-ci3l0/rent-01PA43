@@ -155,8 +155,8 @@ export default function MensajeCard({
                 style={[styles.menuItem, { marginTop: 2 }]}
                 onPress={() => { onEliminar(mensaje.id); setMenuVisible(false); }}
               >
-                <Ionicons name="trash-outline" size={18} color="#A63228" />
-                <Text style={[styles.menuItemText, { color: '#A63228' }]}>Eliminar mensaje</Text>
+                <Ionicons name="trash-outline" size={18} color="#960018" />
+                <Text style={[styles.menuItemText, { color: '#960018' }]}>Eliminar mensaje</Text>
               </TouchableOpacity>
             )}
           </View>
@@ -231,11 +231,11 @@ const styles = StyleSheet.create({
   },
 
   // Menú
-  menuOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.4)', justifyContent: 'center', alignItems: 'center' },
+  menuOverlay: { flex: 1, backgroundColor: 'rgba(18,42,31,0.4)', justifyContent: 'center', alignItems: 'center' },
   menuBox: {
     backgroundColor: cartasBosque.bruma, borderRadius: borderRadius.xl,
     padding: spacing[4], width: '85%',
-    shadowColor: '#000', shadowOpacity: 0.15, shadowRadius: 12, elevation: 8,
+    shadowColor: '#122A1F', shadowOpacity: 0.15, shadowRadius: 12, elevation: 8,
   },
   emojiRow:  { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', marginBottom: spacing[2] },
   emojiBtn:  { padding: spacing[1] + 1 },

@@ -142,8 +142,8 @@ function PermutaRow({
             {formatFechaTurno(permuta.turnoOrigenFecha)} → con {permuta.inquilinoDestinoNombre}
           </Text>
         </View>
-        <View style={[styles.badge, { backgroundColor: '#F5E8C8' }]}>
-          <Text style={[styles.badgeText, { color: '#B07D2A' }]}>pendiente</Text>
+        <View style={[styles.badge, { backgroundColor: '#E8EBE0' }]}>
+          <Text style={[styles.badgeText, { color: '#8A6A72' }]}>pendiente</Text>
         </View>
       </View>
       <View style={styles.permutaAcciones}>
@@ -171,8 +171,8 @@ function IncumpRow({ turno }: { turno: TurnoLimpieza }) {
           {AREA_LABELS[turno.area]} · {formatFechaTurno(turno.fechaProgramada)} · {turno.horaInicio}
         </Text>
       </View>
-      <View style={[styles.badge, { backgroundColor: '#F5DAD8' }]}>
-        <Text style={[styles.badgeText, { color: '#A63228' }]}>incumpl.</Text>
+      <View style={[styles.badge, { backgroundColor: 'rgba(103,0,16,0.15)' }]}>
+        <Text style={[styles.badgeText, { color: '#960018' }]}>incumpl.</Text>
       </View>
     </View>
   );
@@ -409,7 +409,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing[2], paddingVertical: 3,
   },
   btnIncumplimientoText: {
-    fontFamily: 'DMMono_400Regular', fontSize: 9, color: '#A63228', letterSpacing: 0.2,
+    fontFamily: 'DMMono_400Regular', fontSize: 9, color: '#960018', letterSpacing: 0.2,
   },
   vacio: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: spacing[2], marginTop: spacing[10] },
   vacioText: { fontFamily: 'DMSans_400Regular', fontSize: 14, color: cartasBosque.helecho },
@@ -451,7 +451,7 @@ const styles = StyleSheet.create({
   incumpNombre: { fontFamily: 'DMSans_600SemiBold', fontSize: 13, color: cartasBosque.tinta },
   incumpSub:    { fontFamily: 'DMSans_400Regular', fontSize: 11, color: cartasBosque.helecho, marginTop: 2 },
   // Modal
-  overlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.35)' },
+  overlay: { flex: 1, backgroundColor: 'rgba(18,42,31,0.35)' },
   sheet: {
     backgroundColor: cartasBosque.bruma,
     borderTopLeftRadius: borderRadius.xl, borderTopRightRadius: borderRadius.xl,

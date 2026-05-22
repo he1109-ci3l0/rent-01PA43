@@ -55,14 +55,14 @@ function agruparPorMes(pagos: Pago[]): { mes: string; total: number }[] {
 // ─── Sub-components ───────────────────────────────────────────
 
 const ESTADO_HAB_COLOR: Record<string, string> = {
-  disponible:    '#3A7D44',
+  disponible:    '#4A5E48',
   ocupada:       cartasBosque.bosque,
-  mantenimiento: '#B07D2A',
+  mantenimiento: '#8A6A72',
   reservada:     cartasBosque.musgo,
 };
 
 const NIVEL_COLOR: Record<string, string> = {
-  pesimo: '#A63228', moroso: '#B07D2A', regular: cartasBosque.helecho,
+  pesimo: '#960018', moroso: '#8A6A72', regular: cartasBosque.helecho,
   bueno:  cartasBosque.musgo, excelente: cartasBosque.bosque,
 };
 
@@ -266,21 +266,21 @@ export default function DashboardWebScreen() {
           title="Recaudado (mes)"
           value={`$${recaudadoMes.toLocaleString('es-MX')}`}
           sub={`${pagosDelMes.filter(p => p.estado === 'pagado').length} pagos verificados`}
-          color="#3A7D44"
+          color="#4A5E48"
           icon="card"
         />
         <MetricCard
           title="Pagos vencidos"
           value={String(vencidos)}
           sub={vencidos > 0 ? 'Requieren atención' : 'Todo al corriente'}
-          color={vencidos > 0 ? '#A63228' : '#3A7D44'}
+          color={vencidos > 0 ? '#960018' : '#4A5E48'}
           icon={vencidos > 0 ? 'warning' : 'checkmark-circle'}
         />
         <MetricCard
           title="Tickets abiertos"
           value={String(ticketsAbiertos)}
           sub={ticketsAbiertos > 0 ? 'Pendientes de resolver' : 'Sin tickets activos'}
-          color={ticketsAbiertos > 0 ? '#B07D2A' : cartasBosque.helecho}
+          color={ticketsAbiertos > 0 ? '#8A6A72' : cartasBosque.helecho}
           icon="headset"
         />
       </View>
@@ -365,7 +365,7 @@ export default function DashboardWebScreen() {
                 <Ionicons
                   name={al.tipo === 'reporte_robo' ? 'warning-outline' : 'phone-portrait-outline'}
                   size={14}
-                  color={al.tipo === 'reporte_robo' ? '#A63228' : cartasBosque.bosque}
+                  color={al.tipo === 'reporte_robo' ? '#960018' : cartasBosque.bosque}
                 />
                 <View style={{ flex: 1 }}>
                   <Text style={s.alertaNombre} numberOfLines={1}>{al.inquilinoNombre}</Text>
@@ -388,7 +388,7 @@ export default function DashboardWebScreen() {
 // ─── Styles ───────────────────────────────────────────────────
 
 const s = StyleSheet.create({
-  root:   { flex: 1, backgroundColor: '#F0EEE8' },
+  root:   { flex: 1, backgroundColor: '#F5F2EC' },
   scroll: { padding: spacing[5] },
 
   header: {
@@ -451,15 +451,15 @@ const s = StyleSheet.create({
   // Alertas
   alertaBadge: {
     paddingHorizontal: spacing[2], paddingVertical: 2,
-    backgroundColor: '#A63228' + '22', borderRadius: borderRadius.full,
+    backgroundColor: '#960018' + '22', borderRadius: borderRadius.full,
   },
-  alertaBadgeText: { fontFamily: 'DMMono_400Regular', fontSize: 9, color: '#A63228' },
+  alertaBadgeText: { fontFamily: 'DMMono_400Regular', fontSize: 9, color: '#960018' },
   alertaRow: {
     flexDirection: 'row', alignItems: 'center', gap: spacing[2],
     paddingVertical: spacing[2],
     borderBottomWidth: 1, borderBottomColor: cartasBosque.pergaminoOscuro,
   },
-  alertaRowNoVista: { backgroundColor: '#D6EDD9' + '33' },
+  alertaRowNoVista: { backgroundColor: '#E8EBE0' + '33' },
   alertaNombre: { fontFamily: 'DMSans_400Regular', fontSize: 12, color: cartasBosque.tinta },
   alertaMeta:   { fontFamily: 'DMMono_400Regular', fontSize: 10, color: cartasBosque.helecho },
   dotNueva:     { width: 7, height: 7, borderRadius: 4, backgroundColor: cartasBosque.bosque },

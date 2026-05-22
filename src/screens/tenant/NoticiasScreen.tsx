@@ -940,12 +940,12 @@ const st = StyleSheet.create({
     marginHorizontal: spacing[4], marginTop: spacing[5],
     paddingVertical: spacing[4], paddingHorizontal: spacing[4],
     borderRadius: borderRadius.md,
-    borderWidth: 1, borderColor: '#F5C6C2',
-    backgroundColor: 'rgba(165,50,40,0.06)',
+    borderWidth: 1, borderColor: '#CDB29D',
+    backgroundColor: 'rgba(103,0,16,0.15)',
     alignItems: 'center',
   },
   reportarBtnText: {
-    fontFamily: 'DMSans_600SemiBold', fontSize: 14, color: '#A63228',
+    fontFamily: 'DMSans_600SemiBold', fontSize: 14, color: '#960018',
   },
 
   // Badges
@@ -956,12 +956,12 @@ const st = StyleSheet.create({
   badgeText: { fontFamily: 'DMMono_400Regular', fontSize: 10, color: cartasBosque.bruma },
 
   // Panel
-  backdrop: { ...StyleSheet.absoluteFillObject, backgroundColor: '#1A1F1A', zIndex: 10 },
+  backdrop: { ...StyleSheet.absoluteFillObject, backgroundColor: '#122A1F', zIndex: 10 },
   backdropTouch: { ...StyleSheet.absoluteFillObject, zIndex: 11 },
   panel: {
     position: 'absolute', top: 0, bottom: 0, right: 0, width: PANEL_W,
     zIndex: 20, backgroundColor: cartasBosque.bruma,
-    shadowColor: '#000', shadowOpacity: 0.2, shadowRadius: 16, shadowOffset: { width: -2, height: 0 },
+    shadowColor: '#122A1F', shadowOpacity: 0.2, shadowRadius: 16, shadowOffset: { width: -2, height: 0 },
     elevation: 10, borderLeftWidth: 1, borderLeftColor: cartasBosque.pergaminoOscuro,
   },
   panelHeader: {
@@ -1048,7 +1048,7 @@ const st = StyleSheet.create({
     flexDirection: 'row', alignItems: 'center', gap: spacing[2],
     paddingHorizontal: spacing[4], paddingVertical: spacing[3],
     borderTopWidth: 1, borderTopColor: cartasBosque.pergaminoOscuro,
-    backgroundColor: '#F5E8C8',
+    backgroundColor: '#E8EBE0',
   },
   congeladoText: { fontFamily: 'DMSans_400Regular', fontSize: 12, color: cartasBosque.tierra },
 
@@ -1090,7 +1090,7 @@ const st = StyleSheet.create({
     minHeight: 140,
   },
   reporteEnviarBtn: {
-    backgroundColor: '#A63228', borderRadius: borderRadius.md,
+    backgroundColor: '#960018', borderRadius: borderRadius.md,
     paddingVertical: spacing[4], alignItems: 'center',
   },
   reporteEnviarText: { fontFamily: 'DMSans_600SemiBold', fontSize: 15, color: cartasBosque.bruma },

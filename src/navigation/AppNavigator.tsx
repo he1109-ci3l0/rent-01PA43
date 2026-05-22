@@ -53,7 +53,7 @@ function TenantNavigator() {
       initialRouteName="Home"
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: cartasBosque.bosque,
+        tabBarActiveTintColor: cartasBosque.bruma,
         tabBarInactiveTintColor: cartasBosque.helecho,
         tabBarStyle: styles.tabBar,
         tabBarLabelStyle: styles.tabLabel,
@@ -80,7 +80,7 @@ function TenantNavigator() {
               <Ionicons
                 name={focused ? 'home' : 'home-outline'}
                 size={22}
-                color={focused ? cartasBosque.bruma : cartasBosque.helecho}
+                color={focused ? '#122A1F' : cartasBosque.helecho}
               />
             </View>
           ),
@@ -170,9 +170,9 @@ export default function AppNavigator() {
 
 const styles = StyleSheet.create({
   tabBar: {
-    backgroundColor: cartasBosque.bruma,
-    borderTopColor: cartasBosque.pergaminoOscuro,
-    borderTopWidth: 1,
+    backgroundColor: '#122A1F',
+    borderTopColor: '#122A1F',
+    borderTopWidth: 0,
     height: 60,
     paddingBottom: 6,
     paddingTop: 4,
@@ -189,9 +189,9 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: cartasBosque.niebla,
+    backgroundColor: '#2E3C2C',
   },
   homePillActive: {
-    backgroundColor: cartasBosque.bosque,
+    backgroundColor: cartasBosque.bruma,
   },
 });

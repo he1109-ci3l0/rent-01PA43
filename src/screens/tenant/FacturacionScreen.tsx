@@ -22,7 +22,7 @@ const MESES = [
 ];
 
 const ESTADO_COLOR: Record<SolicitudFactura['estado'], string> = {
-  pendiente:   '#D4A017',
+  pendiente:   '#CDB29D',
   procesando:  cartasBosque.musgo,
   emitida:     cartasBosque.bosque,
   rechazada:   cartasBosque.corteza,

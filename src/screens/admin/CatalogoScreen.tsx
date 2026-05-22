@@ -115,11 +115,11 @@ export default function CatalogoScreen({ rooms, onClose }: Props) {
                       <Ionicons
                         name={room.remodelacionActiva ? 'checkmark-circle' : 'construct-outline'}
                         size={14}
-                        color={room.remodelacionActiva ? '#558B2F' : cartasBosque.helecho}
+                        color={room.remodelacionActiva ? '#2E3C2C' : cartasBosque.helecho}
                       />
                       <Text style={[
                         styles.remodelBtnText,
-                        room.remodelacionActiva && { color: '#558B2F' },
+                        room.remodelacionActiva && { color: '#2E3C2C' },
                       ]}>
                         {room.remodelacionActiva
                           ? 'Remodelación activa · Pequeña → Grande $3,600'
@@ -185,7 +185,7 @@ export default function CatalogoScreen({ rooms, onClose }: Props) {
                 {editRoom.precioAlSalir && (
                   <View style={styles.modalInfoRow}>
                     <Text style={styles.modalInfoLabel}>Precio al salir</Text>
-                    <Text style={[styles.modalInfoValue, { color: '#558B2F' }]}>
+                    <Text style={[styles.modalInfoValue, { color: '#2E3C2C' }]}>
                       ${editRoom.precioAlSalir.toLocaleString('es-MX')}/mes
                     </Text>
                   </View>
@@ -317,14 +317,14 @@ const styles = StyleSheet.create({
     marginTop: spacing[1],
     paddingHorizontal: spacing[3],
     paddingVertical: spacing[2],
-    backgroundColor: '#FFFDE7',
+    backgroundColor: 'rgba(205,178,157,0.12)',
     borderRadius: borderRadius.md,
     borderWidth: 1,
-    borderColor: '#F9A825' + '40',
+    borderColor: '#CDB29D' + '40',
   },
   remodelBtnActive: {
-    backgroundColor: '#F1F8E9',
-    borderColor: '#558B2F40',
+    backgroundColor: '#E8EBE0',
+    borderColor: '#2E3C2C40',
   },
   remodelBtnText: {
     fontFamily: 'DMMono_400Regular',
@@ -386,7 +386,7 @@ const styles = StyleSheet.create({
   divider: { height: 1, backgroundColor: cartasBosque.pergaminoOscuro },
 
   // Modal
-  modalOverlay: { flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0,0,0,0.35)' },
+  modalOverlay: { flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(18,42,31,0.35)' },
   modalSheet: {
     backgroundColor: cartasBosque.bruma,
     borderTopLeftRadius: borderRadius['2xl'],

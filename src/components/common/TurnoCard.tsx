@@ -9,9 +9,9 @@ import type { TurnoLimpieza } from '@/types/firestore';
 // ─── Estado colors ────────────────────────────────────────────
 
 const ESTADO_CONFIG: Record<TurnoLimpieza['estado'], { label: string; bg: string; text: string }> = {
-  pendiente:      { label: 'pendiente',      bg: '#F5E8C8', text: '#B07D2A' },
-  completado:     { label: 'completado',     bg: '#D6EDD9', text: '#3A7D44' },
-  incumplimiento: { label: 'incumplimiento', bg: '#F5DAD8', text: '#A63228' },
+  pendiente:      { label: 'pendiente',      bg: '#E8EBE0', text: '#8A6A72' },
+  completado:     { label: 'completado',     bg: '#E8EBE0', text: '#4A5E48' },
+  incumplimiento: { label: 'incumplimiento', bg: 'rgba(103,0,16,0.15)', text: '#960018' },
 };
 
 // ─── Props ────────────────────────────────────────────────────
@@ -108,12 +108,12 @@ export default function TurnoCard({
           )}
           {/* Vencido sin foto */}
           {vencido && turno.estado === 'pendiente' && (
-            <Text style={[styles.hint, { color: '#A63228' }]}>Ventana expirada · 12 h</Text>
+            <Text style={[styles.hint, { color: '#960018' }]}>Ventana expirada · 12 h</Text>
           )}
           {/* Foto ya subida */}
           {turno.estado === 'completado' && (
             <View style={styles.completadoRow}>
-              <Ionicons name="checkmark-circle" size={14} color="#3A7D44" />
+              <Ionicons name="checkmark-circle" size={14} color="#4A5E48" />
               <Text style={styles.completadoText}>Turno acreditado</Text>
             </View>
           )}
@@ -212,6 +212,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row', alignItems: 'center', gap: spacing[1],
   },
   completadoText: {
-    fontFamily: 'DMSans_400Regular', fontSize: 12, color: '#3A7D44',
+    fontFamily: 'DMSans_400Regular', fontSize: 12, color: '#4A5E48',
   },
 });

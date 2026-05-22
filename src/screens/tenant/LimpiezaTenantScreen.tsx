@@ -334,7 +334,7 @@ const styles = StyleSheet.create({
     fontFamily: 'DMSans_400Regular', fontSize: 14, color: cartasBosque.helecho,
   },
   // Modales
-  overlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.35)' },
+  overlay: { flex: 1, backgroundColor: 'rgba(18,42,31,0.35)' },
   sheet: {
     backgroundColor: cartasBosque.bruma,
     borderTopLeftRadius: borderRadius.xl, borderTopRightRadius: borderRadius.xl,

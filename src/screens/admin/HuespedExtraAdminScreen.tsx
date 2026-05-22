@@ -29,9 +29,9 @@ const ESTADO_LABEL: Record<string, string> = {
 };
 
 const ESTADO_COLORS: Record<string, { bg: string; txt: string; border: string }> = {
-  pendiente_auth: { bg: '#FFF3CD', txt: '#856404',    border: '#FFCD3960' },
-  activo:         { bg: '#D6EDD9', txt: '#1C5631',    border: '#3A7D4460' },
-  incorporado:    { bg: '#D1E8FF', txt: '#0D3C6E',    border: '#1565C060' },
+  pendiente_auth: { bg: 'rgba(205,178,157,0.15)', txt: '#8A6A72',    border: '#CDB29D60' },
+  activo:         { bg: '#E8EBE0', txt: '#122A1F',    border: '#4A5E4840' },
+  incorporado:    { bg: '#E8EBE0', txt: '#122A1F',    border: '#4A5E4840' },
   inactivo:       { bg: cartasBosque.pergaminoOscuro, txt: cartasBosque.musgo, border: cartasBosque.helecho + '60' },
 };
 
@@ -253,12 +253,12 @@ const statStyles = StyleSheet.create({
     borderColor: cartasBosque.pergaminoOscuro,
     padding: spacing[3], alignItems: 'center', gap: 2,
   },
-  boxAlert: { backgroundColor: '#FFF3CD', borderColor: '#FFCD3960' },
+  boxAlert: { backgroundColor: 'rgba(205,178,157,0.15)', borderColor: '#CDB29D60' },
   value: {
     fontFamily: 'DMSans_700Bold', fontSize: 24,
     color: cartasBosque.bosque,
   },
-  valueAlert: { color: '#856404' },
+  valueAlert: { color: '#8A6A72' },
   label: {
     fontFamily: 'DMMono_400Regular', fontSize: 9,
     color: cartasBosque.helecho, letterSpacing: 0.5,
@@ -461,13 +461,13 @@ const styles = StyleSheet.create({
   refMonto: { fontFamily: 'DMMono_400Regular', fontSize: 10, color: cartasBosque.bosque },
   authPill: {
     flexDirection: 'row', alignItems: 'center', gap: 3,
-    backgroundColor: '#FFF3CD', borderRadius: borderRadius.full,
+    backgroundColor: 'rgba(205,178,157,0.15)', borderRadius: borderRadius.full,
     paddingHorizontal: spacing[2], paddingVertical: spacing[0.5],
   },
   authPillTxt: { fontFamily: 'DMMono_400Regular', fontSize: 9, color: cartasBosque.corteza },
 
   // Modal
-  modalOverlay: { flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0,0,0,0.35)' },
+  modalOverlay: { flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(18,42,31,0.35)' },
   modalSheet: {
     backgroundColor: cartasBosque.bruma,
     borderTopLeftRadius: borderRadius['2xl'],

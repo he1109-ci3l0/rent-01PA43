@@ -28,7 +28,7 @@ function formatFechaHora(ts: Timestamp): string {
 function estadoColor(estado: EstadoReserva): string {
   switch (estado) {
     case 'confirmada':    return cartasBosque.bosque;
-    case 'pendiente':     return '#D4A017';
+    case 'pendiente':     return '#CDB29D';
     case 'pendiente_auth': return cartasBosque.corteza;
     case 'completada':    return cartasBosque.helecho;
     case 'cancelada':     return cartasBosque.niebla;

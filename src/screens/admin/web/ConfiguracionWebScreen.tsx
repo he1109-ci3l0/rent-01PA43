@@ -451,7 +451,7 @@ export default function ConfiguracionWebScreen() {
 // ─── Styles ───────────────────────────────────────────────────
 
 const s = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: '#F0EEE8' },
+  safe: { flex: 1, backgroundColor: '#F5F2EC' },
   header: {
     paddingHorizontal: spacing[5], paddingTop: spacing[5], paddingBottom: spacing[3],
     borderBottomWidth: 1, borderBottomColor: cartasBosque.pergaminoOscuro,

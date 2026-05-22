@@ -229,17 +229,17 @@ export default function HomeScreen() {
     pagos.slice(0, 5).forEach(p => {
       const ts = p.actualizadoEn?.toMillis?.() ?? p.creadoEn?.toMillis?.() ?? 0;
       if (p.estado === 'pagado')
-        items.push({ id: `p-${p.id}`, color: '#3A7D44', texto: `Pago verificado · ${fmtMoneda(p.monto)}`, ts });
+        items.push({ id: `p-${p.id}`, color: '#4A5E48', texto: `Pago verificado · ${fmtMoneda(p.monto)}`, ts });
       else if (p.estado === 'en_revision')
-        items.push({ id: `p-${p.id}`, color: '#C05A00', texto: 'Comprobante en revisión', ts });
+        items.push({ id: `p-${p.id}`, color: '#8A6A72', texto: 'Comprobante en revisión', ts });
       else if (p.estado === 'vencido')
-        items.push({ id: `p-${p.id}`, color: '#A63228', texto: 'Pago vencido', ts });
+        items.push({ id: `p-${p.id}`, color: '#960018', texto: 'Pago vencido', ts });
     });
 
     visitas.slice(0, 4).forEach(v => {
       const nom = v.nombreVisitante ?? v.documentoNumero;
       if (!v.fechaSalida)
-        items.push({ id: `v-${v.id}`, color: '#2A5EB0', texto: `Visita activa · ${nom}`, ts: v.fechaEntrada?.toMillis?.() ?? 0 });
+        items.push({ id: `v-${v.id}`, color: '#4A5E48', texto: `Visita activa · ${nom}`, ts: v.fechaEntrada?.toMillis?.() ?? 0 });
       else
         items.push({ id: `v-${v.id}`, color: cartasBosque.helecho, texto: `Visita finalizada · ${nom}`, ts: v.fechaSalida?.toMillis?.() ?? 0 });
     });
@@ -248,9 +248,9 @@ export default function HomeScreen() {
       const ts  = t.creadoEn?.toMillis?.() ?? 0;
       const cat = CATEGORIA_LABELS[t.categoria];
       if (t.estado === 'resuelto')
-        items.push({ id: `t-${t.id}`, color: '#3A7D44', texto: `Ticket resuelto · ${cat}`, ts });
+        items.push({ id: `t-${t.id}`, color: '#4A5E48', texto: `Ticket resuelto · ${cat}`, ts });
       else
-        items.push({ id: `t-${t.id}`, color: '#C05A00', texto: `Reporte enviado · ${cat}`, ts });
+        items.push({ id: `t-${t.id}`, color: '#8A6A72', texto: `Reporte enviado · ${cat}`, ts });
     });
 
     return items.sort((a, b) => b.ts - a.ts).slice(0, 8);
@@ -368,18 +368,18 @@ export default function HomeScreen() {
               <View style={s.headerBadgeWrap}>
                 {estado === 'adeudo' && (
                   <View style={[s.badge, s.badgeRojo]}>
-                    <Text style={[s.badgeText, { color: '#F5C6C2' }]}>Adeudo</Text>
+                    <Text style={[s.badgeText, { color: '#CDB29D' }]}>Adeudo</Text>
                   </View>
                 )}
                 {estado === 'vence_hoy' && (
                   <View style={[s.badge, s.badgeNaranja]}>
-                    <Text style={[s.badgeText, { color: '#F8A84B' }]}>Pendiente</Text>
+                    <Text style={[s.badgeText, { color: '#CDB29D' }]}>Pendiente</Text>
                   </View>
                 )}
                 {estado === 'al_corriente' && (
                   <View style={[s.badge, s.badgeVerde]}>
-                    <Ionicons name="checkmark-circle" size={10} color="#D6EDD9" />
-                    <Text style={[s.badgeText, { color: '#D6EDD9', marginLeft: 3 }]}>Al corriente</Text>
+                    <Ionicons name="checkmark-circle" size={10} color="#E8EBE0" />
+                    <Text style={[s.badgeText, { color: '#E8EBE0', marginLeft: 3 }]}>Al corriente</Text>
                   </View>
                 )}
               </View>
@@ -400,9 +400,9 @@ export default function HomeScreen() {
 
             {/* ALERTA ROJA — adeudo 4+ días */}
             {mostrarAlertaRoja && pagoActual && (
-              <View style={[s.alertaCard, { borderColor: '#F5C6C2', backgroundColor: 'rgba(165,50,40,0.18)' }]}>
-                <Ionicons name="alert-circle-outline" size={16} color="#F5C6C2" />
-                <Text style={[s.alertaText, { color: '#F5C6C2' }]}>
+              <View style={[s.alertaCard, { borderColor: '#CDB29D', backgroundColor: 'rgba(103,0,16,0.4)' }]}>
+                <Ionicons name="alert-circle-outline" size={16} color="#CDB29D" />
+                <Text style={[s.alertaText, { color: '#CDB29D' }]}>
                   Han pasado {diasVencido} día{diasVencido !== 1 ? 's' : ''} sin registrar pago · Selecciona una opción.
                 </Text>
               </View>
@@ -410,9 +410,9 @@ export default function HomeScreen() {
 
             {/* ALERTA ROSA — vence hoy */}
             {mostrarAlertaRosa && (
-              <View style={[s.alertaCard, { borderColor: '#F5C6C2', backgroundColor: '#FEF0EF' }]}>
-                <Ionicons name="alert-circle-outline" size={16} color="#A63228" />
-                <Text style={[s.alertaText, { color: '#A63228' }]}>
+              <View style={[s.alertaCard, { borderColor: '#CDB29D', backgroundColor: '#670010' }]}>
+                <Ionicons name="alert-circle-outline" size={16} color="#960018" />
+                <Text style={[s.alertaText, { color: '#960018' }]}>
                   {diasVencido === 0
                     ? 'Hoy es tu día de pago · Registra antes de que termine el día para evitar mora.'
                     : `Venció hace ${diasVencido} día${diasVencido !== 1 ? 's' : ''} · Registra tu pago.`}
@@ -422,9 +422,9 @@ export default function HomeScreen() {
 
             {/* ALERTA NARANJA — visita +40h */}
             {mostrarAlertaNaranja && visitaAlerta40h && (
-              <View style={[s.alertaCard, { borderColor: '#F8A84B55', backgroundColor: '#FFF5E0' }]}>
-                <Ionicons name="time-outline" size={16} color="#C05A00" />
-                <Text style={[s.alertaText, { color: '#C05A00' }]}>
+              <View style={[s.alertaCard, { borderColor: '#CDB29D55', backgroundColor: 'rgba(138,106,114,0.1)' }]}>
+                <Ionicons name="time-outline" size={16} color="#8A6A72" />
+                <Text style={[s.alertaText, { color: '#8A6A72' }]}>
                   Visita de {visitaAlerta40h.nombreVisitante ?? visitaAlerta40h.documentoNumero} lleva{' '}
                   {Math.floor(calcularHorasActiva(visitaAlerta40h.fechaEntrada))}h en la propiedad.
                 </Text>
@@ -670,9 +670,9 @@ const s = StyleSheet.create({
     borderRadius: borderRadius.sm, borderWidth: 1,
   },
   badgeText: { fontFamily: 'DMMono_400Regular', fontSize: 9, letterSpacing: 0.3 },
-  badgeRojo:    { backgroundColor: 'rgba(165,50,40,0.25)', borderColor: '#F5C6C2' + '88' },
-  badgeNaranja: { backgroundColor: 'rgba(248,168,75,0.15)', borderColor: '#F8A84B' + '66' },
-  badgeVerde:   { backgroundColor: 'rgba(58,125,68,0.2)', borderColor: '#3A7D44' + '66' },
+  badgeRojo:    { backgroundColor: 'rgba(103,0,16,0.4)', borderColor: '#CDB29D' + '88' },
+  badgeNaranja: { backgroundColor: 'rgba(205,178,157,0.15)', borderColor: '#CDB29D' + '66' },
+  badgeVerde:   { backgroundColor: 'rgba(74,94,72,0.2)', borderColor: '#4A5E48' + '66' },
 
   headerInfoRow: {
     flexDirection: 'row', gap: spacing[4], marginBottom: spacing[3],
@@ -705,11 +705,11 @@ const s = StyleSheet.create({
   btnDeposito: {
     borderRadius: borderRadius.md, paddingVertical: spacing[3],
     alignItems: 'center',
-    borderWidth: 1, borderColor: '#F5C6C2',
+    borderWidth: 1, borderColor: '#CDB29D',
     marginBottom: spacing[2],
   },
   btnDepositoText: {
-    fontFamily: 'DMSans_400Regular', fontSize: 12, color: '#F5C6C2',
+    fontFamily: 'DMSans_400Regular', fontSize: 12, color: '#CDB29D',
     textAlign: 'center', lineHeight: 18,
   },
 
@@ -733,8 +733,8 @@ const s = StyleSheet.create({
   cardVal: { fontFamily: 'DMSans_400Regular', fontSize: 13, color: cartasBosque.tinta },
   cardDivider: { fontFamily: 'DMSans_400Regular', fontSize: 13, color: cartasBosque.pergaminoOscuro },
   boldVal:  { fontFamily: 'DMSans_700Bold', fontSize: 13, color: cartasBosque.tinta },
-  alertVal: { fontFamily: 'DMSans_700Bold', fontSize: 13, color: '#A63228' },
-  okVal:    { fontFamily: 'DMSans_700Bold', fontSize: 13, color: '#3A7D44' },
+  alertVal: { fontFamily: 'DMSans_700Bold', fontSize: 13, color: '#960018' },
+  okVal:    { fontFamily: 'DMSans_700Bold', fontSize: 13, color: '#4A5E48' },
 
   // Visita card rows
   visitaRow: {

@@ -141,10 +141,10 @@ export default function PromoCard({
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: '#FFFDE7',
+    backgroundColor: 'rgba(205,178,157,0.12)',
     borderRadius: borderRadius.lg,
     borderWidth: 1.5,
-    borderColor: '#F9A82560',
+    borderColor: '#CDB29D60',
     padding: spacing[5],
     gap: spacing[3],
   },
@@ -157,12 +157,12 @@ const styles = StyleSheet.create({
     width: 36, height: 36, borderRadius: 18,
     backgroundColor: '#FFF8E1',
     alignItems: 'center', justifyContent: 'center',
-    borderWidth: 1, borderColor: '#F9A82540',
+    borderWidth: 1, borderColor: '#CDB29D40',
   },
   badge: {
     fontFamily: 'DMMono_400Regular',
     fontSize: 9,
-    color: '#B07D2A',
+    color: '#8A6A72',
     letterSpacing: 1.2,
   },
   titulo: {
@@ -172,13 +172,13 @@ const styles = StyleSheet.create({
   },
   countdown: {
     flexDirection: 'row', alignItems: 'center', gap: 3,
-    backgroundColor: '#F1F8E9',
+    backgroundColor: '#E8EBE0',
     paddingHorizontal: spacing[2],
     paddingVertical: spacing[1],
     borderRadius: borderRadius.full,
-    borderWidth: 1, borderColor: '#558B2F40',
+    borderWidth: 1, borderColor: '#2E3C2C40',
   },
-  countdownExp: { backgroundColor: '#F5DAD8', borderColor: '#A6322840' },
+  countdownExp: { backgroundColor: 'rgba(103,0,16,0.15)', borderColor: '#96001840' },
   countdownTxt: {
     fontFamily: 'DMMono_400Regular',
     fontSize: 11,

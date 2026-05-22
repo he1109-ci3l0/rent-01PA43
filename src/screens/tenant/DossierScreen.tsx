@@ -30,14 +30,14 @@ import type {
 // ─── Constantes ───────────────────────────────────────────────
 
 const NIVEL_COLOR: Record<string, string> = {
-  pesimo: '#A63228', moroso: '#B07D2A', regular: '#7A9E7E',
+  pesimo: '#960018', moroso: '#8A6A72', regular: '#8A9E80',
   bueno: '#4A6741', excelente: '#2C4A2E',
 };
 const NIVEL_LABEL: Record<string, string> = {
   pesimo: 'Pésimo', moroso: 'Moroso', regular: 'Regular',
   bueno: 'Bueno', excelente: 'Excelente',
 };
-const GRAD_SEGS = ['#A63228', '#C05A00', '#B07D2A', '#7A9E7E', '#305C4D'];
+const GRAD_SEGS = ['#960018', '#8A6A72', '#8A6A72', '#8A9E80', '#2E3C2C'];
 const MESES = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
 
 // ─── Helpers ──────────────────────────────────────────────────
@@ -62,20 +62,20 @@ function tiempoDesde(ts: any): string {
 function pagoEstadoBg(p: Pago): string {
   if (p.estado === 'pagado') {
     const tardio = p.fechaPago && p.fechaPago.toMillis() > p.fechaVencimiento.toMillis();
-    return tardio ? '#FFF0E0' : '#D6EDD9';
+    return tardio ? 'rgba(138,106,114,0.1)' : '#E8EBE0';
   }
-  if (p.estado === 'en_revision') return '#FFF0E0';
-  if (p.estado === 'vencido')     return '#F5DAD8';
+  if (p.estado === 'en_revision') return 'rgba(138,106,114,0.1)';
+  if (p.estado === 'vencido')     return 'rgba(103,0,16,0.15)';
   return cartasBosque.pergamino;
 }
 
 function pagoEstadoTextColor(p: Pago): string {
   if (p.estado === 'pagado') {
     const tardio = p.fechaPago && p.fechaPago.toMillis() > p.fechaVencimiento.toMillis();
-    return tardio ? '#C05A00' : '#3A7D44';
+    return tardio ? '#8A6A72' : '#4A5E48';
   }
-  if (p.estado === 'en_revision') return '#C05A00';
-  if (p.estado === 'vencido')     return '#A63228';
+  if (p.estado === 'en_revision') return '#8A6A72';
+  if (p.estado === 'vencido')     return '#960018';
   return cartasBosque.helecho;
 }
 
@@ -95,11 +95,11 @@ function barColorMes(p: Pago | undefined): string {
   if (!p) return cartasBosque.pergaminoOscuro;
   if (p.estado === 'pagado') {
     const tardio = p.fechaPago && p.fechaPago.toMillis() > p.fechaVencimiento.toMillis();
-    return tardio ? '#F5C6C2' : '#D6EDD9';
+    return tardio ? '#CDB29D' : '#E8EBE0';
   }
-  if (p.estado === 'vencido')     return '#F5DAD8';
-  if (p.estado === 'en_revision') return '#FFF0E0';
-  return '#E0D8CC';
+  if (p.estado === 'vencido')     return 'rgba(103,0,16,0.15)';
+  if (p.estado === 'en_revision') return 'rgba(138,106,114,0.1)';
+  return '#E0DDD5';
 }
 
 function getMonthBars(pagos: Pago[]) {
@@ -453,7 +453,7 @@ export default function DossierScreen() {
           {expediente?.firmaDigital ? (
             <View>
               <View style={s.firmaHeaderRow}>
-                <Ionicons name="checkmark-circle" size={18} color="#3A7D44" />
+                <Ionicons name="checkmark-circle" size={18} color="#4A5E48" />
                 <Text style={s.firmaSignedText}>Firmado el {formatFecha(expediente.firmadoEn)}</Text>
               </View>
               <View style={s.firmaPreviewBox}>
@@ -532,7 +532,7 @@ export default function DossierScreen() {
           </View>
           {/* Leyenda */}
           <View style={s.leyendaRow}>
-            {[['#D6EDD9','Completo'],['#F5C6C2','Tardío'],['#E0D8CC','Pendiente']].map(([bg,lbl]) => (
+            {[['#E8EBE0','Completo'],['#CDB29D','Tardío'],['#E0DDD5','Pendiente']].map(([bg,lbl]) => (
               <View key={lbl} style={s.leyendaItem}>
                 <View style={[s.leyendaDot, { backgroundColor: bg as string }]} />
                 <Text style={s.leyendaText}>{lbl}</Text>
@@ -667,7 +667,7 @@ export default function DossierScreen() {
                 { text: 'Cancelar' },
                 { text: 'Eliminar', style: 'destructive', onPress: () => eliminarContactoEmergencia(uid, c.id) },
               ])}>
-                <Ionicons name="trash-outline" size={16} color="#A63228" />
+                <Ionicons name="trash-outline" size={16} color="#960018" />
               </TouchableOpacity>
             </View>
           ))
@@ -730,7 +730,7 @@ export default function DossierScreen() {
           )}
           activeOpacity={0.75}
         >
-          <Ionicons name="warning-outline" size={16} color="#A63228" />
+          <Ionicons name="warning-outline" size={16} color="#960018" />
           <Text style={s.roboBtnText}>Reportar robo / extravío</Text>
         </TouchableOpacity>
 
@@ -834,11 +834,11 @@ const s = StyleSheet.create({
     borderRadius: borderRadius.md, padding: spacing[3],
     borderWidth: 1, borderColor: cartasBosque.pergaminoOscuro, marginBottom: spacing[5],
   },
-  firmaCardSigned: { borderColor: '#3A7D44' + '80', backgroundColor: '#D6EDD9' + '44' },
+  firmaCardSigned: { borderColor: '#4A5E48' + '80', backgroundColor: '#E8EBE0' + '44' },
   firmaVacioRow:   { flexDirection: 'row', alignItems: 'center', gap: spacing[2] },
   firmaVacioText:  { flex: 1, fontFamily: 'DMSans_400Regular', fontSize: 13, color: cartasBosque.bosque },
   firmaHeaderRow:  { flexDirection: 'row', alignItems: 'center', gap: spacing[1], marginBottom: spacing[2] },
-  firmaSignedText: { fontFamily: 'DMMono_400Regular', fontSize: 11, color: '#3A7D44' },
+  firmaSignedText: { fontFamily: 'DMMono_400Regular', fontSize: 11, color: '#4A5E48' },
   firmaPreviewBox: {
     height: 80, backgroundColor: cartasBosque.bruma,
     borderRadius: borderRadius.sm, overflow: 'hidden',
@@ -987,17 +987,17 @@ const s = StyleSheet.create({
   esteDispositivoText: { fontFamily: 'DMMono_400Regular', fontSize: 9, color: cartasBosque.musgo },
   cerrarSesBtn: {
     paddingHorizontal: spacing[3], paddingVertical: spacing[1] + 1,
-    borderRadius: borderRadius.sm, borderWidth: 1, borderColor: '#A63228' + '55',
-    backgroundColor: '#F5DAD8' + '55',
+    borderRadius: borderRadius.sm, borderWidth: 1, borderColor: '#960018' + '55',
+    backgroundColor: 'rgba(103,0,16,0.15)' + '55',
   },
-  cerrarSesBtnText: { fontFamily: 'DMMono_400Regular', fontSize: 10, color: '#A63228' },
+  cerrarSesBtnText: { fontFamily: 'DMMono_400Regular', fontSize: 10, color: '#960018' },
   roboBtn: {
     flexDirection: 'row', alignItems: 'center', gap: spacing[2],
     borderRadius: borderRadius.md, padding: spacing[3],
-    borderWidth: 1, borderColor: '#A63228' + '50',
-    backgroundColor: '#F5DAD8' + '33', marginBottom: spacing[5],
+    borderWidth: 1, borderColor: '#960018' + '50',
+    backgroundColor: 'rgba(103,0,16,0.15)' + '33', marginBottom: spacing[5],
   },
-  roboBtnText: { fontFamily: 'DMSans_400Regular', fontSize: 13, color: '#A63228' },
+  roboBtnText: { fontFamily: 'DMSans_400Regular', fontSize: 13, color: '#960018' },
 
   // Accesos rápidos
   accesoCard: {
@@ -1014,7 +1014,7 @@ const s = StyleSheet.create({
   accesoSub:    { fontFamily: 'DMSans_400Regular',  fontSize: 11, color: cartasBosque.helecho },
 
   // Overlay modal
-  overlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.45)', justifyContent: 'flex-end' },
+  overlay: { flex: 1, backgroundColor: 'rgba(18,42,31,0.45)', justifyContent: 'flex-end' },
 });
 
 const secStyles = StyleSheet.create({

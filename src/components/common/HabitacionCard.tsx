@@ -18,7 +18,7 @@ interface GridCellProps {
 export function HabitacionCell({ habitacion, width, height = 88, onPress }: GridCellProps) {
   const bg = habitacion.habilitada
     ? ESTADO_COLOR[habitacion.estado]
-    : '#C8C8C0';
+    : '#E8EBE0';
 
   const isOscuro = habitacion.estado === 'ocupada'
     || habitacion.estado === 'mantenimiento'
@@ -151,7 +151,7 @@ const styles = StyleSheet.create({
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: '#F9A825',
+    backgroundColor: '#CDB29D',
   },
 
   // Catalog row
@@ -197,12 +197,12 @@ const styles = StyleSheet.create({
   catalogPrecioSalida: {
     fontFamily: 'DMMono_400Regular',
     fontSize: 9,
-    color: '#558B2F',
+    color: '#2E3C2C',
   },
   catalogPrecioRemod: {
     fontFamily: 'DMMono_400Regular',
     fontSize: 9,
-    color: '#F9A825',
+    color: '#CDB29D',
   },
 
   // Slot inhabilitado

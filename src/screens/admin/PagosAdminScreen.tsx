@@ -157,19 +157,19 @@ export default function PagosAdminScreen() {
           <StatCard
             label="Por verificar"
             value={enRevision.length}
-            color="#1565C0"
+            color="#4A5E48"
             icon="time-outline"
           />
           <StatCard
             label="Urgentes"
             value={urgentes.length}
-            color="#EF6C00"
+            color="#8A6A72"
             icon="warning-outline"
           />
           <StatCard
             label="Vencidos"
             value={vencidos.length}
-            color="#C62828"
+            color="#670010"
             icon="alert-circle-outline"
           />
         </View>
@@ -295,10 +295,10 @@ function AdminPagoCard({ pago, procesando, onVerificar, onRechazar, onSetScore }
   const esUrgente = hrs <= 24 && pago.estado === 'en_revision';
   const diasMora = diasDesde(pago.fechaVencimiento);
 
-  const estadoColor = pago.estado === 'en_revision' ? '#1565C0'
-    : pago.estado === 'pagado'   ? '#00897B'
-    : pago.estado === 'rechazado'? '#C62828'
-    : '#EF6C00';
+  const estadoColor = pago.estado === 'en_revision' ? '#4A5E48'
+    : pago.estado === 'pagado'   ? '#4A5E48'
+    : pago.estado === 'rechazado'? '#670010'
+    : '#8A6A72';
 
   const estadoLabel = pago.estado === 'en_revision' ? 'En revisión'
     : pago.estado === 'pagado'   ? 'Pagado'
@@ -351,7 +351,7 @@ function AdminPagoCard({ pago, procesando, onVerificar, onRechazar, onSetScore }
             <Ionicons
               name="hourglass-outline"
               size={12}
-              color={esUrgente ? '#EF6C00' : '#1565C0'}
+              color={esUrgente ? '#8A6A72' : '#4A5E48'}
             />
             <Text style={[styles.countdownText, esUrgente && styles.countdownUrgente]}>
               {hrs}h
@@ -363,7 +363,7 @@ function AdminPagoCard({ pago, procesando, onVerificar, onRechazar, onSetScore }
       {/* Razón rechazo */}
       {pago.estado === 'rechazado' && pago.rechazadoRazon && (
         <View style={styles.rechazadoBox}>
-          <Ionicons name="close-circle-outline" size={14} color="#C62828" />
+          <Ionicons name="close-circle-outline" size={14} color="#670010" />
           <Text style={styles.rechazadoText}>{pago.rechazadoRazon}</Text>
         </View>
       )}
@@ -377,7 +377,7 @@ function AdminPagoCard({ pago, procesando, onVerificar, onRechazar, onSetScore }
             disabled={procesando}
             activeOpacity={0.8}
           >
-            <Ionicons name="close" size={16} color="#C62828" />
+            <Ionicons name="close" size={16} color="#670010" />
             <Text style={styles.btnRechazarText}>Rechazar</Text>
           </TouchableOpacity>
           <TouchableOpacity
@@ -502,33 +502,33 @@ const styles = StyleSheet.create({
   // Comprobante
   comprobanteRow: {
     flexDirection: 'row', alignItems: 'center', gap: spacing[3],
-    backgroundColor: '#EEF2FF', borderRadius: borderRadius.md, padding: spacing[3],
+    backgroundColor: '#E8EBE0', borderRadius: borderRadius.md, padding: spacing[3],
   },
-  comprobanteRowUrgente: { backgroundColor: '#FFF3E0' },
+  comprobanteRowUrgente: { backgroundColor: 'rgba(205,178,157,0.15)' },
   comprobanteMini: { width: 40, height: 52, borderRadius: borderRadius.sm, backgroundColor: cartasBosque.pergaminoOscuro },
-  comprobanteLabel: { fontFamily: 'DMSans_500Medium', fontSize: 13, color: '#1565C0' },
-  comprobanteDate:  { fontFamily: 'DMMono_400Regular', fontSize: 10, color: '#5C6BC0', marginTop: 2 },
+  comprobanteLabel: { fontFamily: 'DMSans_500Medium', fontSize: 13, color: '#4A5E48' },
+  comprobanteDate:  { fontFamily: 'DMMono_400Regular', fontSize: 10, color: '#4A5E48', marginTop: 2 },
   countdownPill: { flexDirection: 'row', alignItems: 'center', gap: 3, backgroundColor: cartasBosque.bruma, borderRadius: borderRadius.full, paddingHorizontal: spacing[2], paddingVertical: spacing[0.5] },
-  countdownText: { fontFamily: 'DMMono_500Medium', fontSize: 11, color: '#1565C0' },
-  countdownUrgente: { color: '#EF6C00' },
+  countdownText: { fontFamily: 'DMMono_500Medium', fontSize: 11, color: '#4A5E48' },
+  countdownUrgente: { color: '#8A6A72' },
 
   // Rechazo
-  rechazadoBox: { flexDirection: 'row', alignItems: 'flex-start', gap: spacing[2], backgroundColor: '#FFEBEE', borderRadius: borderRadius.md, padding: spacing[3] },
-  rechazadoText: { fontFamily: 'DMSans_400Regular', fontSize: 12, color: '#C62828', flex: 1 },
+  rechazadoBox: { flexDirection: 'row', alignItems: 'flex-start', gap: spacing[2], backgroundColor: 'rgba(103,0,16,0.2)', borderRadius: borderRadius.md, padding: spacing[3] },
+  rechazadoText: { fontFamily: 'DMSans_400Regular', fontSize: 12, color: '#670010', flex: 1 },
 
   // Acciones
   accionesRow: { flexDirection: 'row', gap: spacing[3] },
   btnRechazar: {
     flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
     gap: spacing[1.5], paddingVertical: spacing[3],
-    borderRadius: borderRadius.md, borderWidth: 1.5, borderColor: '#C62828',
+    borderRadius: borderRadius.md, borderWidth: 1.5, borderColor: '#670010',
   },
-  btnRechazarText: { fontFamily: 'DMSans_600SemiBold', fontSize: 14, color: '#C62828' },
+  btnRechazarText: { fontFamily: 'DMSans_600SemiBold', fontSize: 14, color: '#670010' },
   btnVerificar: {
     flex: 2, flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
     gap: spacing[1.5], paddingVertical: spacing[3],
-    borderRadius: borderRadius.md, backgroundColor: '#00897B',
-    shadowColor: '#00897B', shadowOffset: { width: 0, height: 3 },
+    borderRadius: borderRadius.md, backgroundColor: '#4A5E48',
+    shadowColor: '#4A5E48', shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.25, shadowRadius: 6, elevation: 3,
   },
   btnVerificarText: { fontFamily: 'DMSans_600SemiBold', fontSize: 14, color: cartasBosque.bruma },
@@ -545,7 +545,7 @@ const styles = StyleSheet.create({
   seedText: { fontFamily: 'DMMono_400Regular', fontSize: 10, color: cartasBosque.helecho },
 
   // Modal rechazo
-  modalOverlay: { flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0,0,0,0.35)' },
+  modalOverlay: { flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(18,42,31,0.35)' },
   modalSheet: {
     backgroundColor: cartasBosque.bruma, borderTopLeftRadius: borderRadius['2xl'],
     borderTopRightRadius: borderRadius['2xl'], padding: spacing[6],
@@ -569,7 +569,7 @@ const styles = StyleSheet.create({
   modalBtnCancelText: { fontFamily: 'DMSans_500Medium', fontSize: 14, color: cartasBosque.musgo },
   modalBtnReject: {
     flex: 1, paddingVertical: spacing[3], alignItems: 'center',
-    borderRadius: borderRadius.md, backgroundColor: '#C62828',
+    borderRadius: borderRadius.md, backgroundColor: '#670010',
   },
-  modalBtnRejectText: { fontFamily: 'DMSans_600SemiBold', fontSize: 14, color: '#fff' },
+  modalBtnRejectText: { fontFamily: 'DMSans_600SemiBold', fontSize: 14, color: '#FFFFFF' },
 });

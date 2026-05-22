@@ -25,16 +25,16 @@ const ESTADOS_FILTER: Array<EstadoTicket | 'todos'> = ['todos', 'en_revision', '
 const ETIQUETAS: EtiquetaTicket[] = ['mal_uso', 'admin_cubre', 'sin_culpa', 'reportar_proveedor'];
 
 const ETIQUETA_COLORES: Record<EtiquetaTicket, string> = {
-  mal_uso:            '#F5DAD8',
-  admin_cubre:        '#D6E8F5',
-  sin_culpa:          '#D6EDD9',
-  reportar_proveedor: '#EEE5F8',
+  mal_uso:            'rgba(103,0,16,0.15)',
+  admin_cubre:        '#E8EBE0',
+  sin_culpa:          '#E8EBE0',
+  reportar_proveedor: '#E8EBE0',
 };
 
 const ESTADO_COLORES: Record<EstadoTicket, { bg: string; text: string }> = {
-  en_revision: { bg: '#D6E8F5', text: '#2A5EB0' },
-  en_proceso:  { bg: '#FFF0E0', text: '#C05A00' },
-  resuelto:    { bg: '#D6EDD9', text: '#3A7D44' },
+  en_revision: { bg: '#E8EBE0', text: '#4A5E48' },
+  en_proceso:  { bg: 'rgba(138,106,114,0.1)', text: '#8A6A72' },
+  resuelto:    { bg: '#E8EBE0', text: '#4A5E48' },
 };
 
 // ─── Modal detalle ────────────────────────────────────────────
@@ -143,7 +143,7 @@ function ModalDetalle({
             ticket.etiquetas.includes('mal_uso')     ? 'mal_uso'     : 'sin_definir';
           const RESP_OPTS: Array<EtiquetaTicket | 'sin_definir'> = ['admin_cubre', 'mal_uso', 'sin_definir'];
           const RESP_COLORS: Record<string, string> = {
-            admin_cubre: '#D6E8F5', mal_uso: '#F5DAD8', sin_definir: cartasBosque.pergamino,
+            admin_cubre: '#E8EBE0', mal_uso: 'rgba(103,0,16,0.15)', sin_definir: cartasBosque.pergamino,
           };
           return (
             <>
@@ -377,7 +377,7 @@ const styles = StyleSheet.create({
   vacioText: { fontFamily: 'DMSans_400Regular', fontSize: 14, color: cartasBosque.helecho },
 
   // Modal
-  overlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.35)' },
+  overlay: { flex: 1, backgroundColor: 'rgba(18,42,31,0.35)' },
   sheet: {
     backgroundColor: cartasBosque.bruma,
     borderTopLeftRadius: borderRadius.xl, borderTopRightRadius: borderRadius.xl,
