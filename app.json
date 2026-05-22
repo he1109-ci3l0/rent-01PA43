@@ -13,6 +13,7 @@
     },
     "ios": {
       "supportsTablet": true,
+      "bundleIdentifier": "com.ci3l0.rent01pa43",
       "infoPlist": {
         "NSLocationWhenInUseUsageDescription": "Usamos tu ubicación para registrar la sesión de seguridad."
       }
