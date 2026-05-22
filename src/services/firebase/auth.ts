@@ -1,7 +1,7 @@
 // @ts-ignore — Metro resuelve firebase/auth al build RN que sí exporta initializeAuth + getReactNativePersistence
-import { initializeAuth, getAuth, getReactNativePersistence, signInWithEmailAndPassword, signOut as firebaseSignOut, onAuthStateChanged as firebaseOnAuthStateChanged, User } from 'firebase/auth';
+import { initializeAuth, getAuth, getReactNativePersistence, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut as firebaseSignOut, onAuthStateChanged as firebaseOnAuthStateChanged, User } from 'firebase/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc, Timestamp } from 'firebase/firestore';
 import app from './config';
 import { db } from './firestore';
 import { crearSesion, cerrarSesion, SESSION_KEY } from './sesiones';
@@ -57,7 +57,7 @@ async function recordFailed(username: string): Promise<{ locked: boolean; attemp
 
 // ─── API pública ──────────────────────────────────────────────
 
-export async function signIn(username: string, curp: string): Promise<void> {
+export async function signIn(username: string, password: string): Promise<void> {
   const u = username.trim().toLowerCase();
 
   const { locked, minutesLeft } = await checkLockout(u);
@@ -65,7 +65,7 @@ export async function signIn(username: string, curp: string): Promise<void> {
 
   try {
     const email = `${u}@antioquia43.app`;
-    const { user } = await signInWithEmailAndPassword(auth, email, curp.trim().toUpperCase());
+    const { user } = await signInWithEmailAndPassword(auth, email, password.trim());
     await clearLockout(u);
 
     const role = u.startsWith('bailleur') ? 'admin' : 'inquilino';
@@ -101,6 +101,45 @@ export async function signOut(): Promise<void> {
   const sesionId = await AsyncStorage.getItem(SESSION_KEY);
   if (sesionId) await cerrarSesion(sesionId).catch(() => {});
   await firebaseSignOut(auth);
+}
+
+export interface SignUpForm {
+  nombre: string;
+  apellido: string;
+  curp: string;
+  emailPersonal: string;
+  telefono: string;
+}
+
+export async function signUp(form: SignUpForm): Promise<{ username: string }> {
+  const shortId = Date.now().toString(36).slice(-5);
+  const username = `tenant_${shortId}`;
+  const email = `${username}@antioquia43.app`;
+  const curpUpper = form.curp.trim().toUpperCase();
+
+  const { user } = await createUserWithEmailAndPassword(auth, email, curpUpper);
+
+  const ahora = Timestamp.now();
+  await setDoc(doc(db, 'inquilinos', user.uid), {
+    id: user.uid,
+    uid: user.uid,
+    nombre: form.nombre.trim(),
+    apellido: form.apellido.trim(),
+    email: form.emailPersonal.trim().toLowerCase(),
+    telefono: form.telefono.trim(),
+    documentoTipo: 'CC',
+    documentoNumero: curpUpper,
+    habitacionId: null,
+    fechaIngreso: null,
+    fechaSalida: null,
+    estado: 'pendiente',
+    rol: 'inquilino',
+    requiresAdminAuth: true,
+    creadoEn: ahora,
+    actualizadoEn: ahora,
+  });
+
+  return { username };
 }
 
 export function getCurrentUser(): User | null {

@@ -16,21 +16,25 @@ import { cartasBosque } from '@/constants/colors';
 import { spacing, borderRadius } from '@/constants/spacing';
 import { useAuth } from '@/hooks/useAuth';
 
-export default function LoginScreen() {
+interface Props {
+  onRegister: () => void;
+}
+
+export default function LoginScreen({ onRegister }: Props) {
   const { signIn } = useAuth();
 
   const [username, setUsername] = useState('');
-  const [curp, setCurp] = useState('');
-  const [showCurp, setShowCurp] = useState(false);
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [lockedMinutes, setLockedMinutes] = useState<number | null>(null);
 
-  const curpRef = useRef<RNTextInput>(null);
+  const passwordRef = useRef<RNTextInput>(null);
 
   async function handleSignIn() {
-    if (!username.trim() || !curp.trim()) {
-      setErrorMsg('Ingresa tu usuario y CURP.');
+    if (!username.trim() || !password.trim()) {
+      setErrorMsg('Ingresa tu usuario y contraseña.');
       return;
     }
     setLoading(true);
@@ -38,12 +42,14 @@ export default function LoginScreen() {
     setLockedMinutes(null);
 
     try {
-      await signIn(username, curp);
+      await signIn(username, password);
     } catch (err: any) {
       if (err.code === 'LOCKED') {
         setLockedMinutes(err.minutesLeft ?? 24);
       } else if (err.code === 'NETWORK_ERROR') {
         setErrorMsg('Sin conexión. Verifica tu internet.');
+      } else if (err.code === 'REQUIRES_ADMIN_AUTH') {
+        setErrorMsg('Tu cuenta está pendiente de verificación por el administrador.');
       } else {
         const left: number = err.attemptsLeft ?? 0;
         setErrorMsg(
@@ -75,55 +81,56 @@ export default function LoginScreen() {
             <Text style={styles.logoChar}>A</Text>
           </View>
           <Text style={styles.title}>Antioquia 43</Text>
-          <Text style={styles.eyebrow}>Acceso de residentes</Text>
+          <Text style={styles.welcome}>
+            Hola, bienvenido a Antioquia 43{'\n'}tu app de renta segura
+          </Text>
         </View>
 
         {/* ── Formulario ── */}
         <View style={styles.form}>
 
-          {/* Usuario */}
+          {/* Nombre de usuario */}
           <View style={styles.field}>
-            <Text style={styles.label}>Usuario</Text>
+            <Text style={styles.label}>Nombre de usuario</Text>
             <TextInput
               style={styles.input}
               value={username}
               onChangeText={(t) => { setUsername(t); setErrorMsg(null); }}
-              placeholder="tenant_001_A1"
+              placeholder="tu_usuario"
               placeholderTextColor={cartasBosque.helecho}
               autoCapitalize="none"
               autoCorrect={false}
               returnKeyType="next"
-              onSubmitEditing={() => curpRef.current?.focus()}
+              onSubmitEditing={() => passwordRef.current?.focus()}
               editable={!isBlocked}
             />
           </View>
 
-          {/* CURP */}
+          {/* Contraseña */}
           <View style={styles.field}>
-            <Text style={styles.label}>Contraseña (CURP)</Text>
+            <Text style={styles.label}>Contraseña</Text>
             <View style={styles.passwordRow}>
               <TextInput
-                ref={curpRef}
+                ref={passwordRef}
                 style={[styles.input, { flex: 1 }]}
-                value={curp}
-                onChangeText={(t) => { setCurp(t.toUpperCase()); setErrorMsg(null); }}
-                placeholder="18 caracteres"
+                value={password}
+                onChangeText={(t) => { setPassword(t); setErrorMsg(null); }}
+                placeholder="••••••••"
                 placeholderTextColor={cartasBosque.helecho}
-                secureTextEntry={!showCurp}
-                autoCapitalize="characters"
+                secureTextEntry={!showPassword}
+                autoCapitalize="none"
                 autoCorrect={false}
-                maxLength={18}
                 returnKeyType="done"
                 onSubmitEditing={handleSignIn}
                 editable={!isBlocked}
               />
               <TouchableOpacity
                 style={styles.eyeBtn}
-                onPress={() => setShowCurp((v) => !v)}
+                onPress={() => setShowPassword((v) => !v)}
                 hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
               >
                 <Ionicons
-                  name={showCurp ? 'eye-off-outline' : 'eye-outline'}
+                  name={showPassword ? 'eye-off-outline' : 'eye-outline'}
                   size={20}
                   color={cartasBosque.musgo}
                 />
@@ -149,7 +156,7 @@ export default function LoginScreen() {
             </View>
           )}
 
-          {/* Botón */}
+          {/* Botón Entrar */}
           <TouchableOpacity
             style={[styles.button, isBlocked && styles.buttonDisabled]}
             onPress={handleSignIn}
@@ -161,6 +168,14 @@ export default function LoginScreen() {
             ) : (
               <Text style={styles.buttonText}>Entrar</Text>
             )}
+          </TouchableOpacity>
+
+          {/* Link de registro */}
+          <TouchableOpacity style={styles.registerRow} onPress={onRegister} disabled={loading}>
+            <Text style={styles.registerText}>
+              ¿No tienes cuenta aún?{' '}
+              <Text style={styles.registerLink}>Regístrate</Text>
+            </Text>
           </TouchableOpacity>
         </View>
 
@@ -207,14 +222,14 @@ const styles = StyleSheet.create({
     fontSize: 30,
     color: cartasBosque.bosque,
     letterSpacing: -0.4,
-    marginBottom: spacing[1.5],
+    marginBottom: spacing[3],
   },
-  eyebrow: {
-    fontFamily: 'DMMono_400Regular',
-    fontSize: 11,
+  welcome: {
+    fontFamily: 'DMSans_400Regular',
+    fontSize: 14,
     color: cartasBosque.musgo,
-    letterSpacing: 2,
-    textTransform: 'uppercase',
+    textAlign: 'center',
+    lineHeight: 21,
   },
 
   // Form
@@ -279,7 +294,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 
-  // Botón
+  // Botón principal
   button: {
     backgroundColor: cartasBosque.bosque,
     borderRadius: borderRadius.md,
@@ -298,6 +313,22 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: cartasBosque.bruma,
     letterSpacing: 0.3,
+  },
+
+  // Registro
+  registerRow: {
+    alignItems: 'center',
+    paddingTop: spacing[2],
+  },
+  registerText: {
+    fontFamily: 'DMSans_400Regular',
+    fontSize: 14,
+    color: cartasBosque.musgo,
+  },
+  registerLink: {
+    fontFamily: 'DMSans_600SemiBold',
+    color: cartasBosque.bosque,
+    textDecorationLine: 'underline',
   },
 
   // Footer

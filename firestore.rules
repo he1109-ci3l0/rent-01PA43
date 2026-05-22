@@ -27,7 +27,7 @@ service cloud.firestore {
     // ─── inquilinos ────────────────────────────────────────────
     match /inquilinos/{uid} {
       allow read:   if isOwner(uid) || isAdmin();
-      allow create: if isAdmin();
+      allow create: if isAdmin() || isOwner(uid);
       allow update: if isAdmin() || (isOwner(uid) && onlyUpdatesAllowed(['telefono', 'avatar']));
       allow delete: if isAdmin();
     }

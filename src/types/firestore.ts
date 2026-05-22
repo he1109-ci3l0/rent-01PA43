@@ -22,7 +22,7 @@ export interface Inquilino {
   habitacionId: string | null;
   fechaIngreso: Timestamp | null;
   fechaSalida: Timestamp | null;
-  estado: 'activo' | 'inactivo' | 'moroso';
+  estado: 'activo' | 'inactivo' | 'moroso' | 'pendiente';
   avatar?: string;                // URL Storage
   rol: Rol;
   requiresAdminAuth?: boolean;
