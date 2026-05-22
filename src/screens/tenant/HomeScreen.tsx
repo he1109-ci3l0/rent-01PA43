@@ -15,7 +15,7 @@ import { db } from '@/services/firebase/firestore';
 import { cartasBosque } from '@/constants/colors';
 import { spacing, borderRadius } from '@/constants/spacing';
 import { useAuth } from '@/hooks/useAuth';
-import { listenMisPagos, registrarComprobante } from '@/services/firebase/pagos';
+import { listenMisPagos, registrarComprobante, listenScore } from '@/services/firebase/pagos';
 import { listenMisVisitas, registrarSalida, calcularHorasActiva } from '@/services/firebase/visitas';
 import { listenMisReservas, CARGAS_INCLUIDAS_MES } from '@/services/firebase/lavanderia';
 import { listenEspacios } from '@/services/firebase/almacenamiento';
@@ -144,9 +144,7 @@ export default function HomeScreen() {
     const u6 = listenMisTickets(uid, setTickets);
     const u7 = listenExpediente(uid, setExpediente);
     const u8 = listenDocumentos(uid, setDocumentos);
-    const u9 = onSnapshot(doc(db, 'scores', uid), snap => {
-      if (snap.exists()) setScore({ ...snap.data(), id: snap.id } as ScoreReputacion);
-    });
+    const u9 = listenScore(uid, s => setScore(s));
     return () => { u1(); u2(); u3(); u4(); u5(); u6(); u7(); u8(); u9(); };
   }, [uid]);
 
@@ -166,10 +164,21 @@ export default function HomeScreen() {
       .reduce((sum, p) => sum + p.monto, 0);
   }, [pagos]);
 
-  // Pago de referencia para el header
-  const pagoHeader = pagoActual ?? proxPago;
-  const venceLabel = pagoHeader
-    ? (pagoHeader.fechaVencimiento.toMillis() <= Date.now() ? 'hoy' : fmtFecha(pagoHeader.fechaVencimiento))
+  // Próximo pago calculado desde fechaIngreso + ciclo mensual
+  const proximoPagoDate = useMemo((): Date | null => {
+    if (!inquilino?.fechaIngreso) return null;
+    const dia = inquilino.fechaIngreso.toDate().getDate();
+    const ahora = new Date();
+    const esteMs = new Date(ahora.getFullYear(), ahora.getMonth(), dia);
+    return esteMs >= ahora
+      ? esteMs
+      : new Date(ahora.getFullYear(), ahora.getMonth() + 1, dia);
+  }, [inquilino]);
+
+  const venceLabel = proximoPagoDate
+    ? (proximoPagoDate.toDateString() === new Date().toDateString()
+        ? 'hoy'
+        : `${proximoPagoDate.getDate()} ${MESES_CORTO[proximoPagoDate.getMonth()]}`)
     : '—';
 
   // Cargas lavandería disponibles este mes
@@ -349,7 +358,7 @@ export default function HomeScreen() {
               <View style={s.headerField}>
                 <Text style={s.headerFieldLabel}>RENTA</Text>
                 <Text style={s.headerMonto}>
-                  {pagoHeader ? fmtMoneda(pagoHeader.monto) : '—'}
+                  {inquilino?.rentaMensual ? fmtMoneda(inquilino.rentaMensual) : '—'}
                 </Text>
               </View>
               <View style={s.headerField}>
@@ -378,11 +387,12 @@ export default function HomeScreen() {
 
             {/* PRÓXIMO PAGO · ADEUDOS */}
             <View style={s.headerInfoRow}>
-              {proxPago && (
-                <Text style={s.headerInfoText}>
-                  PRÓXIMO PAGO: {fmtFecha(proxPago.fechaVencimiento)}
-                </Text>
-              )}
+              <Text style={s.headerInfoText}>
+                PRÓXIMO PAGO:{' '}
+                {proximoPagoDate
+                  ? `${proximoPagoDate.getDate()} ${MESES_CORTO[proximoPagoDate.getMonth()]}`
+                  : '—'}
+              </Text>
               <Text style={s.headerInfoText}>
                 ADEUDOS: {adeudosTotal > 0 ? fmtMoneda(adeudosTotal) : '$0'}
               </Text>

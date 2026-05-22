@@ -23,6 +23,7 @@ export interface Inquilino {
   fechaIngreso: Timestamp | null;
   fechaSalida: Timestamp | null;
   estado: 'activo' | 'inactivo' | 'moroso' | 'pendiente';
+  rentaMensual?: number;          // renta mensual en pesos (denormalizado)
   avatar?: string;                // URL Storage
   rol: Rol;
   requiresAdminAuth?: boolean;
