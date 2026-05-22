@@ -25,8 +25,14 @@ service cloud.firestore {
     }
 
     // ─── inquilinos ────────────────────────────────────────────
+    // isOwner(uid) cubre lecturas directas por doc-ID;
+    // resource.data.uid == request.auth.uid cubre consultas por campo uid;
+    // resource.data.estado == 'activo' permite listar tenants activos (menciones, limpieza, etc.)
     match /inquilinos/{uid} {
-      allow read:   if isOwner(uid) || isAdmin();
+      allow read:   if isAdmin()
+                    || isOwner(uid)
+                    || (isAuth() && resource.data.uid == request.auth.uid)
+                    || (isAuth() && resource.data.estado == 'activo');
       allow create: if isAdmin() || isOwner(uid);
       allow update: if isAdmin() || (isOwner(uid) && onlyUpdatesAllowed(['telefono', 'avatar']));
       allow delete: if isAdmin();
@@ -224,8 +230,12 @@ service cloud.firestore {
     }
 
     // ─── scores ────────────────────────────────────────────────
+    // isOwner(inquilinoId) cubre lectura directa por doc-ID;
+    // resource.data.inquilinoId == request.auth.uid cubre queries where('inquilinoId','==',uid)
     match /scores/{inquilinoId} {
-      allow read:   if isAdmin() || isOwner(inquilinoId);
+      allow read:   if isAdmin()
+                    || isOwner(inquilinoId)
+                    || (isAuth() && resource.data.inquilinoId == request.auth.uid);
       allow write:  if isAdmin();
     }
 

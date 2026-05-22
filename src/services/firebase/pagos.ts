@@ -74,7 +74,11 @@ export function listenMisPagos(
     where('inquilinoId', '==', inquilinoId),
     orderBy('fechaVencimiento', 'desc'),
   );
-  return onSnapshot(q, snap => cb(snap.docs.map(d => ({ ...(d.data() as Omit<Pago, 'id'>), id: d.id }))));
+  return onSnapshot(
+    q,
+    snap => cb(snap.docs.map(d => ({ ...(d.data() as Omit<Pago, 'id'>), id: d.id }))),
+    _err => cb([]),
+  );
 }
 
 export function listenTodosLosPagos(cb: (pagos: Pago[]) => void): () => void {
@@ -87,11 +91,15 @@ export function listenScore(
   cb: (score: ScoreReputacion | null) => void,
 ): () => void {
   const q = query(collections.scores, where('inquilinoId', '==', inquilinoId));
-  return onSnapshot(q, snap => {
-    if (snap.empty) { cb(null); return; }
-    const d = snap.docs[0];
-    cb({ ...(d.data() as Omit<ScoreReputacion, 'id'>), id: d.id });
-  });
+  return onSnapshot(
+    q,
+    snap => {
+      if (snap.empty) { cb(null); return; }
+      const d = snap.docs[0];
+      cb({ ...(d.data() as Omit<ScoreReputacion, 'id'>), id: d.id });
+    },
+    _err => cb(null),
+  );
 }
 
 // ─── Acciones del inquilino ───────────────────────────────────

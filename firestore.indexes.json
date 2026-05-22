@@ -1,4 +1,38 @@
 {
-  "indexes": [],
+  "indexes": [
+    {
+      "collectionGroup": "pagos",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "inquilinoId",      "order": "ASCENDING"  },
+        { "fieldPath": "fechaVencimiento", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "sesiones",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "usuarioId",     "order": "ASCENDING" },
+        { "fieldPath": "dispositivoId", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "sesiones",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "usuarioId",   "order": "ASCENDING" },
+        { "fieldPath": "activa",      "order": "ASCENDING" },
+        { "fieldPath": "fechaInicio", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "sesiones",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "usuarioId",   "order": "ASCENDING"  },
+        { "fieldPath": "fechaInicio", "order": "DESCENDING" }
+      ]
+    }
+  ],
   "fieldOverrides": []
 }
