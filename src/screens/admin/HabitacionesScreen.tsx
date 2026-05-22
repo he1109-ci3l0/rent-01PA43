@@ -489,7 +489,7 @@ const statStyles = StyleSheet.create({
 // ─── Estilos principales ──────────────────────────────────────
 
 const styles = StyleSheet.create({
-  root:    { flex: 1, backgroundColor: cartasBosque.pergamino },
+  root:    { flex: 1, backgroundColor: cartasBosque.bruma },
   content: { padding: H_PADDING, paddingBottom: spacing[10], gap: spacing[5] },
   center:  { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: cartasBosque.bruma },
 

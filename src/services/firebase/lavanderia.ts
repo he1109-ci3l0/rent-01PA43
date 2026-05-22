@@ -253,6 +253,27 @@ export function listenReservasSemana(
   );
 }
 
+export function listenReservasMes(
+  mes: Date,
+  cb: (reservas: ReservaLavanderia[]) => void,
+): () => void {
+  const inicio = new Date(mes.getFullYear(), mes.getMonth(), 1, 0, 0, 0, 0);
+  const fin    = new Date(mes.getFullYear(), mes.getMonth() + 1, 0, 23, 59, 59, 999);
+  const q = query(
+    collections.reservasLavanderia,
+    where('fechaReserva', '>=', Timestamp.fromDate(inicio)),
+    where('fechaReserva', '<=', Timestamp.fromDate(fin)),
+  );
+  return onSnapshot(q,
+    snap => {
+      const all = snap.docs.map(d => ({ ...(d.data() as Omit<ReservaLavanderia, 'id'>), id: d.id }));
+      all.sort((a, b) => (a.fechaReserva?.toMillis?.() ?? 0) - (b.fechaReserva?.toMillis?.() ?? 0));
+      cb(all);
+    },
+    err => console.warn('[lavanderia] listenMes error:', err.code),
+  );
+}
+
 // ─── Seed ─────────────────────────────────────────────────────
 
 export async function seedReservas(): Promise<void> {

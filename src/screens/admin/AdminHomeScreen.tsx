@@ -13,7 +13,7 @@ export default function AdminHomeScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: cartasBosque.pergamino, alignItems: 'center', justifyContent: 'center', gap: spacing[2] },
+  container: { flex: 1, backgroundColor: cartasBosque.bruma, alignItems: 'center', justifyContent: 'center', gap: spacing[2] },
   eyebrow: { fontFamily: 'DMMono_400Regular', fontSize: 11, color: cartasBosque.musgo, letterSpacing: 2, textTransform: 'uppercase' },
   text: { fontFamily: 'DMSans_400Regular', fontSize: 16, color: cartasBosque.tinta },
 });

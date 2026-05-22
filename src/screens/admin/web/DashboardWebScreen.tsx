@@ -55,15 +55,15 @@ function agruparPorMes(pagos: Pago[]): { mes: string; total: number }[] {
 // ─── Sub-components ───────────────────────────────────────────
 
 const ESTADO_HAB_COLOR: Record<string, string> = {
-  disponible: '#3A7D44',
-  ocupada:    cartasBosque.bosque,
+  disponible:    '#3A7D44',
+  ocupada:       cartasBosque.bosque,
   mantenimiento: '#B07D2A',
-  reservada:  '#4A6741',
+  reservada:     cartasBosque.musgo,
 };
 
 const NIVEL_COLOR: Record<string, string> = {
-  pesimo: '#A63228', moroso: '#B07D2A', regular: '#7A9E7E',
-  bueno: '#4A6741',  excelente: '#2C4A2E',
+  pesimo: '#A63228', moroso: '#B07D2A', regular: cartasBosque.helecho,
+  bueno:  cartasBosque.musgo, excelente: cartasBosque.bosque,
 };
 
 const NIVEL_LABEL: Record<string, string> = {
@@ -501,6 +501,6 @@ const rg = StyleSheet.create({
     width: 52, height: 44, borderRadius: 8,
     alignItems: 'center', justifyContent: 'center',
   },
-  num:  { fontFamily: 'DMSans_600SemiBold', fontSize: 12, color: '#FAFAF5' },
-  piso: { fontFamily: 'DMMono_400Regular', fontSize: 8, color: '#FAFAF5AA' },
+  num:  { fontFamily: 'DMSans_600SemiBold', fontSize: 12, color: '#FFFFFF' },
+  piso: { fontFamily: 'DMMono_400Regular', fontSize: 8, color: '#FFFFFFAA' },
 });

@@ -10,21 +10,25 @@ import ConfiguracionWebScreen from '@/screens/admin/web/ConfiguracionWebScreen';
 
 // ── Re-used admin screens ─────────────────────────────────────
 import PagosAdminScreen          from '@/screens/admin/PagosAdminScreen';
-import ServiciosAdminScreen      from '@/screens/admin/ServiciosAdminScreen';
 import HabitacionesScreen        from '@/screens/admin/HabitacionesScreen';
 import LavanderiaAdminScreen     from '@/screens/admin/LavanderiaAdminScreen';
+import LimpiezaAdminScreen       from '@/screens/admin/LimpiezaAdminScreen';
 import AlmacenamientoAdminScreen from '@/screens/admin/AlmacenamientoAdminScreen';
+import FacturasAdminScreen       from '@/screens/admin/FacturasAdminScreen';
 import TicketsAdminScreen        from '@/screens/admin/TicketsAdminScreen';
 import ChatAdminScreen           from '@/screens/admin/ChatAdminScreen';
 import SesionesAdminScreen       from '@/screens/admin/SesionesAdminScreen';
 import ExpedienteAdminScreen     from '@/screens/admin/ExpedienteAdminScreen';
 
+// ── Web-specific screens ──────────────────────────────────────
+import InquilinosWebScreen   from '@/screens/admin/web/InquilinosWebScreen';
+
 // ─── Types ────────────────────────────────────────────────────
 
 type Seccion =
   | 'dashboard' | 'pagos' | 'inquilinos' | 'habitaciones'
-  | 'lavanderia' | 'almacenamiento' | 'tickets' | 'chat'
-  | 'sesiones' | 'expedientes' | 'configuracion';
+  | 'lavanderia' | 'limpieza' | 'almacenamiento' | 'facturacion'
+  | 'tickets' | 'chat' | 'sesiones' | 'expedientes' | 'configuracion';
 
 interface NavItem {
   id: Seccion;
@@ -39,7 +43,9 @@ const NAV_ITEMS: NavItem[] = [
   { id: 'inquilinos',     label: 'Inquilinos',      icon: 'people-outline',        iconActive: 'people' },
   { id: 'habitaciones',   label: 'Habitaciones',    icon: 'bed-outline',           iconActive: 'bed' },
   { id: 'lavanderia',     label: 'Lavandería',      icon: 'water-outline',         iconActive: 'water' },
+  { id: 'limpieza',       label: 'Limpieza',        icon: 'sparkles-outline',      iconActive: 'sparkles' },
   { id: 'almacenamiento', label: 'Almacenamiento',  icon: 'archive-outline',       iconActive: 'archive' },
+  { id: 'facturacion',    label: 'Facturación',     icon: 'receipt-outline',       iconActive: 'receipt' },
   { id: 'tickets',        label: 'Tickets',         icon: 'headset-outline',       iconActive: 'headset' },
   { id: 'chat',           label: 'Noticias / Chat', icon: 'chatbubbles-outline',   iconActive: 'chatbubbles' },
   { id: 'sesiones',       label: 'Sesiones',        icon: 'shield-outline',        iconActive: 'shield' },
@@ -53,10 +59,12 @@ function SeccionContent({ seccion }: { seccion: Seccion }) {
   switch (seccion) {
     case 'dashboard':      return <DashboardWebScreen />;
     case 'pagos':          return <PagosAdminScreen />;
-    case 'inquilinos':     return <ServiciosAdminScreen />;
+    case 'inquilinos':     return <InquilinosWebScreen />;
     case 'habitaciones':   return <HabitacionesScreen />;
     case 'lavanderia':     return <LavanderiaAdminScreen />;
+    case 'limpieza':       return <LimpiezaAdminScreen />;
     case 'almacenamiento': return <AlmacenamientoAdminScreen />;
+    case 'facturacion':    return <FacturasAdminScreen />;
     case 'tickets':        return <TicketsAdminScreen />;
     case 'chat':           return <ChatAdminScreen />;
     case 'sesiones':       return <SesionesAdminScreen />;
@@ -95,12 +103,17 @@ export default function WebAdminNavigator() {
           ))}
 
           <Text style={s.navGroup}>SERVICIOS</Text>
-          {NAV_ITEMS.slice(4, 8).map(item => (
+          {NAV_ITEMS.slice(4, 7).map(item => (
+            <NavBtn key={item.id} item={item} active={seccion === item.id} onPress={() => setSeccion(item.id)} />
+          ))}
+
+          <Text style={s.navGroup}>FINANZAS</Text>
+          {NAV_ITEMS.slice(7, 9).map(item => (
             <NavBtn key={item.id} item={item} active={seccion === item.id} onPress={() => setSeccion(item.id)} />
           ))}
 
           <Text style={s.navGroup}>ADMINISTRACIÓN</Text>
-          {NAV_ITEMS.slice(8).map(item => (
+          {NAV_ITEMS.slice(9).map(item => (
             <NavBtn key={item.id} item={item} active={seccion === item.id} onPress={() => setSeccion(item.id)} />
           ))}
 

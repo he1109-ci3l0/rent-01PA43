@@ -60,6 +60,13 @@ export interface Habitacion {
   habilitada: boolean;             // false = slot inhabitado (015–045)
   moduloRemodelacion?: boolean;    // hab 03: activable desde admin
   remodelacionActiva?: boolean;    // estado actual del módulo
+  modulosHabilitados?: {           // override por habitación (si undefined → usa config global)
+    lavanderia?:     boolean;
+    almacenamiento?: boolean;
+    huespedExtra?:   boolean;
+    visitas?:        boolean;
+    facturacion?:    boolean;
+  };
   inquilinoId: string | null;
   inquilinoNombre?: string;        // denormalizado para display rápido
   creadoEn: Timestamp;

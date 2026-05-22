@@ -14,14 +14,11 @@ import VisitasScreen        from '@/screens/tenant/VisitasScreen';
 import SoporteScreen        from '@/screens/tenant/SoporteScreen';
 
 // ── Admin screens ─────────────────────────────────────────────
-import HabitacionesScreen        from '@/screens/admin/HabitacionesScreen';
-import PagosAdminScreen          from '@/screens/admin/PagosAdminScreen';
-import ServiciosAdminScreen      from '@/screens/admin/ServiciosAdminScreen';
-import VisitasAdminScreen        from '@/screens/admin/VisitasAdminScreen';
-import FacturasAdminScreen       from '@/screens/admin/FacturasAdminScreen';
-import TicketsAdminScreen        from '@/screens/admin/TicketsAdminScreen';
-import ChatAdminScreen           from '@/screens/admin/ChatAdminScreen';
-import SesionesAdminScreen       from '@/screens/admin/SesionesAdminScreen';
+import DashboardAdminScreen from '@/screens/admin/DashboardAdminScreen';
+import PagosAdminScreen     from '@/screens/admin/PagosAdminScreen';
+import ServiciosAdminScreen from '@/screens/admin/ServiciosAdminScreen';
+import TicketsAdminScreen   from '@/screens/admin/TicketsAdminScreen';
+import ConfigAdminScreen    from '@/screens/admin/ConfigAdminScreen';
 
 type IoniconsName = React.ComponentProps<typeof Ionicons>['name'];
 
@@ -109,13 +106,11 @@ function TenantNavigator() {
 // ─────────────────────────────────────────────────────────────
 
 type AdminTabList = {
-  Panel: undefined;
+  Dashboard:  undefined;
+  Pagos:      undefined;
   Inquilinos: undefined;
-  Pagos: undefined;
-  Tickets: undefined;
-  Chat: undefined;
-  Ajustes: undefined;
-  Seguridad: undefined;
+  Tickets:    undefined;
+  Config:     undefined;
 };
 
 const AdminTab = createBottomTabNavigator<AdminTabList>();
@@ -123,7 +118,7 @@ const AdminTab = createBottomTabNavigator<AdminTabList>();
 function AdminNavigator() {
   return (
     <AdminTab.Navigator
-      initialRouteName="Panel"
+      initialRouteName="Dashboard"
       screenOptions={{
         headerShown: false,
         tabBarActiveTintColor: cartasBosque.bosque,
@@ -133,14 +128,9 @@ function AdminNavigator() {
       }}
     >
       <AdminTab.Screen
-        name="Panel"
-        component={HabitacionesScreen}
-        options={{ tabBarIcon: tabIcon('grid-outline', 'grid') }}
-      />
-      <AdminTab.Screen
-        name="Inquilinos"
-        component={ServiciosAdminScreen}
-        options={{ tabBarIcon: tabIcon('apps-outline', 'apps'), tabBarLabel: 'Servicios' }}
+        name="Dashboard"
+        component={DashboardAdminScreen}
+        options={{ tabBarIcon: tabIcon('grid-outline', 'grid'), tabBarLabel: 'Dashboard' }}
       />
       <AdminTab.Screen
         name="Pagos"
@@ -148,24 +138,19 @@ function AdminNavigator() {
         options={{ tabBarIcon: tabIcon('card-outline', 'card') }}
       />
       <AdminTab.Screen
+        name="Inquilinos"
+        component={ServiciosAdminScreen}
+        options={{ tabBarIcon: tabIcon('people-outline', 'people'), tabBarLabel: 'Inquilinos' }}
+      />
+      <AdminTab.Screen
         name="Tickets"
         component={TicketsAdminScreen}
         options={{ tabBarIcon: tabIcon('headset-outline', 'headset'), tabBarLabel: 'Tickets' }}
       />
       <AdminTab.Screen
-        name="Chat"
-        component={ChatAdminScreen}
-        options={{ tabBarIcon: tabIcon('chatbubbles-outline', 'chatbubbles'), tabBarLabel: 'Chat' }}
-      />
-      <AdminTab.Screen
-        name="Ajustes"
-        component={FacturasAdminScreen}
-        options={{ tabBarIcon: tabIcon('receipt-outline', 'receipt'), tabBarLabel: 'Facturación' }}
-      />
-      <AdminTab.Screen
-        name="Seguridad"
-        component={SesionesAdminScreen}
-        options={{ tabBarIcon: tabIcon('shield-outline', 'shield'), tabBarLabel: 'Seguridad' }}
+        name="Config"
+        component={ConfigAdminScreen}
+        options={{ tabBarIcon: tabIcon('settings-outline', 'settings'), tabBarLabel: 'Config' }}
       />
     </AdminTab.Navigator>
   );

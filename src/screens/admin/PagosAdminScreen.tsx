@@ -435,7 +435,7 @@ function AdminPagoCard({ pago, procesando, onVerificar, onRechazar, onSetScore }
 // ─── Estilos ──────────────────────────────────────────────────
 
 const styles = StyleSheet.create({
-  root:    { flex: 1, backgroundColor: cartasBosque.pergamino },
+  root:    { flex: 1, backgroundColor: cartasBosque.bruma },
   content: { padding: spacing[5], paddingBottom: spacing[10] },
   center:  { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: cartasBosque.bruma },
 

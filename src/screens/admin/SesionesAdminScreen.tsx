@@ -28,7 +28,7 @@ const TIPO_LABEL: Record<string, string> = {
 };
 
 const TIPO_COLOR: Record<string, string> = {
-  dispositivo_nuevo: '#2C4A2E',
+  dispositivo_nuevo: cartasBosque.bosque,
   reporte_robo:      '#A63228',
 };
 

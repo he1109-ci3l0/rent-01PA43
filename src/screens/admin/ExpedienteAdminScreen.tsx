@@ -30,7 +30,7 @@ function formatFecha(ts: any): string {
 
 const NIVEL_COLOR: Record<string, string> = {
   pesimo: '#A63228', moroso: '#B07D2A', regular: '#7A9E7E',
-  bueno: '#4A6741',  excelente: '#2C4A2E',
+  bueno: cartasBosque.musgo,  excelente: cartasBosque.bosque,
 };
 const NIVEL_LABEL: Record<string, string> = {
   pesimo: 'Pésimo', moroso: 'Moroso', regular: 'Regular',
@@ -496,7 +496,7 @@ const d = StyleSheet.create({
     flexDirection: 'row', alignItems: 'center', gap: spacing[3],
     backgroundColor: '#F5E8C8', borderRadius: borderRadius.md,
     padding: spacing[3], marginBottom: spacing[2],
-    borderWidth: 1, borderColor: '#E4D8B4',
+    borderWidth: 1, borderColor: cartasBosque.pergaminoOscuro,
   },
   cfdiTitulo: { fontFamily: 'DMSans_600SemiBold', fontSize: 12, color: cartasBosque.tinta },
   cfdiMeta:   { fontFamily: 'DMMono_400Regular',  fontSize: 10, color: '#B07D2A' },
