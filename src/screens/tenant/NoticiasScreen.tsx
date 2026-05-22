@@ -594,7 +594,11 @@ export default function NoticiasScreen() {
   }
 
   async function crearGrupo() {
-    Alert.prompt?.(
+    if (!Alert.prompt) {
+      Alert.alert('Próximamente', 'La creación de grupos está disponible en iOS 13+.');
+      return;
+    }
+    Alert.prompt(
       'Nuevo grupo',
       'Nombre del grupo',
       async (nombre) => {
@@ -614,7 +618,7 @@ export default function NoticiasScreen() {
         } catch { Alert.alert('Error', 'No se pudo crear el grupo.'); }
       },
       'plain-text',
-    ) ?? Alert.alert('Próximamente', 'La creación de grupos está disponible en iOS 13+.');
+    );
   }
 
   async function enviarReporteAcoso() {

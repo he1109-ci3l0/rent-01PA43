@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { User } from '@firebase/auth';
+import { User } from 'firebase/auth';
 import * as authService from '@/services/firebase/auth';
 import type { SignUpForm } from '@/services/firebase/auth';
 

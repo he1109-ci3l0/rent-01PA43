@@ -1,6 +1,6 @@
 import {
   query, where, onSnapshot,
-  doc, addDoc, updateDoc, getDocs, serverTimestamp, Timestamp,
+  doc, addDoc, updateDoc, getDocs, serverTimestamp, Timestamp, FieldValue,
 } from 'firebase/firestore';
 import { db, collections } from './firestore';
 import type { Cupon, CuponUso, ConceptoCupon, ErrorCupon, TipoCupon } from '@/types/firestore';
@@ -110,7 +110,7 @@ export async function actualizarCupon(
 ): Promise<void> {
   const payload: Record<string, unknown> = { ...campos };
   if (campos.codigo) payload.codigo = campos.codigo.toUpperCase();
-  await updateDoc(doc(db, 'cupones', id), payload);
+  await updateDoc(doc(db, 'cupones', id), payload as Record<string, FieldValue | Partial<unknown> | undefined>);
 }
 
 export async function toggleDisponible(id: string, disponible: boolean): Promise<void> {
