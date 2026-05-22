@@ -27,9 +27,9 @@ type Paso = 'lista' | 'formulario' | 'confirmacion';
 const CATEGORIAS = Object.keys(CATEGORIA_LABELS) as CategoriaTicket[];
 
 const CATEGORIA_EMOJI: Record<CategoriaTicket, string> = {
-  internet:          '📶',
+  internet:          '📊',
   pago:              '💳',
-  reporte_limpieza:  '🧹',
+  reporte_limpieza:  '🖌️',
   reporte_inquilino: '👤',
   lavadora:          '🫧',
   almacenamiento:    '🔒',

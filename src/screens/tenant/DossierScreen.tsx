@@ -12,7 +12,6 @@ import { cartasBosque } from '@/constants/colors';
 import { spacing, borderRadius } from '@/constants/spacing';
 import { useAuth } from '@/hooks/useAuth';
 import DocumentoCard from '@/components/common/DocumentoCard';
-import SesionCard from '@/components/common/SesionCard';
 import FacturacionScreen from './FacturacionScreen';
 import {
   listenExpediente, listenDocumentos, inicializarExpediente,
@@ -20,27 +19,100 @@ import {
   agregarContactoEmergencia, eliminarContactoEmergencia,
   agregarMascota, eliminarMascota,
 } from '@/services/firebase/expedientes';
+import { listenMisPagos } from '@/services/firebase/pagos';
 import { listenMisSesiones, cerrarSesion } from '@/services/firebase/sesiones';
 import { useSessionManager } from '@/hooks/useSessionManager';
 import type {
-  Inquilino, Expediente, DocumentoExpediente,
+  Inquilino, Expediente, DocumentoExpediente, Pago,
   HuespedExtra, ScoreReputacion, ContactoEmergencia, Mascota, Sesion,
 } from '@/types/firestore';
 
-// ─── Helpers score ────────────────────────────────────────────
+// ─── Constantes ───────────────────────────────────────────────
 
 const NIVEL_COLOR: Record<string, string> = {
   pesimo: '#A63228', moroso: '#B07D2A', regular: '#7A9E7E',
-  bueno: '#4A6741',  excelente: '#2C4A2E',
+  bueno: '#4A6741', excelente: '#2C4A2E',
 };
 const NIVEL_LABEL: Record<string, string> = {
   pesimo: 'Pésimo', moroso: 'Moroso', regular: 'Regular',
-  bueno: 'Bueno',   excelente: 'Excelente',
+  bueno: 'Bueno', excelente: 'Excelente',
 };
+const GRAD_SEGS = ['#A63228', '#C05A00', '#B07D2A', '#7A9E7E', '#305C4D'];
+const MESES = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+
+// ─── Helpers ──────────────────────────────────────────────────
 
 function formatFecha(ts: any): string {
   try { return ts.toDate().toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' }); }
   catch { return '—'; }
+}
+
+function tiempoDesde(ts: any): string {
+  try {
+    const diff = Date.now() - ts.toDate().getTime();
+    const mins = Math.floor(diff / 60000);
+    if (mins < 2)  return 'justo ahora';
+    if (mins < 60) return `hace ${mins} min`;
+    const hrs = Math.floor(mins / 60);
+    if (hrs < 24)  return `hace ${hrs} h`;
+    return `hace ${Math.floor(hrs / 24)} días`;
+  } catch { return '—'; }
+}
+
+function pagoEstadoBg(p: Pago): string {
+  if (p.estado === 'pagado') {
+    const tardio = p.fechaPago && p.fechaPago.toMillis() > p.fechaVencimiento.toMillis();
+    return tardio ? '#FFF0E0' : '#D6EDD9';
+  }
+  if (p.estado === 'en_revision') return '#FFF0E0';
+  if (p.estado === 'vencido')     return '#F5DAD8';
+  return cartasBosque.pergamino;
+}
+
+function pagoEstadoTextColor(p: Pago): string {
+  if (p.estado === 'pagado') {
+    const tardio = p.fechaPago && p.fechaPago.toMillis() > p.fechaVencimiento.toMillis();
+    return tardio ? '#C05A00' : '#3A7D44';
+  }
+  if (p.estado === 'en_revision') return '#C05A00';
+  if (p.estado === 'vencido')     return '#A63228';
+  return cartasBosque.helecho;
+}
+
+function pagoEtiqueta(p: Pago): string {
+  if (p.estado === 'pagado') {
+    const tardio = p.fechaPago && p.fechaPago.toMillis() > p.fechaVencimiento.toMillis();
+    return tardio
+      ? `Tardío · $${p.monto.toLocaleString('es-MX')}`
+      : `Completo · $${p.monto.toLocaleString('es-MX')}`;
+  }
+  if (p.estado === 'en_revision') return 'En verificación';
+  if (p.estado === 'vencido')     return 'Adeudo';
+  return 'Pendiente';
+}
+
+function barColorMes(p: Pago | undefined): string {
+  if (!p) return cartasBosque.pergaminoOscuro;
+  if (p.estado === 'pagado') {
+    const tardio = p.fechaPago && p.fechaPago.toMillis() > p.fechaVencimiento.toMillis();
+    return tardio ? '#F5C6C2' : '#D6EDD9';
+  }
+  if (p.estado === 'vencido')     return '#F5DAD8';
+  if (p.estado === 'en_revision') return '#FFF0E0';
+  return '#E0D8CC';
+}
+
+function getMonthBars(pagos: Pago[]) {
+  const now = new Date();
+  return Array.from({ length: 12 }, (_, i) => {
+    const d = new Date(now.getFullYear(), now.getMonth() - (11 - i), 1);
+    const yr = d.getFullYear(); const mo = d.getMonth();
+    const pago = pagos.find(p => {
+      const pd = p.fechaVencimiento.toDate();
+      return pd.getFullYear() === yr && pd.getMonth() === mo && p.concepto === 'arriendo';
+    });
+    return { label: MESES[mo], color: barColorMes(pago), pago };
+  });
 }
 
 // ─── Firma pad ────────────────────────────────────────────────
@@ -52,8 +124,8 @@ function FirmaPad({ onGuardar, onCancelar }: {
   onGuardar: (json: string) => void;
   onCancelar: () => void;
 }) {
-  const strokesRef    = useRef<Stroke[]>([]);
-  const currentRef    = useRef<Stroke>([]);
+  const strokesRef = useRef<Stroke[]>([]);
+  const currentRef = useRef<Stroke>([]);
   const [tick, setTick] = useState(0);
 
   const panResponder = useRef(
@@ -85,26 +157,17 @@ function FirmaPad({ onGuardar, onCancelar }: {
   function renderStroke(stroke: Stroke, si: number) {
     return stroke.slice(1).map((p, pi) => {
       const prev = stroke[pi];
-      const dx   = p.x - prev.x;
-      const dy   = p.y - prev.y;
-      const len  = Math.sqrt(dx * dx + dy * dy);
-      const ang  = Math.atan2(dy, dx) * (180 / Math.PI);
-      const cx   = (prev.x + p.x) / 2;
-      const cy   = (prev.y + p.y) / 2;
+      const dx = p.x - prev.x; const dy = p.y - prev.y;
+      const len = Math.sqrt(dx * dx + dy * dy);
+      const ang = Math.atan2(dy, dx) * (180 / Math.PI);
+      const cx = (prev.x + p.x) / 2; const cy = (prev.y + p.y) / 2;
       return (
-        <View
-          key={`${si}-${pi}`}
-          style={{
-            position: 'absolute',
-            left: cx - len / 2,
-            top:  cy - 1.5,
-            width: Math.max(len, 1),
-            height: 3,
-            borderRadius: 1.5,
-            backgroundColor: cartasBosque.tinta,
-            transform: [{ rotate: `${ang}deg` }],
-          }}
-        />
+        <View key={`${si}-${pi}`} style={{
+          position: 'absolute', left: cx - len / 2, top: cy - 1.5,
+          width: Math.max(len, 1), height: 3, borderRadius: 1.5,
+          backgroundColor: cartasBosque.tinta,
+          transform: [{ rotate: `${ang}deg` }],
+        }} />
       );
     });
   }
@@ -113,17 +176,12 @@ function FirmaPad({ onGuardar, onCancelar }: {
     <View style={firmaStyles.container}>
       <Text style={firmaStyles.titulo}>Firma tu contrato</Text>
       <Text style={firmaStyles.sub}>Dibuja tu firma en el área de abajo</Text>
-
-      <View
-        style={firmaStyles.canvas}
-        {...panResponder.panHandlers}
-      >
+      <View style={firmaStyles.canvas} {...panResponder.panHandlers}>
         {allStrokes.map((s, i) => renderStroke(s, i))}
         {allStrokes.length === 0 && (
           <Text style={firmaStyles.canvasHint}>← Dibuja aquí →</Text>
         )}
       </View>
-
       <View style={firmaStyles.btnRow}>
         <TouchableOpacity
           style={firmaStyles.btnLimpiar}
@@ -146,20 +204,16 @@ function FirmaPad({ onGuardar, onCancelar }: {
   );
 }
 
-// Renderiza firma guardada (preview read-only)
 function FirmaPreview({ json }: { json: string }) {
   try {
     const strokes: Stroke[] = JSON.parse(json);
     if (!strokes.length) return null;
-    // Bounding box
     const allPts = strokes.flat();
     const minX = Math.min(...allPts.map(p => p.x));
     const maxX = Math.max(...allPts.map(p => p.x));
     const minY = Math.min(...allPts.map(p => p.y));
     const maxY = Math.max(...allPts.map(p => p.y));
-    const W = maxX - minX + 20;
-    const H = maxY - minY + 20;
-
+    const H    = maxY - minY + 20;
     return (
       <View style={{ height: Math.min(H, 80), width: '100%', overflow: 'hidden' }}>
         {strokes.map((stroke, si) =>
@@ -198,21 +252,20 @@ function ModalContacto({ onGuardar, onCancelar }: {
   const [redesSociales, setRedesSociales] = useState('');
   const [direccion,     setDireccion]     = useState('');
 
-  const camposLlenos = [nombre, edad, parentesco].filter(Boolean).length +
-    [telefono, redesSociales, direccion].filter(Boolean).length;
-  const valido = nombre && edad && parentesco && camposLlenos >= 2;
+  const valido = nombre && edad && parentesco &&
+    [telefono, redesSociales, direccion].filter(Boolean).length >= 1;
 
   return (
     <View style={mStyles.sheet}>
       <Text style={mStyles.titulo}>Contacto de emergencia</Text>
       <Text style={mStyles.sub}>Mínimo nombre + parentesco + un dato de contacto</Text>
       {[
-        { label: 'Nombre *', value: nombre, onChange: setNombre, kb: 'default' as const },
-        { label: 'Edad *',   value: edad,   onChange: setEdad,   kb: 'numeric' as const },
-        { label: 'Parentesco *', value: parentesco, onChange: setParentesco, kb: 'default' as const },
-        { label: 'Teléfono', value: telefono, onChange: setTelefono, kb: 'phone-pad' as const },
-        { label: 'Redes sociales', value: redesSociales, onChange: setRedesSociales, kb: 'default' as const },
-        { label: 'Dirección', value: direccion, onChange: setDireccion, kb: 'default' as const },
+        { label: 'Nombre *',      value: nombre,        onChange: setNombre,        kb: 'default'    as const },
+        { label: 'Edad *',        value: edad,          onChange: setEdad,          kb: 'numeric'    as const },
+        { label: 'Parentesco *',  value: parentesco,    onChange: setParentesco,    kb: 'default'    as const },
+        { label: 'Teléfono',      value: telefono,      onChange: setTelefono,      kb: 'phone-pad'  as const },
+        { label: 'Redes sociales',value: redesSociales, onChange: setRedesSociales, kb: 'default'    as const },
+        { label: 'Dirección',     value: direccion,     onChange: setDireccion,     kb: 'default'    as const },
       ].map(f => (
         <TextInput
           key={f.label}
@@ -287,45 +340,38 @@ function Seccion({ label }: { label: string }) {
 
 // ─── DossierScreen ────────────────────────────────────────────
 
-type Vista = 'dossier' | 'facturacion';
+type Vista    = 'dossier' | 'facturacion';
 type ModalTipo = 'firma' | 'contacto' | 'mascota' | null;
 
 export default function DossierScreen() {
   const { user, signOut } = useAuth();
   const uid = user?.uid ?? '';
 
-  const [vista, setVista]               = useState<Vista>('dossier');
-  const [modal, setModal]               = useState<ModalTipo>(null);
-  const [inquilino, setInquilino]       = useState<Inquilino | null>(null);
-  const [expediente, setExpediente]     = useState<Expediente | null>(null);
-  const [documentos, setDocumentos]     = useState<DocumentoExpediente[]>([]);
-  const [huespedes, setHuespedes]       = useState<HuespedExtra[]>([]);
-  const [score, setScore]               = useState<ScoreReputacion | null>(null);
-  const [sesiones, setSesiones]         = useState<Sesion[]>([]);
-  const [cargando, setCargando]         = useState(true);
+  const [vista, setVista]             = useState<Vista>('dossier');
+  const [modal, setModal]             = useState<ModalTipo>(null);
+  const [inquilino, setInquilino]     = useState<Inquilino | null>(null);
+  const [expediente, setExpediente]   = useState<Expediente | null>(null);
+  const [documentos, setDocumentos]   = useState<DocumentoExpediente[]>([]);
+  const [huespedes, setHuespedes]     = useState<HuespedExtra[]>([]);
+  const [score, setScore]             = useState<ScoreReputacion | null>(null);
+  const [pagos, setPagos]             = useState<Pago[]>([]);
+  const [sesiones, setSesiones]       = useState<Sesion[]>([]);
+  const [cargando, setCargando]       = useState(true);
   const { sesionId, reportarDispositivoPerdido } = useSessionManager();
 
-  // Inicializar expediente + listeners
   useEffect(() => {
     if (!uid) return;
 
-    // Cargar inquilino
     const unsubInq = onSnapshot(doc(db, 'inquilinos', uid), snap => {
       if (snap.exists()) setInquilino({ ...snap.data(), id: snap.id } as Inquilino);
     });
-
-    // Cargar score
     const unsubScore = onSnapshot(doc(db, 'scores', uid), snap => {
       if (snap.exists()) setScore({ ...snap.data(), id: snap.id } as ScoreReputacion);
     });
-
-    // Cargar huéspedes activos
     const qH = query(collection(db, 'huespedes_extra'), where('inquilinoId', '==', uid), where('activo', '==', true));
     const unsubH = onSnapshot(qH, snap => {
       setHuespedes(snap.docs.map(d => ({ ...d.data(), id: d.id } as HuespedExtra)));
     }, () => {});
-
-    // Cargar expediente + docs (inicializa si no existe)
     const unsubExp = listenExpediente(uid, async (exp) => {
       if (!exp) {
         await inicializarExpediente(uid, { habitacionId: null, habitacionNumero: null }).catch(() => {});
@@ -334,25 +380,30 @@ export default function DossierScreen() {
       }
       setCargando(false);
     });
+    const unsubDocs  = listenDocumentos(uid, setDocumentos);
+    const unsubSes   = listenMisSesiones(uid, setSesiones);
+    const unsubPagos = listenMisPagos(uid, setPagos);
 
-    const unsubDocs = listenDocumentos(uid, setDocumentos);
-    const unsubSes  = listenMisSesiones(uid, setSesiones);
-
-    return () => { unsubInq(); unsubScore(); unsubH(); unsubExp(); unsubDocs(); unsubSes(); };
+    return () => { unsubInq(); unsubScore(); unsubH(); unsubExp(); unsubDocs(); unsubSes(); unsubPagos(); };
   }, [uid]);
 
   if (vista === 'facturacion') {
     return <FacturacionScreen onBack={() => setVista('dossier')} />;
   }
 
-  const nombreCompleto = inquilino
-    ? `${inquilino.nombre} ${inquilino.apellido}`
-    : user?.email ?? '—';
+  const nombreCompleto = inquilino ? `${inquilino.nombre} ${inquilino.apellido}` : user?.email ?? '—';
+  const scoreColor     = score ? (NIVEL_COLOR[score.nivel] ?? cartasBosque.helecho) : cartasBosque.helecho;
+  const scoreLabel     = score ? (NIVEL_LABEL[score.nivel] ?? '') : '—';
+  const totalExtra     = huespedes.reduce((s, h) => s + (h.montoMensual ?? 0), 0);
 
-  const scoreColor = score ? (NIVEL_COLOR[score.nivel] ?? cartasBosque.helecho) : cartasBosque.helecho;
-  const scoreLabel = score ? (NIVEL_LABEL[score.nivel] ?? '') : '—';
-
-  const totalExtra = huespedes.reduce((s, h) => s + (h.montoMensual ?? 0), 0);
+  const pagosCompletos = pagos.filter(p => p.estado === 'pagado').length;
+  const pagosTardios   = pagos.filter(p =>
+    p.estado === 'pagado' && p.fechaPago != null &&
+    p.fechaPago.toMillis() > p.fechaVencimiento.toMillis()
+  ).length;
+  const adeudos  = pagos.filter(p => p.estado === 'vencido').length;
+  const monthBars = getMonthBars(pagos);
+  const historial = pagos.filter(p => p.concepto === 'arriendo').slice(0, 12);
 
   return (
     <SafeAreaView style={s.safe} edges={['top']}>
@@ -383,11 +434,8 @@ export default function DossierScreen() {
                 <Text style={s.meta}>Desde {formatFecha(inquilino.fechaIngreso)}</Text>
               )}
             </View>
-            {/* Score ring */}
             <View style={[s.scoreRing, { borderColor: scoreColor }]}>
-              <Text style={[s.scoreNum, { color: scoreColor }]}>
-                {score?.puntos ?? '—'}
-              </Text>
+              <Text style={[s.scoreNum, { color: scoreColor }]}>{score?.puntos ?? '—'}</Text>
               <Text style={s.scoreLabel}>{scoreLabel}</Text>
             </View>
           </View>
@@ -406,9 +454,7 @@ export default function DossierScreen() {
             <View>
               <View style={s.firmaHeaderRow}>
                 <Ionicons name="checkmark-circle" size={18} color="#3A7D44" />
-                <Text style={s.firmaSignedText}>
-                  Firmado el {formatFecha(expediente.firmadoEn)}
-                </Text>
+                <Text style={s.firmaSignedText}>Firmado el {formatFecha(expediente.firmadoEn)}</Text>
               </View>
               <View style={s.firmaPreviewBox}>
                 <FirmaPreview json={expediente.firmaDigital} />
@@ -445,10 +491,91 @@ export default function DossierScreen() {
           ))
         )}
 
+        {/* ── REPUTACIÓN ── */}
+        <Seccion label="Reputación" />
+        <View style={s.repCard}>
+          {/* Porcentaje + badge */}
+          <View style={s.repTopRow}>
+            <Text style={[s.repPct, { color: scoreColor }]}>{score?.puntos ?? 0}%</Text>
+            <View style={[s.repBadge, { backgroundColor: scoreColor + '22', borderColor: scoreColor + '55' }]}>
+              <Text style={[s.repBadgeText, { color: scoreColor }]}>{scoreLabel || 'Sin datos'}</Text>
+            </View>
+          </View>
+
+          {/* Barra gradiente 5 segmentos */}
+          <View style={s.gradBar}>
+            {GRAD_SEGS.map((color, i) => {
+              const segStart = i * 20;
+              const puntos = score?.puntos ?? 0;
+              const filled  = Math.min(Math.max(puntos - segStart, 0), 20) / 20;
+              return (
+                <View key={i} style={[s.gradSeg, { backgroundColor: cartasBosque.pergaminoOscuro }]}>
+                  <View style={{ width: `${filled * 100}%`, height: '100%', backgroundColor: color }} />
+                </View>
+              );
+            })}
+          </View>
+
+          {/* Estadísticas texto */}
+          <Text style={s.repStats}>
+            {pagosCompletos} pagos completos · {pagosTardios} tardíos · {adeudos} adeudos
+          </Text>
+
+          {/* Gráfica barras mensual */}
+          <View style={s.chartWrap}>
+            {monthBars.map((mb, i) => (
+              <View key={i} style={s.barCol}>
+                <View style={[s.bar, { backgroundColor: mb.color }]} />
+                <Text style={s.barLabel}>{mb.label}</Text>
+              </View>
+            ))}
+          </View>
+          {/* Leyenda */}
+          <View style={s.leyendaRow}>
+            {[['#D6EDD9','Completo'],['#F5C6C2','Tardío'],['#E0D8CC','Pendiente']].map(([bg,lbl]) => (
+              <View key={lbl} style={s.leyendaItem}>
+                <View style={[s.leyendaDot, { backgroundColor: bg as string }]} />
+                <Text style={s.leyendaText}>{lbl}</Text>
+              </View>
+            ))}
+          </View>
+        </View>
+
+        {/* ── HISTORIAL DE PAGOS ── */}
+        <Seccion label="Historial de pagos" />
+        {historial.length === 0 ? (
+          <View style={s.emptyCard}>
+            <Text style={s.emptyText}>Sin historial de pagos aún</Text>
+          </View>
+        ) : (
+          <View style={s.histCard}>
+            {historial.map((p, i) => {
+              const bg   = pagoEstadoBg(p);
+              const clr  = pagoEstadoTextColor(p);
+              const etiq = pagoEtiqueta(p);
+              const d    = p.fechaVencimiento.toDate();
+              return (
+                <View key={p.id}>
+                  {i > 0 && <View style={s.histDivider} />}
+                  <View style={s.histRow}>
+                    <View style={{ flex: 1 }}>
+                      <Text style={s.histMes}>
+                        {d.toLocaleDateString('es-MX', { month: 'long', year: 'numeric' })}
+                      </Text>
+                    </View>
+                    <View style={[s.histBadge, { backgroundColor: bg, borderColor: clr + '55' }]}>
+                      <Text style={[s.histBadgeText, { color: clr }]}>{etiq}</Text>
+                    </View>
+                  </View>
+                </View>
+              );
+            })}
+          </View>
+        )}
+
         {/* ── Ocupantes ── */}
         <Seccion label="Ocupantes" />
         <View style={s.ocupanteCard}>
-          {/* Titular */}
           <View style={s.ocupanteRow}>
             <View style={s.ocupanteAvatarSmall}>
               <Ionicons name="person" size={14} color={cartasBosque.bruma} />
@@ -458,7 +585,6 @@ export default function DossierScreen() {
               <Text style={s.ocupanteTipo}>Titular</Text>
             </View>
           </View>
-
           {huespedes.map((h, i) => (
             <View key={h.id}>
               <View style={s.ocupanteDivider} />
@@ -472,13 +598,10 @@ export default function DossierScreen() {
                     {h.modalidad === 'mensual' ? 'Permanente' : 'Temporal'} · {formatFecha(h.fechaEntrada)}
                   </Text>
                 </View>
-                <Text style={s.ocupanteCosto}>
-                  ${h.montoMensual.toLocaleString('es-MX')}/mes
-                </Text>
+                <Text style={s.ocupanteCosto}>${h.montoMensual.toLocaleString('es-MX')}/mes</Text>
               </View>
             </View>
           ))}
-
           {huespedes.length > 0 && (
             <>
               <View style={s.ocupanteDivider} />
@@ -490,96 +613,121 @@ export default function DossierScreen() {
           )}
         </View>
 
-        {/* ── Contactos de emergencia ── */}
+        {/* ── MASCOTAS REGISTRADAS ── */}
         <View style={s.seccionHeaderRow}>
-          <Seccion label={`Contactos de emergencia (${expediente?.contactosEmergencia.length ?? 0}/2)`} />
-          {(expediente?.contactosEmergencia.length ?? 0) < 2 && (
-            <TouchableOpacity onPress={() => setModal('contacto')}>
-              <Ionicons name="add-circle-outline" size={20} color={cartasBosque.bosque} />
-            </TouchableOpacity>
-          )}
-        </View>
-        {(expediente?.contactosEmergencia ?? []).length === 0 ? (
-          <TouchableOpacity style={s.emptyCard} onPress={() => setModal('contacto')}>
-            <Text style={s.emptyText}>Agrega hasta 2 contactos de emergencia</Text>
-          </TouchableOpacity>
-        ) : (
-          expediente!.contactosEmergencia.map(c => (
-            <View key={c.id} style={s.contactoCard}>
-              <View style={s.contactoRow}>
-                <View style={s.contactoIcon}>
-                  <Ionicons name="people-outline" size={16} color={cartasBosque.bosque} />
-                </View>
-                <View style={{ flex: 1 }}>
-                  <Text style={s.contactoNombre}>{c.nombre}</Text>
-                  <Text style={s.contactoMeta}>{c.parentesco} · {c.edad} años</Text>
-                  {c.telefono && <Text style={s.contactoMeta}>{c.telefono}</Text>}
-                  {c.redesSociales && <Text style={s.contactoMeta}>{c.redesSociales}</Text>}
-                  {c.direccion && <Text style={s.contactoMeta}>{c.direccion}</Text>}
-                </View>
-                <TouchableOpacity
-                  onPress={() => Alert.alert('Eliminar', `¿Eliminar a ${c.nombre}?`, [
-                    { text: 'Cancelar' },
-                    { text: 'Eliminar', style: 'destructive', onPress: () => eliminarContactoEmergencia(uid, c.id) },
-                  ])}
-                >
-                  <Ionicons name="trash-outline" size={16} color="#A63228" />
-                </TouchableOpacity>
-              </View>
-            </View>
-          ))
-        )}
-
-        {/* ── Mascotas ── */}
-        <View style={s.seccionHeaderRow}>
-          <Seccion label={`Mascotas (${expediente?.mascotas.length ?? 0}/6)`} />
-          {(expediente?.mascotas.length ?? 0) < 6 && (
-            <TouchableOpacity onPress={() => setModal('mascota')}>
-              <Ionicons name="add-circle-outline" size={20} color={cartasBosque.bosque} />
-            </TouchableOpacity>
-          )}
+          <Seccion label={`Mascotas registradas (${expediente?.mascotas.length ?? 0}/6)`} />
         </View>
         {(expediente?.mascotas ?? []).length === 0 ? (
-          <TouchableOpacity style={s.emptyCard} onPress={() => setModal('mascota')}>
+          <View style={s.emptyCard}>
             <Text style={s.emptyText}>Registra tus mascotas (máx 6)</Text>
-          </TouchableOpacity>
+          </View>
         ) : (
           expediente!.mascotas.map(m => (
-            <View key={m.id} style={s.mascotaRow}>
-              <Ionicons name="paw-outline" size={14} color={cartasBosque.musgo} />
-              <Text style={s.mascotaText}>{m.descripcion}</Text>
+            <View key={m.id} style={s.mascotaCard}>
+              <Text style={s.mascotaEmoji}>🐾</Text>
+              <Text style={s.mascotaDesc}>{m.descripcion}</Text>
               <TouchableOpacity onPress={() => eliminarMascota(uid, m.id)}>
-                <Ionicons name="close-circle-outline" size={16} color={cartasBosque.helecho} />
+                <Ionicons name="close-circle-outline" size={18} color={cartasBosque.helecho} />
               </TouchableOpacity>
             </View>
           ))
         )}
+        {(expediente?.mascotas.length ?? 0) < 6 && (
+          <TouchableOpacity style={s.agregarBtn} onPress={() => setModal('mascota')}>
+            <Ionicons name="add-circle-outline" size={16} color={cartasBosque.bosque} />
+            <Text style={s.agregarBtnText}>+ Registrar mascota</Text>
+          </TouchableOpacity>
+        )}
 
-        {/* ── Seguridad ── */}
-        <Seccion label={`Seguridad · ${sesiones.filter(s => s.activa).length} sesión${sesiones.filter(s => s.activa).length !== 1 ? 'es' : ''} activa${sesiones.filter(s => s.activa).length !== 1 ? 's' : ''}`} />
-        {sesiones.filter(s => s.activa).map(ses => (
-          <SesionCard
-            key={ses.id}
-            sesion={ses}
-            esActual={ses.id === sesionId}
-            onCerrar={() => cerrarSesion(ses.id).catch(() => {})}
-          />
-        ))}
+        {/* ── CONTACTO DE EMERGENCIA ── */}
+        <Seccion label={`Contacto de emergencia (${expediente?.contactosEmergencia.length ?? 0}/2)`} />
+        {(expediente?.contactosEmergencia ?? []).length === 0 ? (
+          <View style={s.emptyCard}>
+            <Text style={s.emptyText}>Agrega hasta 2 contactos de emergencia</Text>
+          </View>
+        ) : (
+          expediente!.contactosEmergencia.map(c => (
+            <View key={c.id} style={s.contactoCard2}>
+              {/* Avatar con iniciales */}
+              <View style={s.contactoAvatar2}>
+                <Text style={s.contactoAvatarInitial}>
+                  {c.nombre.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()}
+                </Text>
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text style={s.contactoNombre2}>{c.nombre}</Text>
+                <Text style={s.contactoMeta2}>{c.parentesco} · {c.edad} años</Text>
+                {c.telefono   && <Text style={s.contactoMeta2}>{c.telefono}</Text>}
+                {c.direccion  && <Text style={s.contactoMeta2}>{c.direccion}</Text>}
+                {c.redesSociales && (
+                  <Text style={s.contactoNota}>{c.redesSociales}</Text>
+                )}
+              </View>
+              <TouchableOpacity onPress={() => Alert.alert('Eliminar', `¿Eliminar a ${c.nombre}?`, [
+                { text: 'Cancelar' },
+                { text: 'Eliminar', style: 'destructive', onPress: () => eliminarContactoEmergencia(uid, c.id) },
+              ])}>
+                <Ionicons name="trash-outline" size={16} color="#A63228" />
+              </TouchableOpacity>
+            </View>
+          ))
+        )}
+        {(expediente?.contactosEmergencia.length ?? 0) < 2 && (
+          <TouchableOpacity style={s.agregarBtn} onPress={() => setModal('contacto')}>
+            <Ionicons name="person-add-outline" size={16} color={cartasBosque.bosque} />
+            <Text style={s.agregarBtnText}>Editar contacto</Text>
+          </TouchableOpacity>
+        )}
+
+        {/* ── SESIONES ACTIVAS ── */}
+        <Seccion label={`Sesiones activas (${sesiones.filter(se => se.activa).length})`} />
+        {sesiones.filter(se => se.activa).map(ses => {
+          const esActual  = ses.id === sesionId;
+          const ubicacion = [ses.colonia, ses.ciudad].filter(Boolean).join(' · ');
+          const platformIcon = ses.plataforma === 'web'
+            ? 'globe-outline'
+            : 'phone-portrait-outline';
+          return (
+            <View key={ses.id} style={s.sesionCard}>
+              <View style={s.sesionIconWrap}>
+                <Ionicons name={platformIcon} size={18} color={cartasBosque.bosque} />
+              </View>
+              <View style={{ flex: 1, gap: 2 }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing[2] }}>
+                  <Text style={s.sesionDispositivo} numberOfLines={1}>{ses.dispositivo}</Text>
+                  {esActual && (
+                    <View style={s.esteDispositivoBadge}>
+                      <Text style={s.esteDispositivoText}>este dispositivo</Text>
+                    </View>
+                  )}
+                </View>
+                {!!ubicacion && <Text style={s.sesionUbicacion}>{ubicacion}</Text>}
+                <Text style={s.sesionTiempo}>{tiempoDesde(ses.fechaUltimaActividad)}</Text>
+              </View>
+              {!esActual && (
+                <TouchableOpacity
+                  style={s.cerrarSesBtn}
+                  onPress={() => Alert.alert('Cerrar sesión', `¿Cerrar sesión en ${ses.dispositivo}?`, [
+                    { text: 'Cancelar' },
+                    { text: 'Cerrar', style: 'destructive', onPress: () => cerrarSesion(ses.id).catch(() => {}) },
+                  ])}
+                >
+                  <Text style={s.cerrarSesBtnText}>Cerrar</Text>
+                </TouchableOpacity>
+              )}
+            </View>
+          );
+        })}
         <TouchableOpacity
           style={s.roboBtn}
-          onPress={() =>
-            Alert.alert(
-              'Reportar robo / extravío',
-              'Se notificará al administrador y se cerrará la sesión. Tu cuenta quedará protegida.',
-              [
-                { text: 'Cancelar' },
-                {
-                  text: 'Continuar', style: 'destructive',
-                  onPress: () => reportarDispositivoPerdido().catch(() => {}),
-                },
-              ],
-            )
-          }
+          onPress={() => Alert.alert(
+            'Reportar robo / extravío',
+            'Se notificará al administrador y tu cuenta quedará protegida.',
+            [
+              { text: 'Cancelar' },
+              { text: 'Continuar', style: 'destructive', onPress: () => reportarDispositivoPerdido().catch(() => {}) },
+            ],
+          )}
           activeOpacity={0.75}
         >
           <Ionicons name="warning-outline" size={16} color="#A63228" />
@@ -603,12 +751,7 @@ export default function DossierScreen() {
       </ScrollView>
 
       {/* ── Modales ── */}
-      <Modal
-        visible={modal === 'firma'}
-        animationType="slide"
-        presentationStyle="pageSheet"
-        onRequestClose={() => setModal(null)}
-      >
+      <Modal visible={modal === 'firma'} animationType="slide" presentationStyle="pageSheet" onRequestClose={() => setModal(null)}>
         <SafeAreaView style={{ flex: 1, backgroundColor: cartasBosque.bruma }}>
           <FirmaPad
             onGuardar={async (json) => {
@@ -620,12 +763,7 @@ export default function DossierScreen() {
         </SafeAreaView>
       </Modal>
 
-      <Modal
-        visible={modal === 'contacto'}
-        animationType="slide"
-        transparent
-        onRequestClose={() => setModal(null)}
-      >
+      <Modal visible={modal === 'contacto'} animationType="slide" transparent onRequestClose={() => setModal(null)}>
         <Pressable style={s.overlay} onPress={() => setModal(null)}>
           <Pressable onPress={e => e.stopPropagation()}>
             <ModalContacto
@@ -639,12 +777,7 @@ export default function DossierScreen() {
         </Pressable>
       </Modal>
 
-      <Modal
-        visible={modal === 'mascota'}
-        animationType="slide"
-        transparent
-        onRequestClose={() => setModal(null)}
-      >
+      <Modal visible={modal === 'mascota'} animationType="slide" transparent onRequestClose={() => setModal(null)}>
         <Pressable style={s.overlay} onPress={() => setModal(null)}>
           <Pressable onPress={e => e.stopPropagation()}>
             <ModalMascota
@@ -677,25 +810,20 @@ const s = StyleSheet.create({
   perfilCard: {
     backgroundColor: cartasBosque.pergamino,
     borderRadius: borderRadius.lg, padding: spacing[4],
-    borderWidth: 1, borderColor: cartasBosque.pergaminoOscuro,
-    marginBottom: spacing[5],
+    borderWidth: 1, borderColor: cartasBosque.pergaminoOscuro, marginBottom: spacing[5],
   },
   avatarRow: { flexDirection: 'row', alignItems: 'center', gap: spacing[3] },
   avatar: {
     width: 52, height: 52, borderRadius: 26,
-    backgroundColor: cartasBosque.bosque,
-    alignItems: 'center', justifyContent: 'center',
+    backgroundColor: cartasBosque.bosque, alignItems: 'center', justifyContent: 'center',
   },
   avatarInitial: { fontFamily: 'DMSans_600SemiBold', fontSize: 22, color: cartasBosque.bruma },
   nombre: { fontFamily: 'DMSans_600SemiBold', fontSize: 15, color: cartasBosque.tinta },
   hab:    { fontFamily: 'DMMono_400Regular',  fontSize: 11, color: cartasBosque.musgo,   marginTop: 2 },
   meta:   { fontFamily: 'DMMono_400Regular',  fontSize: 10, color: cartasBosque.helecho, marginTop: 1 },
-
-  // Score ring
   scoreRing: {
     width: 58, height: 58, borderRadius: 29, borderWidth: 4,
-    alignItems: 'center', justifyContent: 'center',
-    backgroundColor: cartasBosque.bruma,
+    alignItems: 'center', justifyContent: 'center', backgroundColor: cartasBosque.bruma,
   },
   scoreNum:   { fontFamily: 'DMSans_600SemiBold', fontSize: 16, color: cartasBosque.tinta },
   scoreLabel: { fontFamily: 'DMMono_400Regular',  fontSize: 8,  color: cartasBosque.helecho },
@@ -704,8 +832,7 @@ const s = StyleSheet.create({
   firmaCard: {
     backgroundColor: cartasBosque.pergamino,
     borderRadius: borderRadius.md, padding: spacing[3],
-    borderWidth: 1, borderColor: cartasBosque.pergaminoOscuro,
-    marginBottom: spacing[5],
+    borderWidth: 1, borderColor: cartasBosque.pergaminoOscuro, marginBottom: spacing[5],
   },
   firmaCardSigned: { borderColor: '#3A7D44' + '80', backgroundColor: '#D6EDD9' + '44' },
   firmaVacioRow:   { flexDirection: 'row', alignItems: 'center', gap: spacing[2] },
@@ -718,7 +845,7 @@ const s = StyleSheet.create({
     borderWidth: 1, borderColor: cartasBosque.pergaminoOscuro,
   },
 
-  // Sección
+  // Sección header row
   seccionHeaderRow: {
     flexDirection: 'row', alignItems: 'center',
     justifyContent: 'space-between', marginBottom: 0,
@@ -729,64 +856,146 @@ const s = StyleSheet.create({
     backgroundColor: cartasBosque.pergamino,
     borderRadius: borderRadius.md, padding: spacing[3],
     alignItems: 'center', marginBottom: spacing[5],
-    borderWidth: 1, borderColor: cartasBosque.pergaminoOscuro,
-    borderStyle: 'dashed',
+    borderWidth: 1, borderColor: cartasBosque.pergaminoOscuro, borderStyle: 'dashed',
   },
   emptyText: { fontFamily: 'DMSans_400Regular', fontSize: 12, color: cartasBosque.helecho },
+
+  // ── REPUTACIÓN ──
+  repCard: {
+    backgroundColor: cartasBosque.pergamino,
+    borderRadius: borderRadius.lg, padding: spacing[4],
+    borderWidth: 1, borderColor: cartasBosque.pergaminoOscuro, marginBottom: spacing[5],
+  },
+  repTopRow:  { flexDirection: 'row', alignItems: 'center', gap: spacing[3], marginBottom: spacing[3] },
+  repPct:     { fontFamily: 'DMSans_700Bold', fontSize: 42, lineHeight: 44 },
+  repBadge: {
+    paddingHorizontal: spacing[3], paddingVertical: spacing[1],
+    borderRadius: borderRadius.xl, borderWidth: 1,
+  },
+  repBadgeText: { fontFamily: 'DMSans_600SemiBold', fontSize: 13 },
+  gradBar: {
+    flexDirection: 'row', height: 10, borderRadius: 5, overflow: 'hidden',
+    gap: 2, marginBottom: spacing[3],
+  },
+  gradSeg: { flex: 1, overflow: 'hidden', borderRadius: 2 },
+  repStats: {
+    fontFamily: 'DMMono_400Regular', fontSize: 10,
+    color: cartasBosque.helecho, marginBottom: spacing[4], letterSpacing: 0.2,
+  },
+  chartWrap: {
+    flexDirection: 'row', alignItems: 'flex-end',
+    gap: 3, height: 52, marginBottom: spacing[2],
+  },
+  barCol:  { flex: 1, alignItems: 'center', gap: 3 },
+  bar:     { flex: 1, width: '100%', borderRadius: 2, minHeight: 6 },
+  barLabel:{ fontFamily: 'DMMono_400Regular', fontSize: 7, color: cartasBosque.niebla, textAlign: 'center' },
+  leyendaRow: { flexDirection: 'row', gap: spacing[3], marginTop: spacing[1] },
+  leyendaItem:{ flexDirection: 'row', alignItems: 'center', gap: 4 },
+  leyendaDot: { width: 8, height: 8, borderRadius: 4 },
+  leyendaText:{ fontFamily: 'DMMono_400Regular', fontSize: 9, color: cartasBosque.helecho },
+
+  // ── HISTORIAL ──
+  histCard: {
+    backgroundColor: cartasBosque.pergamino,
+    borderRadius: borderRadius.md, padding: spacing[3],
+    borderWidth: 1, borderColor: cartasBosque.pergaminoOscuro, marginBottom: spacing[5],
+  },
+  histRow:    { flexDirection: 'row', alignItems: 'center', gap: spacing[2], paddingVertical: spacing[2] },
+  histDivider:{ height: 1, backgroundColor: cartasBosque.pergaminoOscuro },
+  histMes:    { fontFamily: 'DMSans_400Regular', fontSize: 13, color: cartasBosque.tinta },
+  histBadge: {
+    paddingHorizontal: spacing[2], paddingVertical: 3,
+    borderRadius: borderRadius.sm, borderWidth: 1,
+  },
+  histBadgeText: { fontFamily: 'DMMono_400Regular', fontSize: 10 },
 
   // Ocupantes
   ocupanteCard: {
     backgroundColor: cartasBosque.pergamino,
     borderRadius: borderRadius.md, padding: spacing[3],
-    borderWidth: 1, borderColor: cartasBosque.pergaminoOscuro,
-    marginBottom: spacing[5],
+    borderWidth: 1, borderColor: cartasBosque.pergaminoOscuro, marginBottom: spacing[5],
   },
   ocupanteRow: { flexDirection: 'row', alignItems: 'center', gap: spacing[2] },
   ocupanteAvatarSmall: {
     width: 28, height: 28, borderRadius: 14,
+    backgroundColor: cartasBosque.bosque, alignItems: 'center', justifyContent: 'center',
+  },
+  ocupanteNombre:    { fontFamily: 'DMSans_600SemiBold', fontSize: 12, color: cartasBosque.tinta },
+  ocupanteTipo:      { fontFamily: 'DMMono_400Regular',  fontSize: 10, color: cartasBosque.helecho },
+  ocupanteCosto:     { fontFamily: 'DMMono_400Regular',  fontSize: 11, color: cartasBosque.musgo },
+  ocupanteDivider:   { height: 1, backgroundColor: cartasBosque.pergaminoOscuro, marginVertical: spacing[2] },
+  ocupanteTotalLabel:{ flex: 1, fontFamily: 'DMMono_400Regular', fontSize: 10, color: cartasBosque.helecho },
+  ocupanteTotal:     { fontFamily: 'DMSans_600SemiBold', fontSize: 12, color: cartasBosque.musgo },
+
+  // ── MASCOTAS ──
+  mascotaCard: {
+    flexDirection: 'row', alignItems: 'center', gap: spacing[3],
+    backgroundColor: cartasBosque.pergamino,
+    borderRadius: borderRadius.md, padding: spacing[3],
+    borderWidth: 1, borderColor: cartasBosque.pergaminoOscuro, marginBottom: spacing[2],
+  },
+  mascotaEmoji: { fontSize: 24 },
+  mascotaDesc:  { flex: 1, fontFamily: 'DMSans_400Regular', fontSize: 13, color: cartasBosque.tinta },
+
+  // ── CONTACTO ──
+  contactoCard2: {
+    flexDirection: 'row', alignItems: 'flex-start', gap: spacing[3],
+    backgroundColor: cartasBosque.pergamino,
+    borderRadius: borderRadius.md, padding: spacing[3],
+    borderWidth: 1, borderColor: cartasBosque.pergaminoOscuro, marginBottom: spacing[2],
+  },
+  contactoAvatar2: {
+    width: 38, height: 38, borderRadius: 19,
     backgroundColor: cartasBosque.bosque,
     alignItems: 'center', justifyContent: 'center',
   },
-  ocupanteNombre: { fontFamily: 'DMSans_600SemiBold', fontSize: 12, color: cartasBosque.tinta },
-  ocupanteTipo:   { fontFamily: 'DMMono_400Regular',  fontSize: 10, color: cartasBosque.helecho },
-  ocupanteCosto:  { fontFamily: 'DMMono_400Regular',  fontSize: 11, color: cartasBosque.musgo },
-  ocupanteDivider:{ height: 1, backgroundColor: cartasBosque.pergaminoOscuro, marginVertical: spacing[2] },
-  ocupanteTotalLabel: { flex: 1, fontFamily: 'DMMono_400Regular', fontSize: 10, color: cartasBosque.helecho },
-  ocupanteTotal:      { fontFamily: 'DMSans_600SemiBold', fontSize: 12, color: cartasBosque.musgo },
+  contactoAvatarInitial: { fontFamily: 'DMSans_600SemiBold', fontSize: 15, color: cartasBosque.bruma },
+  contactoNombre2: { fontFamily: 'DMSans_600SemiBold', fontSize: 13, color: cartasBosque.tinta },
+  contactoMeta2:   { fontFamily: 'DMMono_400Regular',  fontSize: 10, color: cartasBosque.helecho, marginTop: 1 },
+  contactoNota:    { fontFamily: 'DMSans_400Regular',  fontSize: 11, color: cartasBosque.helecho, fontStyle: 'italic', marginTop: 2 },
 
-  // Contactos
-  contactoCard: {
-    backgroundColor: cartasBosque.pergamino,
-    borderRadius: borderRadius.md, padding: spacing[3],
-    borderWidth: 1, borderColor: cartasBosque.pergaminoOscuro,
-    marginBottom: spacing[2],
-  },
-  contactoRow: { flexDirection: 'row', alignItems: 'flex-start', gap: spacing[3] },
-  contactoIcon: {
-    width: 34, height: 34, borderRadius: 17,
-    backgroundColor: cartasBosque.niebla + '44',
-    alignItems: 'center', justifyContent: 'center',
-  },
-  contactoNombre: { fontFamily: 'DMSans_600SemiBold', fontSize: 13, color: cartasBosque.tinta },
-  contactoMeta:   { fontFamily: 'DMMono_400Regular',  fontSize: 10, color: cartasBosque.helecho, marginTop: 1 },
-
-  // Mascotas
-  mascotaRow: {
+  // ── BOTÓN AGREGAR / EDITAR ──
+  agregarBtn: {
     flexDirection: 'row', alignItems: 'center', gap: spacing[2],
     backgroundColor: cartasBosque.pergamino,
     borderRadius: borderRadius.md, padding: spacing[3],
-    borderWidth: 1, borderColor: cartasBosque.pergaminoOscuro,
-    marginBottom: spacing[2],
+    borderWidth: 1, borderColor: cartasBosque.bosque + '55',
+    borderStyle: 'dashed', marginBottom: spacing[5],
+    justifyContent: 'center',
   },
-  mascotaText: { flex: 1, fontFamily: 'DMSans_400Regular', fontSize: 12, color: cartasBosque.tinta },
+  agregarBtnText: { fontFamily: 'DMSans_400Regular', fontSize: 13, color: cartasBosque.bosque },
 
-  // Seguridad
+  // ── SESIONES ──
+  sesionCard: {
+    flexDirection: 'row', alignItems: 'center', gap: spacing[3],
+    backgroundColor: cartasBosque.pergamino,
+    borderRadius: borderRadius.md, padding: spacing[3],
+    borderWidth: 1, borderColor: cartasBosque.pergaminoOscuro, marginBottom: spacing[2],
+  },
+  sesionIconWrap: {
+    width: 36, height: 36, borderRadius: borderRadius.sm,
+    backgroundColor: cartasBosque.niebla + '44',
+    alignItems: 'center', justifyContent: 'center',
+  },
+  sesionDispositivo:    { fontFamily: 'DMSans_600SemiBold', fontSize: 12, color: cartasBosque.tinta, flex: 1 },
+  sesionUbicacion:      { fontFamily: 'DMMono_400Regular',  fontSize: 10, color: cartasBosque.helecho },
+  sesionTiempo:         { fontFamily: 'DMMono_400Regular',  fontSize: 10, color: cartasBosque.niebla },
+  esteDispositivoBadge: {
+    paddingHorizontal: spacing[2], paddingVertical: 1,
+    borderRadius: borderRadius.sm, backgroundColor: cartasBosque.niebla + '55',
+  },
+  esteDispositivoText: { fontFamily: 'DMMono_400Regular', fontSize: 9, color: cartasBosque.musgo },
+  cerrarSesBtn: {
+    paddingHorizontal: spacing[3], paddingVertical: spacing[1] + 1,
+    borderRadius: borderRadius.sm, borderWidth: 1, borderColor: '#A63228' + '55',
+    backgroundColor: '#F5DAD8' + '55',
+  },
+  cerrarSesBtnText: { fontFamily: 'DMMono_400Regular', fontSize: 10, color: '#A63228' },
   roboBtn: {
     flexDirection: 'row', alignItems: 'center', gap: spacing[2],
     borderRadius: borderRadius.md, padding: spacing[3],
     borderWidth: 1, borderColor: '#A63228' + '50',
-    backgroundColor: '#F5DAD8' + '33',
-    marginBottom: spacing[5],
+    backgroundColor: '#F5DAD8' + '33', marginBottom: spacing[5],
   },
   roboBtnText: { fontFamily: 'DMSans_400Regular', fontSize: 13, color: '#A63228' },
 
@@ -795,22 +1004,17 @@ const s = StyleSheet.create({
     flexDirection: 'row', alignItems: 'center', gap: spacing[3],
     backgroundColor: cartasBosque.pergamino,
     borderRadius: borderRadius.md, padding: spacing[3],
-    borderWidth: 1, borderColor: cartasBosque.pergaminoOscuro,
-    marginBottom: spacing[2],
+    borderWidth: 1, borderColor: cartasBosque.pergaminoOscuro, marginBottom: spacing[2],
   },
   accesoIcon: {
     width: 40, height: 40, borderRadius: 20,
-    backgroundColor: cartasBosque.niebla + '55',
-    alignItems: 'center', justifyContent: 'center',
+    backgroundColor: cartasBosque.niebla + '55', alignItems: 'center', justifyContent: 'center',
   },
   accesoTitulo: { fontFamily: 'DMSans_600SemiBold', fontSize: 13, color: cartasBosque.tinta },
   accesoSub:    { fontFamily: 'DMSans_400Regular',  fontSize: 11, color: cartasBosque.helecho },
 
   // Overlay modal
-  overlay: {
-    flex: 1, backgroundColor: 'rgba(0,0,0,0.45)',
-    justifyContent: 'flex-end',
-  },
+  overlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.45)', justifyContent: 'flex-end' },
 });
 
 const secStyles = StyleSheet.create({
@@ -838,18 +1042,17 @@ const firmaStyles = StyleSheet.create({
     paddingHorizontal: spacing[3], paddingVertical: spacing[2] + 2,
     borderRadius: borderRadius.md, borderWidth: 1, borderColor: cartasBosque.pergaminoOscuro,
   },
-  btnLimpiarText:   { fontFamily: 'DMSans_400Regular', fontSize: 13, color: cartasBosque.helecho },
+  btnLimpiarText:  { fontFamily: 'DMSans_400Regular', fontSize: 13, color: cartasBosque.helecho },
   btnCancelar: {
     paddingHorizontal: spacing[3], paddingVertical: spacing[2] + 2,
     borderRadius: borderRadius.md, borderWidth: 1, borderColor: cartasBosque.pergaminoOscuro,
   },
-  btnCancelarText:  { fontFamily: 'DMSans_400Regular', fontSize: 13, color: cartasBosque.helecho },
+  btnCancelarText: { fontFamily: 'DMSans_400Regular', fontSize: 13, color: cartasBosque.helecho },
   btnGuardar: {
     flex: 1, paddingVertical: spacing[2] + 2,
-    borderRadius: borderRadius.md, backgroundColor: cartasBosque.bosque,
-    alignItems: 'center',
+    borderRadius: borderRadius.md, backgroundColor: cartasBosque.bosque, alignItems: 'center',
   },
-  btnGuardarText:   { fontFamily: 'DMSans_600SemiBold', fontSize: 13, color: cartasBosque.bruma },
+  btnGuardarText: { fontFamily: 'DMSans_600SemiBold', fontSize: 13, color: cartasBosque.bruma },
 });
 
 const mStyles = StyleSheet.create({
@@ -875,8 +1078,7 @@ const mStyles = StyleSheet.create({
   btnCancelText: { fontFamily: 'DMSans_400Regular', fontSize: 14, color: cartasBosque.helecho },
   btnOk: {
     flex: 1, paddingVertical: spacing[3],
-    borderRadius: borderRadius.md, backgroundColor: cartasBosque.bosque,
-    alignItems: 'center',
+    borderRadius: borderRadius.md, backgroundColor: cartasBosque.bosque, alignItems: 'center',
   },
   btnOkText: { fontFamily: 'DMSans_600SemiBold', fontSize: 14, color: cartasBosque.bruma },
 });

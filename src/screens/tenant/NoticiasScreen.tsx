@@ -135,8 +135,8 @@ function ChatList({ chats, chatGeneral, uid, onSelect }: {
 
 // ─── Chat view ────────────────────────────────────────────────
 
-function ChatView({ chat, uid, nombre, esAdmin, onBack }: {
-  chat: Chat; uid: string; nombre: string; esAdmin: boolean; onBack: () => void;
+function ChatView({ chat, uid, nombre, esAdmin, onBack, hideHeader }: {
+  chat: Chat; uid: string; nombre: string; esAdmin: boolean; onBack: () => void; hideHeader?: boolean;
 }) {
   const [mensajes, setMensajes] = useState<Mensaje[]>([]);
   const [texto, setTexto]       = useState('');
@@ -193,13 +193,15 @@ function ChatView({ chat, uid, nombre, esAdmin, onBack }: {
 
   return (
     <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-      <View style={styles.chatHeader}>
-        <TouchableOpacity onPress={onBack} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
-          <Ionicons name="arrow-back" size={20} color={cartasBosque.tinta} />
-        </TouchableOpacity>
-        <Text style={styles.chatHeaderNombre} numberOfLines={1}>{chat.nombre ?? 'Chat'}</Text>
-        {chat.congelado && <Ionicons name="lock-closed" size={14} color={cartasBosque.tierra} />}
-      </View>
+      {!hideHeader && (
+        <View style={styles.chatHeader}>
+          <TouchableOpacity onPress={onBack} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+            <Ionicons name="arrow-back" size={20} color={cartasBosque.tinta} />
+          </TouchableOpacity>
+          <Text style={styles.chatHeaderNombre} numberOfLines={1}>{chat.nombre ?? 'Chat'}</Text>
+          {chat.congelado && <Ionicons name="lock-closed" size={14} color={cartasBosque.tierra} />}
+        </View>
+      )}
 
       <FlatList
         ref={flatRef}
@@ -360,28 +362,60 @@ export default function NoticiasScreen() {
 
   return (
     <View style={styles.root} {...panResponder.panHandlers}>
-      {/* Feed noticias */}
+      {/* Feed noticias + chat general siempre visible */}
       <SafeAreaView style={{ flex: 1, backgroundColor: cartasBosque.bruma }}>
         <View style={styles.header}>
           <Text style={styles.titulo}>Noticias</Text>
           <Text style={styles.swipeHint}>← desliza para el chat</Text>
         </View>
+
         {cargando ? (
           <ActivityIndicator color={cartasBosque.bosque} style={{ marginTop: spacing[8] }} />
-        ) : noticias.length === 0 ? (
-          <View style={styles.vacio}>
-            <Ionicons name="newspaper-outline" size={36} color={cartasBosque.niebla} />
-            <Text style={styles.vacioText}>Sin noticias por ahora</Text>
-          </View>
         ) : (
-          <FlatList
-            data={noticias} keyExtractor={n => n.id}
-            contentContainerStyle={{ padding: spacing[4], paddingBottom: spacing[12] }}
-            renderItem={({ item }) => (
-              <NoticiaCard noticia={item} uid={uid}
-                onVotar={(id, op) => votarEncuesta(id, op, uid).catch(() => {})} />
+          <View style={{ flex: 1 }}>
+            {/* Noticias en la parte superior (scroll compacto) */}
+            {noticias.length > 0 ? (
+              <FlatList
+                data={noticias} keyExtractor={n => n.id}
+                style={{ maxHeight: 260 }}
+                contentContainerStyle={{ padding: spacing[4], paddingBottom: spacing[2] }}
+                showsVerticalScrollIndicator={false}
+                renderItem={({ item }) => (
+                  <NoticiaCard noticia={item} uid={uid}
+                    onVotar={(id, op) => votarEncuesta(id, op, uid).catch(() => {})} />
+                )}
+              />
+            ) : (
+              <View style={styles.noticiaPlaceholder}>
+                <Ionicons name="newspaper-outline" size={18} color={cartasBosque.niebla} />
+                <Text style={styles.noticiaPlaceholderText}>Aún no hay noticias publicadas</Text>
+              </View>
             )}
-          />
+
+            {/* Divisor sección general */}
+            <View style={styles.generalHeader}>
+              <View style={[styles.generalDot, { backgroundColor: cartasBosque.bosque }]} />
+              <Text style={styles.generalLabel}>GENERAL</Text>
+            </View>
+
+            {/* Chat general siempre presente */}
+            {chatGeneral ? (
+              <View style={{ flex: 1 }}>
+                <ChatView
+                  chat={chatGeneral}
+                  uid={uid}
+                  nombre={nombreInq || uid.slice(0, 8)}
+                  esAdmin={esAdmin}
+                  onBack={() => {}}
+                  hideHeader
+                />
+              </View>
+            ) : (
+              <View style={styles.vacio}>
+                <ActivityIndicator color={cartasBosque.bosque} />
+              </View>
+            )}
+          </View>
         )}
       </SafeAreaView>
 
@@ -435,6 +469,21 @@ const styles = StyleSheet.create({
   swipeHint: { fontFamily: 'DMMono_400Regular', fontSize: 10, color: cartasBosque.niebla },
   vacio:     { flex: 1, alignItems: 'center', justifyContent: 'center', gap: spacing[2] },
   vacioText: { fontFamily: 'DMSans_400Regular', fontSize: 14, color: cartasBosque.helecho },
+
+  noticiaPlaceholder: {
+    flexDirection: 'row', alignItems: 'center', gap: spacing[2],
+    paddingHorizontal: spacing[4], paddingVertical: spacing[3],
+    borderBottomWidth: 1, borderBottomColor: cartasBosque.pergaminoOscuro,
+  },
+  noticiaPlaceholderText: { fontFamily: 'DMSans_400Regular', fontSize: 13, color: cartasBosque.niebla },
+  generalHeader: {
+    flexDirection: 'row', alignItems: 'center', gap: spacing[2],
+    paddingHorizontal: spacing[4], paddingVertical: spacing[2],
+    borderBottomWidth: 1, borderBottomColor: cartasBosque.pergaminoOscuro,
+    backgroundColor: cartasBosque.bruma,
+  },
+  generalDot:  { width: 8, height: 8, borderRadius: 4 },
+  generalLabel:{ fontFamily: 'DMMono_400Regular', fontSize: 10, color: cartasBosque.helecho, letterSpacing: 0.5 },
 
   noticiaCard: {
     backgroundColor: cartasBosque.pergamino, borderRadius: borderRadius.md,
