@@ -10,8 +10,8 @@ import {
 import type { Ticket } from '@/types/firestore';
 
 const ESTADO_COLORES: Record<string, { bg: string; text: string }> = {
-  en_revision: { bg: '#F5E8C8', text: '#B07D2A' },
-  en_proceso:  { bg: '#D6E8F5', text: '#2A5EB0' },
+  en_revision: { bg: '#D6E8F5', text: '#2A5EB0' },
+  en_proceso:  { bg: '#FFF0E0', text: '#C05A00' },
   resuelto:    { bg: '#D6EDD9', text: '#3A7D44' },
 };
 

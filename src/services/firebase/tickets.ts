@@ -12,13 +12,13 @@ import type {
 // ─── Labels ───────────────────────────────────────────────────
 
 export const CATEGORIA_LABELS: Record<CategoriaTicket, string> = {
-  internet:           'Internet',
-  pago:               'Problema con pago',
+  internet:           'Problemas con el internet',
+  pago:               'Problemas con un pago',
   reporte_limpieza:   'Reporte de limpieza',
-  reporte_inquilino:  'Reporte de inquilino',
-  lavadora:           'Lavadora',
-  almacenamiento:     'Almacenamiento',
-  mantenimiento:      'Mantenimiento',
+  reporte_inquilino:  'Reporte sobre otro inquilino',
+  lavadora:           'Problemas con la lavadora',
+  almacenamiento:     'Problemas con el almacenamiento',
+  mantenimiento:      'Mantenimiento / Reparaciones',
 };
 
 export const CATEGORIA_ICONS: Record<CategoriaTicket, string> = {
@@ -48,25 +48,26 @@ export const SUBCATEGORIA_LABELS: Record<string, string> = {
   // internet
   senal_lenta: 'Señal lenta', sin_senal: 'Sin señal', modem_roto: 'Módem roto',
   // pago
-  no_registrado: 'No registrado', paso_fecha: 'Se pasó la fecha',
-  comprobante_diferente: 'Comprobante diferente', otro: 'Otro',
-  // limpieza areas
-  bano_gris: 'Baño gris', bano_marron: 'Baño marrón', bano_terraza: 'Baño terraza',
-  cocina_pb: 'Cocina PB', cocina_tp: 'Cocina TP', pasillo: 'Pasillo',
-  escalera: 'Escalera', patio: 'Patio', tendedero: 'Tendedero',
+  no_registrado: 'No aparece registrado', paso_fecha: 'Se pasó la fecha',
+  comprobante_diferente: 'El comprobante es diferente', otro: 'Otro',
+  // limpieza
+  bano_1_pb: 'Baño 1 PB', bano_2_pb: 'Baño 2 PB',
+  bano_gris: 'Baño Gris', bano_marron: 'Baño Marrón', bano_terraza: 'Baño Terraza',
+  cocina_pb: 'CocinaPB', cocina_tp: 'CocinaTP', area_comun: 'Área común', pasillo: 'Pasillo',
   // inquilino
-  ruido: 'Ruido', basura: 'Basura', malos_olores: 'Malos olores',
-  dano_propiedad: 'Daño a propiedad', agresion_verbal: 'Agresión verbal',
-  robo_hurto: 'Robo / Hurto', mascota_no_autorizada: 'Mascota no autorizada',
+  ruido: 'Ruido', basura: 'Basura', mal_uso_areas: 'Mal uso de áreas',
+  agresion: 'Agresión', acoso: 'Acoso', sustancias: 'Sustancias',
+  visitas_no_registradas: 'Visitas no registradas',
   // lavadora
   se_paro: 'Se paró', faltan_prendas: 'Faltan prendas',
   // almacenamiento
-  lugar_ocupado: 'Lugar ocupado', intentaron_abrir: 'Intentaron abrir',
-  se_comieron_cosas: 'Se comieron cosas', no_puedo_abrir: 'No puedo abrir',
+  lugar_ocupado: 'Lugar ocupado por error', intentaron_abrir: 'Intentaron abrir mi espacio',
+  se_tomaron_cosas: 'Se tomaron mis cosas', no_puedo_abrir: 'No puedo abrir',
   // mantenimiento
-  electrico: 'Eléctrico', plomeria: 'Plomería', gas: 'Gas', muebles: 'Muebles',
-  cerradura: 'Cerradura', ventana_puerta: 'Ventana / Puerta',
-  sucia_rota_entrega: 'Sucia/Rota al entregarse',
+  sucia_rota_entrega: 'Hab sucia al entregarse',
+  retoque_pared: 'Retoque de pared', humedad: 'Humedad', agua_turbia: 'Agua turbia',
+  chapa_no_sirve: 'Chapa no sirve', ventana_rota: 'Ventana rota',
+  puerta_no_cierra: 'Puerta no cierra', escusado: 'Escusado', closet: 'Closet',
 };
 
 // ─── Subcategorías por categoría ──────────────────────────────
@@ -74,17 +75,39 @@ export const SUBCATEGORIA_LABELS: Record<string, string> = {
 export const SUBCATEGORIAS: Record<CategoriaTicket, SubcategoriaTicket[]> = {
   internet:          ['senal_lenta', 'sin_senal', 'modem_roto'],
   pago:              ['no_registrado', 'paso_fecha', 'comprobante_diferente', 'otro'],
-  reporte_limpieza:  ['bano_gris', 'bano_marron', 'bano_terraza', 'cocina_pb', 'cocina_tp', 'pasillo', 'escalera', 'patio', 'tendedero'],
-  reporte_inquilino: ['ruido', 'basura', 'malos_olores', 'dano_propiedad', 'agresion_verbal', 'robo_hurto', 'mascota_no_autorizada', 'otro'],
+  reporte_limpieza:  ['bano_1_pb', 'bano_2_pb', 'bano_gris', 'bano_marron', 'bano_terraza', 'cocina_pb', 'cocina_tp', 'area_comun', 'pasillo'],
+  reporte_inquilino: ['ruido', 'basura', 'mal_uso_areas', 'agresion', 'acoso', 'sustancias', 'visitas_no_registradas', 'otro'],
   lavadora:          ['se_paro', 'faltan_prendas'],
-  almacenamiento:    ['lugar_ocupado', 'intentaron_abrir', 'se_comieron_cosas', 'no_puedo_abrir'],
-  mantenimiento:     ['electrico', 'plomeria', 'gas', 'muebles', 'cerradura', 'ventana_puerta', 'sucia_rota_entrega', 'otro'],
+  almacenamiento:    ['lugar_ocupado', 'intentaron_abrir', 'se_tomaron_cosas', 'no_puedo_abrir'],
+  mantenimiento:     ['sucia_rota_entrega', 'retoque_pared', 'humedad', 'agua_turbia', 'chapa_no_sirve', 'ventana_rota', 'puerta_no_cierra', 'escusado', 'closet', 'otro'],
 } as any;
 
 // foto obligatoria para estas categorías
 export const FOTO_OBLIGATORIA: CategoriaTicket[] = [
-  'internet', 'reporte_limpieza', 'almacenamiento', 'mantenimiento',
+  'reporte_limpieza', 'almacenamiento', 'mantenimiento',
 ];
+
+// ─── Responsabilidad automática ───────────────────────────────
+
+export const RESPONSABILIDAD_LABELS: Record<EtiquetaTicket | 'sin_definir', string> = {
+  admin_cubre:        'Admin cubre',
+  mal_uso:            'Mal uso del inquilino',
+  sin_culpa:          'Sin culpa',
+  reportar_proveedor: 'Reportar proveedor',
+  sin_definir:        'Sin definir',
+};
+
+function calcularEtiquetaResponsabilidad(
+  categoria: CategoriaTicket,
+  subcategoria: SubcategoriaTicket,
+): EtiquetaTicket | null {
+  if (categoria !== 'mantenimiento') return null;
+  const adminCubre = ['sucia_rota_entrega', 'retoque_pared', 'humedad', 'agua_turbia'];
+  const malUso     = ['chapa_no_sirve', 'ventana_rota', 'puerta_no_cierra', 'escusado', 'closet'];
+  if (adminCubre.includes(subcategoria as string)) return 'admin_cubre';
+  if (malUso.includes(subcategoria as string))     return 'mal_uso';
+  return null;
+}
 
 // ─── Folio ────────────────────────────────────────────────────
 
@@ -129,6 +152,8 @@ export async function crearTicket(payload: {
     fotoUrl = await getDownloadURL(r);
   }
 
+  const etiquetaResp = calcularEtiquetaResponsabilidad(payload.categoria, payload.subcategoria);
+
   const data: Omit<Ticket, 'id'> = {
     folio,
     inquilinoId:      payload.inquilinoId,
@@ -141,7 +166,7 @@ export async function crearTicket(payload: {
     sacasteRopa:      payload.sacasteRopa,
     fotoUrl,
     estado:           'en_revision',
-    etiquetas:        [],
+    etiquetas:        etiquetaResp ? [etiquetaResp] : [],
     afectaScore:      false,
     afectaExpediente: false,
     notasAdmin:       '',
@@ -150,8 +175,8 @@ export async function crearTicket(payload: {
     resueltoEn:       null,
   };
 
-  const ref2 = await addDoc(collection(db, 'tickets'), data);
-  return ref2.id;
+  await addDoc(collection(db, 'tickets'), data);
+  return folio;
 }
 
 // ─── Admin mutations ──────────────────────────────────────────

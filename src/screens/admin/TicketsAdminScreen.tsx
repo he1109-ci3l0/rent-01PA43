@@ -11,7 +11,7 @@ import TicketCard from '@/components/common/TicketCard';
 import {
   listenTodosTickets, actualizarEstado, agregarEtiqueta, quitarEtiqueta,
   actualizarDecisionAdmin,
-  CATEGORIA_LABELS, ESTADO_LABELS, ETIQUETA_LABELS,
+  CATEGORIA_LABELS, ESTADO_LABELS, ETIQUETA_LABELS, RESPONSABILIDAD_LABELS,
 } from '@/services/firebase/tickets';
 import type {
   Ticket, CategoriaTicket, EstadoTicket, EtiquetaTicket,
@@ -32,8 +32,8 @@ const ETIQUETA_COLORES: Record<EtiquetaTicket, string> = {
 };
 
 const ESTADO_COLORES: Record<EstadoTicket, { bg: string; text: string }> = {
-  en_revision: { bg: '#F5E8C8', text: '#B07D2A' },
-  en_proceso:  { bg: '#D6E8F5', text: '#2A5EB0' },
+  en_revision: { bg: '#D6E8F5', text: '#2A5EB0' },
+  en_proceso:  { bg: '#FFF0E0', text: '#C05A00' },
   resuelto:    { bg: '#D6EDD9', text: '#3A7D44' },
 };
 
@@ -61,6 +61,15 @@ function ModalDetalle({
     try { await actualizarEstado(ticket.id, est); }
     catch { Alert.alert('Error', 'No se pudo cambiar el estado.'); }
     finally { setGuardando(false); }
+  }
+
+  async function cambiarResponsabilidad(resp: EtiquetaTicket | 'sin_definir') {
+    if (!ticket) return;
+    try {
+      if (ticket.etiquetas.includes('admin_cubre')) await quitarEtiqueta(ticket.id, 'admin_cubre');
+      if (ticket.etiquetas.includes('mal_uso'))     await quitarEtiqueta(ticket.id, 'mal_uso');
+      if (resp !== 'sin_definir')                   await agregarEtiqueta(ticket.id, resp);
+    } catch { Alert.alert('Error', 'No se pudo cambiar la responsabilidad.'); }
   }
 
   async function toggleEtiqueta(e: EtiquetaTicket) {
@@ -126,6 +135,41 @@ function ModalDetalle({
             );
           })}
         </View>
+
+        {/* Responsabilidad */}
+        {(() => {
+          const respActual: EtiquetaTicket | 'sin_definir' =
+            ticket.etiquetas.includes('admin_cubre') ? 'admin_cubre' :
+            ticket.etiquetas.includes('mal_uso')     ? 'mal_uso'     : 'sin_definir';
+          const RESP_OPTS: Array<EtiquetaTicket | 'sin_definir'> = ['admin_cubre', 'mal_uso', 'sin_definir'];
+          const RESP_COLORS: Record<string, string> = {
+            admin_cubre: '#D6E8F5', mal_uso: '#F5DAD8', sin_definir: cartasBosque.pergamino,
+          };
+          return (
+            <>
+              <Text style={styles.sheetLabel}>RESPONSABILIDAD</Text>
+              <View style={styles.estadosRow}>
+                {RESP_OPTS.map(r => {
+                  const activo = respActual === r;
+                  return (
+                    <TouchableOpacity
+                      key={r}
+                      style={[
+                        styles.estadoBtn,
+                        activo && { backgroundColor: RESP_COLORS[r], borderColor: cartasBosque.helecho },
+                      ]}
+                      onPress={() => cambiarResponsabilidad(r)}
+                    >
+                      <Text style={[styles.estadoBtnText, activo && { color: cartasBosque.tinta }]}>
+                        {RESPONSABILIDAD_LABELS[r]}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+            </>
+          );
+        })()}
 
         {/* Etiquetas internas */}
         <Text style={styles.sheetLabel}>ETIQUETAS INTERNAS</Text>

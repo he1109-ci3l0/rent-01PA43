@@ -214,11 +214,11 @@ export type CategoriaTicket =
 
 export type SubcategoriaInternet      = 'senal_lenta' | 'sin_senal' | 'modem_roto';
 export type SubcategoriaPago          = 'no_registrado' | 'paso_fecha' | 'comprobante_diferente' | 'otro';
-export type SubcategoriaLimpieza      = 'bano_gris' | 'bano_marron' | 'bano_terraza' | 'cocina_pb' | 'cocina_tp' | 'pasillo' | 'escalera' | 'patio' | 'tendedero';
-export type SubcategoriaInquilino     = 'ruido' | 'basura' | 'malos_olores' | 'dano_propiedad' | 'agresion_verbal' | 'robo_hurto' | 'mascota_no_autorizada' | 'otro';
+export type SubcategoriaLimpieza      = 'bano_1_pb' | 'bano_2_pb' | 'bano_gris' | 'bano_marron' | 'bano_terraza' | 'cocina_pb' | 'cocina_tp' | 'area_comun' | 'pasillo';
+export type SubcategoriaInquilino     = 'ruido' | 'basura' | 'mal_uso_areas' | 'agresion' | 'acoso' | 'sustancias' | 'visitas_no_registradas' | 'otro';
 export type SubcategoriaLavadora      = 'se_paro' | 'faltan_prendas';
-export type SubcategoriaAlmacenamiento= 'lugar_ocupado' | 'intentaron_abrir' | 'se_comieron_cosas' | 'no_puedo_abrir';
-export type SubcategoriaMantenimiento = 'electrico' | 'plomeria' | 'gas' | 'muebles' | 'cerradura' | 'ventana_puerta' | 'sucia_rota_entrega' | 'otro';
+export type SubcategoriaAlmacenamiento= 'lugar_ocupado' | 'intentaron_abrir' | 'se_tomaron_cosas' | 'no_puedo_abrir';
+export type SubcategoriaMantenimiento = 'sucia_rota_entrega' | 'retoque_pared' | 'humedad' | 'agua_turbia' | 'chapa_no_sirve' | 'ventana_rota' | 'puerta_no_cierra' | 'escusado' | 'closet' | 'otro';
 
 export type SubcategoriaTicket =
   | SubcategoriaInternet

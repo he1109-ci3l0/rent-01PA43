@@ -1,6 +1,14 @@
 {
   "indexes": [
     {
+      "collectionGroup": "tickets",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "inquilinoId", "order": "ASCENDING"  },
+        { "fieldPath": "creadoEn",    "order": "DESCENDING" }
+      ]
+    },
+    {
       "collectionGroup": "pagos",
       "queryScope": "COLLECTION",
       "fields": [
