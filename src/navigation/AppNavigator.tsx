@@ -8,6 +8,7 @@ import { cartasBosque } from '@/constants/colors';
 // ── Tenant screens ────────────────────────────────────────────
 import DossierScreen        from '@/screens/tenant/DossierScreen';
 import NoticiasScreen       from '@/screens/tenant/NoticiasScreen';
+import HomeScreen           from '@/screens/tenant/HomeScreen';
 import PagosScreen          from '@/screens/tenant/PagosScreen';
 import ServiciosMenuScreen  from '@/screens/tenant/ServiciosMenuScreen';
 import VisitasScreen        from '@/screens/tenant/VisitasScreen';
@@ -72,7 +73,7 @@ function TenantNavigator() {
       {/* Home — tab central con pill destacado */}
       <TenantTab.Screen
         name="Home"
-        component={PagosScreen}
+        component={HomeScreen}
         options={{
           tabBarIcon: ({ focused }) => (
             <View style={[styles.homePill, focused && styles.homePillActive]}>
