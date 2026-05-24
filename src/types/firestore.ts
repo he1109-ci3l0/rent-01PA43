@@ -735,9 +735,15 @@ export interface CuponUso {
 export type TipoDocExpediente =
   | 'INE_FRENTE' | 'INE_REVERSO' | 'CURP' | 'COMPROBANTE_DOMICILIO'
   | 'PRENDA_1_1' | 'PRENDA_1_2' | 'CONTRATO' | 'REGLAMENTO'
-  | 'AVISO_PRIVACIDAD' | 'ADDENDUM_SERVICIOS' | 'CLAUSULA_CUPONES';
+  | 'AVISO_PRIVACIDAD' | 'ADDENDUM_SERVICIOS' | 'CLAUSULA_CUPONES'
+  | 'CONTRATO_MOBILIARIO';
 
-export type EstadoDocExpediente = 'pendiente' | 'subido' | 'rechazado';
+export type EstadoDocExpediente =
+  | 'pendiente'       // doc personal sin subir
+  | 'subido'          // disponible (sin firma requerida)
+  | 'rechazado'       // rechazado por admin
+  | 'pendiente_firma' // plantilla disponible, requiere firma
+  | 'firmado';        // firmado digitalmente
 
 export interface DocumentoExpediente {
   id: string;
@@ -749,6 +755,22 @@ export interface DocumentoExpediente {
   maxDescargas: number;
   subidoEn: Timestamp | null;
   subidoPor: string | null;
+  requiereFirma?: boolean;
+  firmadoEn?: Timestamp | null;
+}
+
+// ─── documentosPlantillas ─────────────────────────────────────
+
+export interface DocumentoPlantilla {
+  tipo: string;           // 'contrato' | 'reglamento' | etc.
+  nombre: string;
+  nombreArchivo: string;
+  storageRuta: string;    // 'documentos/plantillas/contrato_final_v5.docx'
+  url: string;
+  requiereFirma: boolean;
+  version: string;
+  subidoEn: Timestamp;
+  subidoPor: string;
 }
 
 export interface ContactoEmergencia {

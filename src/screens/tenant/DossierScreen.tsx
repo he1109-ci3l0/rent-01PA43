@@ -15,7 +15,7 @@ import DocumentoCard from '@/components/common/DocumentoCard';
 import FacturacionScreen from './FacturacionScreen';
 import {
   listenExpediente, listenDocumentos, inicializarExpediente,
-  guardarFirma, registrarDescarga,
+  guardarFirma, registrarDescarga, firmarDocumento,
   agregarContactoEmergencia, eliminarContactoEmergencia,
   agregarMascota, eliminarMascota,
 } from '@/services/firebase/expedientes';
@@ -470,7 +470,7 @@ export default function DossierScreen() {
         </TouchableOpacity>
 
         {/* ── Documentos ── */}
-        <Seccion label={`Documentos (${documentos.filter(d => d.estado === 'subido').length}/${documentos.length})`} />
+        <Seccion label={`Documentos (${documentos.filter(d => d.estado === 'subido' || d.estado === 'firmado').length}/${documentos.length})`} />
         {documentos.length === 0 ? (
           <View style={s.emptyCard}>
             <Text style={s.emptyText}>Los documentos serán cargados por administración</Text>
@@ -485,6 +485,21 @@ export default function DossierScreen() {
                 if (d.url) {
                   await registrarDescarga(uid, d.id).catch(() => {});
                   Linking.openURL(d.url);
+                }
+              }}
+              onFirmar={async () => {
+                if (!expediente?.firmaDigital) {
+                  Alert.alert(
+                    'Firma requerida',
+                    'Primero registra tu firma digital en la sección "Firma digital" de esta pantalla.',
+                    [{ text: 'Entendido' }],
+                  );
+                  return;
+                }
+                try {
+                  await firmarDocumento(uid, d.id);
+                } catch {
+                  Alert.alert('Error', 'No se pudo registrar la firma. Intenta de nuevo.');
                 }
               }}
             />

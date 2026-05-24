@@ -18,19 +18,24 @@ const TIPO_ICON: Record<string, IoniconsName> = {
   REGLAMENTO:            'book-outline',
   AVISO_PRIVACIDAD:      'lock-closed-outline',
   ADDENDUM_SERVICIOS:    'add-circle-outline',
+  CONTRATO_MOBILIARIO:   'cube-outline',
   CLAUSULA_CUPONES:      'pricetag-outline',
 };
 
 const ESTADO_LABEL: Record<DocumentoExpediente['estado'], string> = {
-  pendiente: 'Pendiente',
-  subido:    'Disponible',
-  rechazado: 'Rechazado',
+  pendiente:       'Pendiente',
+  subido:          'Disponible',
+  rechazado:       'Rechazado',
+  pendiente_firma: 'Pendiente firma',
+  firmado:         'Firmado',
 };
 
 const ESTADO_COLORS: Record<DocumentoExpediente['estado'], { bg: string; text: string }> = {
-  pendiente: { bg: cartasBosque.niebla + '55', text: cartasBosque.helecho },
-  subido:    { bg: '#E8EBE0',                  text: '#4A5E48'            },
-  rechazado: { bg: 'rgba(103,0,16,0.15)',                  text: '#960018'            },
+  pendiente:       { bg: cartasBosque.niebla + '55', text: cartasBosque.helecho },
+  subido:          { bg: '#E8EBE0',                  text: '#4A5E48'            },
+  rechazado:       { bg: 'rgba(103,0,16,0.15)',      text: '#960018'            },
+  pendiente_firma: { bg: 'rgba(150,0,24,0.10)',      text: '#960018'            },
+  firmado:         { bg: '#E8EBE0',                  text: '#4A5E48'            },
 };
 
 interface Props {
@@ -39,13 +44,16 @@ interface Props {
   onDescargar: () => void;
   onSubir?: () => void;
   onResetContador?: () => void;
+  onFirmar?: () => void;
 }
 
 export default function DocumentoCard({
-  doc, esAdmin, onDescargar, onSubir, onResetContador,
+  doc, esAdmin, onDescargar, onSubir, onResetContador, onFirmar,
 }: Props) {
   const icono = TIPO_ICON[doc.tipo] ?? 'document-outline';
-  const disponible = doc.estado === 'subido' && !!doc.url;
+  const disponible = !!doc.url && (
+    doc.estado === 'subido' || doc.estado === 'pendiente_firma' || doc.estado === 'firmado'
+  );
   const agotado = disponible && !esAdmin && doc.descargas >= doc.maxDescargas;
   const restantes = doc.maxDescargas - doc.descargas;
   const colores = ESTADO_COLORS[doc.estado];
@@ -110,6 +118,14 @@ export default function DocumentoCard({
         )}
       </View>
 
+      {/* Botón firma — solo inquilino, solo docs que requieren firma pendiente */}
+      {!esAdmin && doc.requiereFirma && doc.estado === 'pendiente_firma' && (
+        <TouchableOpacity style={styles.firmaBtn} onPress={onFirmar}>
+          <Ionicons name="pencil-outline" size={13} color={cartasBosque.bruma} />
+          <Text style={styles.firmaBtnText}>Firmar digitalmente</Text>
+        </TouchableOpacity>
+      )}
+
       {/* Resetear contador — solo admin, solo si tiene descargas */}
       {esAdmin && doc.descargas > 0 && (
         <TouchableOpacity style={styles.resetRow} onPress={onResetContador}>
@@ -151,6 +167,15 @@ const styles = StyleSheet.create({
     borderWidth: 1, borderColor: cartasBosque.pergaminoOscuro,
   },
   accionBtnDisabled: { opacity: 0.35 },
+  firmaBtn: {
+    flexDirection: 'row', alignItems: 'center', gap: 6,
+    marginTop: spacing[2], alignSelf: 'flex-start',
+    backgroundColor: '#960018', borderRadius: borderRadius.full,
+    paddingHorizontal: spacing[3], paddingVertical: spacing[1] + 2,
+  },
+  firmaBtnText: {
+    fontFamily: 'Inter_600SemiBold', fontSize: 11, color: cartasBosque.bruma,
+  },
   resetRow: {
     flexDirection: 'row', alignItems: 'center', gap: 4,
     marginTop: spacing[2], alignSelf: 'flex-end',

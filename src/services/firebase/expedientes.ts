@@ -1,5 +1,5 @@
 import {
-  doc, getDoc, setDoc, updateDoc, addDoc, onSnapshot, increment,
+  doc, getDoc, setDoc, updateDoc, addDoc, getDocs, onSnapshot, increment,
   collection, Timestamp,
 } from 'firebase/firestore';
 import { db } from './firestore';
@@ -10,18 +10,25 @@ import type {
 
 // ─── Documentos iniciales ─────────────────────────────────────
 
+// Tipos que vienen de plantillas (lowercase→UPPERCASE mapping via .toUpperCase())
+const TIPOS_PLANTILLA = new Set([
+  'CONTRATO', 'REGLAMENTO', 'AVISO_PRIVACIDAD',
+  'ADDENDUM_SERVICIOS', 'CONTRATO_MOBILIARIO', 'CLAUSULA_CUPONES',
+]);
+
 const DOCS_BASE: Array<Omit<DocumentoExpediente, 'id'>> = [
-  { tipo: 'INE_FRENTE',          nombre: 'INE — Frente',            url: null, estado: 'pendiente', descargas: 0, maxDescargas: 3, subidoEn: null, subidoPor: null },
-  { tipo: 'INE_REVERSO',         nombre: 'INE — Reverso',           url: null, estado: 'pendiente', descargas: 0, maxDescargas: 3, subidoEn: null, subidoPor: null },
-  { tipo: 'CURP',                nombre: 'CURP',                    url: null, estado: 'pendiente', descargas: 0, maxDescargas: 3, subidoEn: null, subidoPor: null },
-  { tipo: 'COMPROBANTE_DOMICILIO', nombre: 'Comprobante de domicilio', url: null, estado: 'pendiente', descargas: 0, maxDescargas: 3, subidoEn: null, subidoPor: null },
-  { tipo: 'PRENDA_1_1',          nombre: 'Prenda garantía 1/2',     url: null, estado: 'pendiente', descargas: 0, maxDescargas: 3, subidoEn: null, subidoPor: null },
-  { tipo: 'PRENDA_1_2',          nombre: 'Prenda garantía 2/2',     url: null, estado: 'pendiente', descargas: 0, maxDescargas: 3, subidoEn: null, subidoPor: null },
-  { tipo: 'CONTRATO',            nombre: 'Contrato de hospedaje',   url: null, estado: 'pendiente', descargas: 0, maxDescargas: 3, subidoEn: null, subidoPor: null },
-  { tipo: 'REGLAMENTO',          nombre: 'Reglamento interno',      url: null, estado: 'pendiente', descargas: 0, maxDescargas: 3, subidoEn: null, subidoPor: null },
-  { tipo: 'AVISO_PRIVACIDAD',    nombre: 'Aviso de privacidad',     url: null, estado: 'pendiente', descargas: 0, maxDescargas: 3, subidoEn: null, subidoPor: null },
-  { tipo: 'ADDENDUM_SERVICIOS',  nombre: 'Addendum de servicios',   url: null, estado: 'pendiente', descargas: 0, maxDescargas: 3, subidoEn: null, subidoPor: null },
-  { tipo: 'CLAUSULA_CUPONES',    nombre: 'Cláusula de cupones',     url: null, estado: 'pendiente', descargas: 0, maxDescargas: 3, subidoEn: null, subidoPor: null },
+  { tipo: 'INE_FRENTE',          nombre: 'INE — Frente',             url: null, estado: 'pendiente', descargas: 0, maxDescargas: 3, subidoEn: null, subidoPor: null, requiereFirma: false, firmadoEn: null },
+  { tipo: 'INE_REVERSO',         nombre: 'INE — Reverso',            url: null, estado: 'pendiente', descargas: 0, maxDescargas: 3, subidoEn: null, subidoPor: null, requiereFirma: false, firmadoEn: null },
+  { tipo: 'CURP',                nombre: 'CURP',                     url: null, estado: 'pendiente', descargas: 0, maxDescargas: 3, subidoEn: null, subidoPor: null, requiereFirma: false, firmadoEn: null },
+  { tipo: 'COMPROBANTE_DOMICILIO', nombre: 'Comprobante de domicilio', url: null, estado: 'pendiente', descargas: 0, maxDescargas: 3, subidoEn: null, subidoPor: null, requiereFirma: false, firmadoEn: null },
+  { tipo: 'PRENDA_1_1',          nombre: 'Prenda garantía 1/2',      url: null, estado: 'pendiente', descargas: 0, maxDescargas: 3, subidoEn: null, subidoPor: null, requiereFirma: false, firmadoEn: null },
+  { tipo: 'PRENDA_1_2',          nombre: 'Prenda garantía 2/2',      url: null, estado: 'pendiente', descargas: 0, maxDescargas: 3, subidoEn: null, subidoPor: null, requiereFirma: false, firmadoEn: null },
+  { tipo: 'CONTRATO',            nombre: 'Contrato de hospedaje',    url: null, estado: 'pendiente', descargas: 0, maxDescargas: 3, subidoEn: null, subidoPor: null, requiereFirma: true,  firmadoEn: null },
+  { tipo: 'REGLAMENTO',          nombre: 'Reglamento interno',       url: null, estado: 'pendiente', descargas: 0, maxDescargas: 3, subidoEn: null, subidoPor: null, requiereFirma: true,  firmadoEn: null },
+  { tipo: 'AVISO_PRIVACIDAD',    nombre: 'Aviso de privacidad',      url: null, estado: 'pendiente', descargas: 0, maxDescargas: 3, subidoEn: null, subidoPor: null, requiereFirma: true,  firmadoEn: null },
+  { tipo: 'ADDENDUM_SERVICIOS',  nombre: 'Addendum de servicios',    url: null, estado: 'pendiente', descargas: 0, maxDescargas: 3, subidoEn: null, subidoPor: null, requiereFirma: false, firmadoEn: null },
+  { tipo: 'CONTRATO_MOBILIARIO', nombre: 'Contrato de mobiliario',   url: null, estado: 'pendiente', descargas: 0, maxDescargas: 3, subidoEn: null, subidoPor: null, requiereFirma: false, firmadoEn: null },
+  { tipo: 'CLAUSULA_CUPONES',    nombre: 'Cláusula de cupones',      url: null, estado: 'pendiente', descargas: 0, maxDescargas: 3, subidoEn: null, subidoPor: null, requiereFirma: false, firmadoEn: null },
 ];
 
 // ─── Inicialización ───────────────────────────────────────────
@@ -30,6 +37,7 @@ export async function inicializarExpediente(uid: string, params: {
   habitacionId: string | null;
   habitacionNumero: string | null;
 }): Promise<void> {
+  // Crear expediente si no existe
   const ref = doc(db, 'expedientes', uid);
   const snap = await getDoc(ref);
   if (!snap.exists()) {
@@ -49,17 +57,36 @@ export async function inicializarExpediente(uid: string, params: {
     } satisfies Omit<Expediente, 'id'>);
   }
 
+  // Sembrar documentos solo si la sub-colección está vacía
   const docsRef = collection(db, `inquilinos/${uid}/documentos`);
-  const existingSnap = await getDoc(doc(db, `inquilinos/${uid}/documentos`, '__check__')).catch(() => null);
-  // Only seed docs if none exist (check by counting)
-  const existingDocs = await getDoc(ref); // re-use ref just to check; actual check below
-  void existingDocs; // suppress lint
-  // Seed docs unconditionally when creating a fresh expediente (idempotent via estado check)
-  // We'll check in the listener whether docs exist
-  const docsSnap = await import('firebase/firestore').then(({ getDocs }) => getDocs(docsRef));
-  if (docsSnap.empty) {
-    await Promise.all(DOCS_BASE.map(d => addDoc(docsRef, d)));
-  }
+  const docsSnap = await getDocs(docsRef);
+  if (!docsSnap.empty) return;
+
+  // Cargar URLs de plantillas para pre-poblar docs legales
+  const plantillasSnap = await getDocs(collection(db, 'documentosPlantillas'));
+  const plantillaMap = new Map<string, { url: string; requiereFirma: boolean }>();
+  plantillasSnap.docs.forEach(p => {
+    const data = p.data();
+    // tipo en plantilla = lowercase ('contrato') → UPPERCASE en TipoDocExpediente ('CONTRATO')
+    plantillaMap.set(p.id.toUpperCase(), {
+      url:           data.url as string,
+      requiereFirma: data.requiereFirma as boolean,
+    });
+  });
+
+  const docsToSeed = DOCS_BASE.map(base => {
+    if (!TIPOS_PLANTILLA.has(base.tipo)) return base;
+    const plantilla = plantillaMap.get(base.tipo);
+    if (!plantilla) return base;
+    return {
+      ...base,
+      url:          plantilla.url,
+      requiereFirma: plantilla.requiereFirma,
+      estado:       (plantilla.requiereFirma ? 'pendiente_firma' : 'subido') as DocumentoExpediente['estado'],
+    };
+  });
+
+  await Promise.all(docsToSeed.map(d => addDoc(docsRef, d)));
 }
 
 // ─── Listeners ────────────────────────────────────────────────
@@ -75,7 +102,7 @@ export function listenDocumentos(uid: string, cb: (docs: DocumentoExpediente[]) 
     const ordered: TipoDocExpediente[] = [
       'INE_FRENTE','INE_REVERSO','CURP','COMPROBANTE_DOMICILIO',
       'PRENDA_1_1','PRENDA_1_2','CONTRATO','REGLAMENTO',
-      'AVISO_PRIVACIDAD','ADDENDUM_SERVICIOS','CLAUSULA_CUPONES',
+      'AVISO_PRIVACIDAD','ADDENDUM_SERVICIOS','CONTRATO_MOBILIARIO','CLAUSULA_CUPONES',
     ];
     const docs = snap.docs.map(d => ({ ...d.data(), id: d.id } as DocumentoExpediente));
     docs.sort((a, b) => ordered.indexOf(a.tipo) - ordered.indexOf(b.tipo));
@@ -88,6 +115,13 @@ export function listenDocumentos(uid: string, cb: (docs: DocumentoExpediente[]) 
 export async function registrarDescarga(uid: string, docId: string): Promise<void> {
   await updateDoc(doc(db, `inquilinos/${uid}/documentos`, docId), {
     descargas: increment(1),
+  });
+}
+
+export async function firmarDocumento(uid: string, docId: string): Promise<void> {
+  await updateDoc(doc(db, `inquilinos/${uid}/documentos`, docId), {
+    estado:    'firmado',
+    firmadoEn: Timestamp.now(),
   });
 }
 

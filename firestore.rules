@@ -261,8 +261,14 @@ service cloud.firestore {
       allow read:   if isOwner(uid) || isAdmin();
       allow create: if isAdmin() || isOwner(uid);
       allow update: if isAdmin()
-        || (isOwner(uid) && onlyUpdatesAllowed(['descargas']));
+        || (isOwner(uid) && onlyUpdatesAllowed(['descargas', 'estado', 'firmadoEn']));
       allow delete: if isAdmin();
+    }
+
+    // ─── documentosPlantillas ──────────────────────────────────
+    match /documentosPlantillas/{tipo} {
+      allow read:  if isAuth();
+      allow write: if isAdmin();
     }
 
     // ─── alertas_seguridad ─────────────────────────────────────

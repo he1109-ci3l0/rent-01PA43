@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
-  TextInput, ActivityIndicator, Alert,
+  TextInput, ActivityIndicator, Alert, Modal, Pressable,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { createUserWithEmailAndPassword, getAuth } from 'firebase/auth';
@@ -10,9 +10,14 @@ import { cartasBosque } from '@/constants/colors';
 import { spacing, borderRadius } from '@/constants/spacing';
 import { db, collections } from '@/services/firebase/firestore';
 import ServiciosAdminScreen from '@/screens/admin/ServiciosAdminScreen';
-import type { Habitacion } from '@/types/firestore';
+import { inicializarExpediente } from '@/services/firebase/expedientes';
+import {
+  PLANTILLAS_META, listenDocumentosPlantillas, actualizarPlantillaUrl,
+} from '@/services/firebase/documentosPlantillas';
+import { useAuth } from '@/hooks/useAuth';
+import type { Habitacion, DocumentoPlantilla } from '@/types/firestore';
 
-type Tab = 'lista' | 'nuevo';
+type Tab = 'lista' | 'nuevo' | 'plantillas';
 
 // ─── Formulario de registro ────────────────────────────────────
 
@@ -107,9 +112,16 @@ function NuevoInquilinoForm({ onDone }: { onDone: () => void }) {
         estado:          'activo',
         rol:             'inquilino',
         requiresAdminAuth: false,
+        rentaMensual:    form.rentaMensual ? Number(form.rentaMensual) : undefined,
         creadoEn:        ahora,
         actualizadoEn:   ahora,
       });
+
+      // Inicializar expediente + copiar plantillas legales
+      await inicializarExpediente(user.uid, {
+        habitacionId:    hab.id,
+        habitacionNumero: hab.numero,
+      }).catch(() => {});
 
       Alert.alert(
         '¡Inquilino registrado!',
@@ -223,6 +235,132 @@ function Row({ label, children }: { label: string; children: React.ReactNode }) 
   );
 }
 
+// ─── PlantillasPanel ──────────────────────────────────────────
+
+function PlantillasPanel() {
+  const { user } = useAuth();
+  const [plantillas, setPlantillas] = useState<DocumentoPlantilla[]>([]);
+  const [editando, setEditando]     = useState<string | null>(null);
+  const [nuevaUrl, setNuevaUrl]     = useState('');
+  const [nuevaVer, setNuevaVer]     = useState('');
+  const [saving, setSaving]         = useState(false);
+
+  useEffect(() => listenDocumentosPlantillas(setPlantillas), []);
+
+  const metaMap = Object.fromEntries(PLANTILLAS_META.map(m => [m.tipo, m]));
+
+  async function guardar(tipo: string) {
+    if (!nuevaUrl.trim()) return;
+    setSaving(true);
+    try {
+      await actualizarPlantillaUrl(
+        tipo,
+        nuevaUrl.trim(),
+        `documentos/plantillas/${metaMap[tipo]?.nombreArchivo ?? tipo}`,
+        nuevaVer.trim() || 'v1',
+        user?.uid ?? '',
+      );
+      setEditando(null);
+      setNuevaUrl('');
+      setNuevaVer('');
+    } catch {
+      Alert.alert('Error', 'No se pudo actualizar la plantilla.');
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  const plantillaMap = Object.fromEntries(plantillas.map(p => [p.tipo, p]));
+
+  return (
+    <ScrollView style={p.scroll} contentContainerStyle={p.content}>
+      <Text style={p.heading}>Documentos plantilla</Text>
+      <Text style={p.sub}>
+        Sube los archivos a Firebase Storage, copia la URL de descarga y pégala aquí.{'\n'}
+        Ruta en Storage: <Text style={p.mono}>documentos/plantillas/[archivo]</Text>
+      </Text>
+
+      {PLANTILLAS_META.map(meta => {
+        const actual = plantillaMap[meta.tipo];
+        return (
+          <View key={meta.tipo} style={p.card}>
+            <View style={p.cardHeader}>
+              <View style={{ flex: 1 }}>
+                <Text style={p.cardNombre}>{meta.nombre}</Text>
+                <Text style={p.cardMeta}>
+                  {meta.nombreArchivo}
+                  {actual && <Text style={p.cardVer}> · {actual.version}</Text>}
+                  {meta.requiereFirma && <Text style={p.cardFirma}> · Requiere firma</Text>}
+                </Text>
+                {actual?.url ? (
+                  <Text style={p.cardUrl} numberOfLines={1}>{actual.url}</Text>
+                ) : (
+                  <Text style={p.cardUrlEmpty}>Sin URL — pendiente de subida</Text>
+                )}
+              </View>
+              <TouchableOpacity
+                style={p.editBtn}
+                onPress={() => {
+                  setEditando(meta.tipo);
+                  setNuevaUrl(actual?.url ?? '');
+                  setNuevaVer(actual?.version ?? meta.version);
+                }}
+              >
+                <Ionicons name="cloud-upload-outline" size={16} color={cartasBosque.bosque} />
+              </TouchableOpacity>
+            </View>
+          </View>
+        );
+      })}
+
+      {/* Modal para editar URL de plantilla */}
+      <Modal visible={!!editando} transparent animationType="fade" onRequestClose={() => setEditando(null)}>
+        <Pressable style={p.overlay} onPress={() => setEditando(null)}>
+          <Pressable onPress={e => e.stopPropagation()}>
+            <View style={p.sheet}>
+              <Text style={p.sheetTitulo}>Actualizar plantilla</Text>
+              <Text style={p.sheetSub}>{editando ? metaMap[editando]?.nombre : ''}</Text>
+              <Text style={p.sheetLabel}>Versión</Text>
+              <TextInput
+                style={p.sheetInput}
+                value={nuevaVer}
+                onChangeText={setNuevaVer}
+                placeholder="ej. v5"
+                placeholderTextColor={cartasBosque.helecho}
+              />
+              <Text style={p.sheetLabel}>URL de descarga (Firebase Storage)</Text>
+              <TextInput
+                style={[p.sheetInput, { height: 72, textAlignVertical: 'top' }]}
+                value={nuevaUrl}
+                onChangeText={setNuevaUrl}
+                placeholder="https://firebasestorage.googleapis.com/..."
+                placeholderTextColor={cartasBosque.helecho}
+                multiline
+                autoCapitalize="none"
+                autoCorrect={false}
+              />
+              <View style={p.sheetBtns}>
+                <TouchableOpacity style={p.sheetCancel} onPress={() => setEditando(null)}>
+                  <Text style={p.sheetCancelText}>Cancelar</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[p.sheetOk, (!nuevaUrl.trim() || saving) && { opacity: 0.4 }]}
+                  disabled={!nuevaUrl.trim() || saving}
+                  onPress={() => editando && guardar(editando)}
+                >
+                  {saving
+                    ? <ActivityIndicator size="small" color="#FFF" />
+                    : <Text style={p.sheetOkText}>Guardar</Text>}
+                </TouchableOpacity>
+              </View>
+            </View>
+          </Pressable>
+        </Pressable>
+      </Modal>
+    </ScrollView>
+  );
+}
+
 // ─── InquilinosWebScreen ──────────────────────────────────────
 
 export default function InquilinosWebScreen() {
@@ -238,12 +376,15 @@ export default function InquilinosWebScreen() {
           <Ionicons name="person-add-outline" size={14} color={tab === 'nuevo' ? cartasBosque.bosque : cartasBosque.helecho} />
           <Text style={[s.tabText, tab === 'nuevo' && s.tabTextActivo]}>Nuevo inquilino</Text>
         </TouchableOpacity>
+        <TouchableOpacity style={[s.tab, tab === 'plantillas' && s.tabActivo]} onPress={() => setTab('plantillas')}>
+          <Ionicons name="document-text-outline" size={14} color={tab === 'plantillas' ? cartasBosque.bosque : cartasBosque.helecho} />
+          <Text style={[s.tabText, tab === 'plantillas' && s.tabTextActivo]}>Plantillas legales</Text>
+        </TouchableOpacity>
       </View>
 
-      {tab === 'lista'
-        ? <ServiciosAdminScreen />
-        : <NuevoInquilinoForm onDone={() => setTab('lista')} />
-      }
+      {tab === 'lista'      && <ServiciosAdminScreen />}
+      {tab === 'nuevo'      && <NuevoInquilinoForm onDone={() => setTab('lista')} />}
+      {tab === 'plantillas' && <PlantillasPanel />}
     </View>
   );
 }
@@ -263,6 +404,36 @@ const s = StyleSheet.create({
   tabActivo:      { borderBottomColor: cartasBosque.bosque },
   tabText:        { fontFamily: 'Inter_500Medium', fontSize: 13, color: cartasBosque.helecho },
   tabTextActivo:  { color: cartasBosque.bosque },
+});
+
+const p = StyleSheet.create({
+  scroll:   { flex: 1, backgroundColor: cartasBosque.bruma },
+  content:  { maxWidth: 620, padding: spacing[6], paddingBottom: spacing[12] },
+  heading:  { fontFamily: 'Inter_700Bold', fontSize: 22, color: cartasBosque.tinta, marginBottom: spacing[1] },
+  sub:      { fontFamily: 'Inter_400Regular', fontSize: 13, color: cartasBosque.musgo, marginBottom: spacing[6], lineHeight: 20 },
+  mono:     { fontFamily: 'SpaceMono_400Regular', fontSize: 12, color: cartasBosque.bosque },
+
+  card:       { backgroundColor: cartasBosque.pergamino, borderRadius: borderRadius.md, borderWidth: 1, borderColor: cartasBosque.pergaminoOscuro, padding: spacing[4], marginBottom: spacing[3] },
+  cardHeader: { flexDirection: 'row', alignItems: 'flex-start', gap: spacing[3] },
+  cardNombre: { fontFamily: 'Inter_600SemiBold', fontSize: 14, color: cartasBosque.tinta, marginBottom: 2 },
+  cardMeta:   { fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.helecho },
+  cardVer:    { color: cartasBosque.musgo },
+  cardFirma:  { color: '#960018' },
+  cardUrl:    { fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.bosque, marginTop: 4 },
+  cardUrlEmpty:{ fontFamily: 'Inter_400Regular', fontSize: 11, color: '#960018', fontStyle: 'italic', marginTop: 4 },
+  editBtn:    { width: 36, height: 36, borderRadius: 18, backgroundColor: cartasBosque.pergaminoOscuro, alignItems: 'center', justifyContent: 'center' },
+
+  overlay:    { flex: 1, backgroundColor: 'rgba(18,42,31,0.5)', alignItems: 'center', justifyContent: 'center', padding: spacing[6] },
+  sheet:      { backgroundColor: cartasBosque.bruma, borderRadius: borderRadius.xl, padding: spacing[6], width: '100%', maxWidth: 480 },
+  sheetTitulo:{ fontFamily: 'Inter_700Bold', fontSize: 18, color: cartasBosque.tinta, marginBottom: 2 },
+  sheetSub:   { fontFamily: 'Inter_400Regular', fontSize: 13, color: cartasBosque.musgo, marginBottom: spacing[4] },
+  sheetLabel: { fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.helecho, letterSpacing: 0.5, textTransform: 'uppercase', marginBottom: spacing[1], marginTop: spacing[3] },
+  sheetInput: { backgroundColor: cartasBosque.pergamino, borderRadius: borderRadius.md, borderWidth: 1, borderColor: cartasBosque.pergaminoOscuro, paddingHorizontal: spacing[3], paddingVertical: spacing[2] + 2, fontFamily: 'Inter_400Regular', fontSize: 13, color: cartasBosque.tinta },
+  sheetBtns:  { flexDirection: 'row', gap: spacing[3], marginTop: spacing[5] },
+  sheetCancel:{ flex: 1, paddingVertical: spacing[3], borderRadius: borderRadius.md, borderWidth: 1, borderColor: cartasBosque.pergaminoOscuro, alignItems: 'center' },
+  sheetCancelText: { fontFamily: 'Inter_400Regular', fontSize: 14, color: cartasBosque.helecho },
+  sheetOk:    { flex: 1, paddingVertical: spacing[3], borderRadius: borderRadius.md, backgroundColor: cartasBosque.bosque, alignItems: 'center' },
+  sheetOkText:{ fontFamily: 'Inter_600SemiBold', fontSize: 14, color: '#FFF' },
 });
 
 const f = StyleSheet.create({
