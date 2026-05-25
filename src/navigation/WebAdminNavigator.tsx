@@ -23,12 +23,19 @@ import ExpedienteAdminScreen     from '@/screens/admin/ExpedienteAdminScreen';
 // ── Web-specific screens ──────────────────────────────────────
 import InquilinosWebScreen   from '@/screens/admin/web/InquilinosWebScreen';
 
+// ── Additional admin screens ──────────────────────────────────
+import VisitasAdminScreen    from '@/screens/admin/VisitasAdminScreen';
+import CuponesAdminScreen    from '@/screens/admin/CuponesAdminScreen';
+import MobiliarioAdminScreen from '@/screens/admin/MobiliarioAdminScreen';
+import EstadoFinanzasScreen  from '@/screens/admin/web/EstadoFinanzasScreen';
+
 // ─── Types ────────────────────────────────────────────────────
 
 type Seccion =
   | 'dashboard' | 'pagos' | 'inquilinos' | 'habitaciones'
-  | 'lavanderia' | 'limpieza' | 'almacenamiento' | 'facturacion'
-  | 'tickets' | 'chat' | 'sesiones' | 'expedientes' | 'configuracion';
+  | 'lavanderia' | 'limpieza' | 'almacenamiento' | 'mobiliario'
+  | 'facturacion' | 'cupones' | 'estado'
+  | 'visitas' | 'tickets' | 'chat' | 'sesiones' | 'expedientes' | 'configuracion';
 
 interface NavItem {
   id: Seccion;
@@ -38,14 +45,22 @@ interface NavItem {
 }
 
 const NAV_ITEMS: NavItem[] = [
+  // GENERAL
   { id: 'dashboard',      label: 'Dashboard',      icon: 'grid-outline',          iconActive: 'grid' },
   { id: 'pagos',          label: 'Pagos',           icon: 'card-outline',          iconActive: 'card' },
   { id: 'inquilinos',     label: 'Inquilinos',      icon: 'people-outline',        iconActive: 'people' },
-  { id: 'habitaciones',   label: 'Habitaciones',    icon: 'bed-outline',           iconActive: 'bed' },
+  { id: 'habitaciones',   label: 'Habitaciones',    icon: 'home-outline',          iconActive: 'home' },
+  // SERVICIOS
   { id: 'lavanderia',     label: 'Lavandería',      icon: 'water-outline',         iconActive: 'water' },
   { id: 'limpieza',       label: 'Limpieza',        icon: 'sparkles-outline',      iconActive: 'sparkles' },
   { id: 'almacenamiento', label: 'Almacenamiento',  icon: 'archive-outline',       iconActive: 'archive' },
+  { id: 'mobiliario',     label: 'Mobiliario',      icon: 'bed-outline',           iconActive: 'bed' },
+  // FINANZAS
   { id: 'facturacion',    label: 'Facturación',     icon: 'receipt-outline',       iconActive: 'receipt' },
+  { id: 'cupones',        label: 'Cupones',         icon: 'pricetag-outline',      iconActive: 'pricetag' },
+  { id: 'estado',         label: 'Estado',          icon: 'analytics-outline',     iconActive: 'analytics' },
+  // ADMINISTRACIÓN
+  { id: 'visitas',        label: 'Visitas',         icon: 'walk-outline',          iconActive: 'walk' },
   { id: 'tickets',        label: 'Tickets',         icon: 'headset-outline',       iconActive: 'headset' },
   { id: 'chat',           label: 'Noticias / Chat', icon: 'chatbubbles-outline',   iconActive: 'chatbubbles' },
   { id: 'sesiones',       label: 'Sesiones',        icon: 'shield-outline',        iconActive: 'shield' },
@@ -64,7 +79,11 @@ function SeccionContent({ seccion }: { seccion: Seccion }) {
     case 'lavanderia':     return <LavanderiaAdminScreen />;
     case 'limpieza':       return <LimpiezaAdminScreen />;
     case 'almacenamiento': return <AlmacenamientoAdminScreen />;
+    case 'mobiliario':     return <MobiliarioAdminScreen />;
     case 'facturacion':    return <FacturasAdminScreen />;
+    case 'cupones':        return <CuponesAdminScreen />;
+    case 'estado':         return <EstadoFinanzasScreen />;
+    case 'visitas':        return <VisitasAdminScreen />;
     case 'tickets':        return <TicketsAdminScreen />;
     case 'chat':           return <ChatAdminScreen />;
     case 'sesiones':       return <SesionesAdminScreen />;
@@ -98,22 +117,22 @@ export default function WebAdminNavigator() {
         {/* Nav */}
         <ScrollView style={s.navScroll} showsVerticalScrollIndicator={false}>
           <Text style={s.navGroup}>GENERAL</Text>
-          {NAV_ITEMS.slice(0, 4).map(item => (
+          {NAV_ITEMS.filter(item => ['dashboard', 'pagos', 'inquilinos', 'habitaciones'].includes(item.id)).map(item => (
             <NavBtn key={item.id} item={item} active={seccion === item.id} onPress={() => setSeccion(item.id)} />
           ))}
 
           <Text style={s.navGroup}>SERVICIOS</Text>
-          {NAV_ITEMS.slice(4, 7).map(item => (
+          {NAV_ITEMS.filter(item => ['lavanderia', 'limpieza', 'almacenamiento', 'mobiliario'].includes(item.id)).map(item => (
             <NavBtn key={item.id} item={item} active={seccion === item.id} onPress={() => setSeccion(item.id)} />
           ))}
 
           <Text style={s.navGroup}>FINANZAS</Text>
-          {NAV_ITEMS.slice(7, 9).map(item => (
+          {NAV_ITEMS.filter(item => ['facturacion', 'cupones', 'estado'].includes(item.id)).map(item => (
             <NavBtn key={item.id} item={item} active={seccion === item.id} onPress={() => setSeccion(item.id)} />
           ))}
 
           <Text style={s.navGroup}>ADMINISTRACIÓN</Text>
-          {NAV_ITEMS.slice(9).map(item => (
+          {NAV_ITEMS.filter(item => ['visitas', 'tickets', 'chat', 'sesiones', 'expedientes', 'configuracion'].includes(item.id)).map(item => (
             <NavBtn key={item.id} item={item} active={seccion === item.id} onPress={() => setSeccion(item.id)} />
           ))}
 
@@ -185,11 +204,11 @@ const s = StyleSheet.create({
     paddingTop: spacing[5],
     paddingBottom: spacing[4],
     borderBottomWidth: 1,
-    borderBottomColor: '#122A1F',
+    borderBottomColor: '#2E3C2C',
   },
   brandLogo: {
     width: 36, height: 36, borderRadius: 10,
-    backgroundColor: '#122A1F',
+    backgroundColor: '#1A4233',
     alignItems: 'center', justifyContent: 'center',
   },
   brandLogoText: { fontFamily: 'Inter_700Bold', fontSize: 18, color: '#A8D5B5' },
@@ -217,7 +236,7 @@ const s = StyleSheet.create({
   navActiveBar: {
     position: 'absolute', left: 0, top: '20%' as any,
     width: 3, height: '60%' as any,
-    backgroundColor: '#6DBF8C',
+    backgroundColor: '#CDB29D',
     borderRadius: 2,
   },
   navLabel:       { fontFamily: 'Inter_400Regular', fontSize: 13, color: SIDEBAR_TEXT },

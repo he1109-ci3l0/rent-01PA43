@@ -19,7 +19,18 @@ import type { TurnoLimpieza, PermutaLimpieza, AreaLimpieza } from '@/types/fires
 
 // ─── Helpers ──────────────────────────────────────────────────
 
-type Vista = 'calendario' | 'permutas' | 'incumplimientos';
+type Vista    = 'calendario' | 'areas' | 'turnos';
+type SubVista = 'lista' | 'permutas' | 'incumplimientos';
+
+const DIAS_SEMANA_CAL = ['DOM', 'LUN', 'MAR', 'MIÉ', 'JUE', 'VIE', 'SÁB'];
+const MESES_ES_CAL    = ['Enero','Febrero','Marzo','Abril','Mayo','Junio',
+                         'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+
+function mismaFechaLimp(a: Date, b: Date): boolean {
+  return a.getFullYear() === b.getFullYear()
+    && a.getMonth() === b.getMonth()
+    && a.getDate() === b.getDate();
+}
 
 const HORAS = Array.from({ length: 16 }, (_, i) => `${String(i + 7).padStart(2, '0')}:00`);
 
@@ -181,16 +192,19 @@ function IncumpRow({ turno }: { turno: TurnoLimpieza }) {
 // ─── Pantalla principal ───────────────────────────────────────
 
 export default function LimpiezaAdminScreen() {
-  const [vista, setVista]             = useState<Vista>('calendario');
+  const [vistaActiva, setVistaActiva] = useState<Vista>('calendario');
+  const [tabTurnos, setTabTurnos]     = useState<SubVista>('lista');
   const [turnos, setTurnos]           = useState<TurnoLimpieza[]>([]);
   const [permutas, setPermutas]       = useState<PermutaLimpieza[]>([]);
   const [incumplimientos, setIncumpl] = useState<TurnoLimpieza[]>([]);
   const [cargando, setCargando]       = useState(true);
   const [turnoMover, setTurnoMover]   = useState<TurnoLimpieza | null>(null);
   const [seeding, setSeeding]         = useState(false);
-
-  // filtro de área
-  const [areaFiltro, setAreaFiltro] = useState<AreaLimpieza | 'todas'>('todas');
+  const [areaFiltro, setAreaFiltro]   = useState<AreaLimpieza | 'todas'>('todas');
+  const [mesCalendario, setMesCalendario] = useState(() => {
+    const d = new Date(); d.setDate(1); d.setHours(0, 0, 0, 0); return d;
+  });
+  const [diaModal, setDiaModal] = useState<Date | null>(null);
 
   useEffect(() => {
     seedTurnos()
@@ -244,22 +258,43 @@ export default function LimpiezaAdminScreen() {
     catch { Alert.alert('Error', 'No se pudo bloquear la permuta.'); }
   }
 
+  // ── Datos calendario ────────────────────────────────────────
+  const anioMes   = mesCalendario.getFullYear();
+  const mesMes    = mesCalendario.getMonth();
+  const diasEnMes = new Date(anioMes, mesMes + 1, 0).getDate();
+  const primerDia = new Date(anioMes, mesMes, 1).getDay();
+  const celdas: (number | null)[] = [
+    ...Array(primerDia).fill(null),
+    ...Array.from({ length: diasEnMes }, (_, i) => i + 1),
+  ];
+  while (celdas.length % 7 !== 0) celdas.push(null);
+
+  function turnosDia(dia: number): TurnoLimpieza[] {
+    return turnos.filter(t => {
+      const f = t.fechaProgramada.toDate();
+      return f.getFullYear() === anioMes && f.getMonth() === mesMes && f.getDate() === dia;
+    });
+  }
+
+  const turnosDiaModal = diaModal
+    ? turnos.filter(t => mismaFechaLimp(t.fechaProgramada.toDate(), diaModal))
+    : [];
+
+  const AREA_KEYS = Object.keys(AREA_LABELS) as AreaLimpieza[];
+
   return (
     <View style={{ flex: 1, backgroundColor: cartasBosque.bruma }}>
-      {/* Tab bar interno */}
-      <View style={styles.tabs}>
-        {([
-          ['calendario',      `Calendario (${turnosFiltrados.length})`],
-          ['permutas',        `Permutas (${permutas.length})`],
-          ['incumplimientos', `Incumpl. (${incumplimientos.length})`],
-        ] as [Vista, string][]).map(([v, label]) => (
+
+      {/* ── Header de 3 pestañas ── */}
+      <View style={styles.vistaTabs}>
+        {(['calendario', 'turnos', 'areas'] as Vista[]).map(v => (
           <TouchableOpacity
             key={v}
-            style={[styles.tabBtn, vista === v && styles.tabBtnActivo]}
-            onPress={() => setVista(v)}
+            style={[styles.vistaTab, vistaActiva === v && styles.vistaTabActiva]}
+            onPress={() => setVistaActiva(v)}
           >
-            <Text style={[styles.tabText, vista === v && styles.tabTextActivo]}>
-              {label}
+            <Text style={[styles.vistaTabText, vistaActiva === v && styles.vistaTabTextActiva]}>
+              {v === 'calendario' ? 'CALENDARIO' : v === 'turnos' ? 'TURNOS' : 'POR ÁREA'}
             </Text>
           </TouchableOpacity>
         ))}
@@ -267,103 +302,240 @@ export default function LimpiezaAdminScreen() {
 
       {cargando ? (
         <ActivityIndicator color={cartasBosque.bosque} style={{ marginTop: spacing[8] }} />
-      ) : vista === 'calendario' ? (
+      ) : (
         <>
-          {/* Filtro de área */}
-          <ScrollView
-            horizontal showsHorizontalScrollIndicator={false}
-            style={styles.areaScroll}
-            contentContainerStyle={{ gap: spacing[2], padding: spacing[3] }}
-          >
-            {ALL_AREAS.map(a => (
-              <TouchableOpacity
-                key={a}
-                style={[styles.areaChip, areaFiltro === a && styles.areaChipActivo]}
-                onPress={() => setAreaFiltro(a)}
-              >
-                {a !== 'todas' && (
-                  <Ionicons
-                    name={AREA_ICONS[a as AreaLimpieza] as any}
-                    size={12}
-                    color={areaFiltro === a ? cartasBosque.bruma : cartasBosque.bosque}
-                  />
-                )}
-                <Text style={[styles.areaChipText, areaFiltro === a && styles.areaChipTextActivo]}>
-                  {a === 'todas' ? 'Todas' : AREA_LABELS[a as AreaLimpieza]}
+          {/* ══ CALENDARIO ══ */}
+          {vistaActiva === 'calendario' && (
+            <ScrollView contentContainerStyle={{ padding: spacing[4], paddingBottom: spacing[10] }}>
+              <View style={styles.calNav}>
+                <TouchableOpacity
+                  onPress={() => setMesCalendario(d => { const n = new Date(d); n.setMonth(n.getMonth() - 1); return n; })}
+                  hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                >
+                  <Ionicons name="chevron-back" size={18} color={cartasBosque.tinta} />
+                </TouchableOpacity>
+                <Text style={styles.calNavTitulo}>
+                  {MESES_ES_CAL[mesMes].toUpperCase()} {anioMes}
                 </Text>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
+                <TouchableOpacity
+                  onPress={() => setMesCalendario(d => { const n = new Date(d); n.setMonth(n.getMonth() + 1); return n; })}
+                  hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                >
+                  <Ionicons name="chevron-forward" size={18} color={cartasBosque.tinta} />
+                </TouchableOpacity>
+              </View>
+              <View style={styles.calGridRow}>
+                {DIAS_SEMANA_CAL.map(d => (
+                  <Text key={d} style={styles.calDiaNombre}>{d}</Text>
+                ))}
+              </View>
+              <View style={styles.calGrid}>
+                {celdas.map((dia, idx) => {
+                  if (dia === null) return <View key={`b-${idx}`} style={styles.calCelda} />;
+                  const fechaCelda = new Date(anioMes, mesMes, dia);
+                  const esHoy = mismaFechaLimp(fechaCelda, new Date());
+                  const tieneTurnos = turnosDia(dia).length > 0;
+                  return (
+                    <TouchableOpacity
+                      key={dia}
+                      style={styles.calCelda}
+                      onPress={() => setDiaModal(fechaCelda)}
+                      activeOpacity={0.7}
+                    >
+                      <View style={[styles.calNumWrap, esHoy && styles.calNumHoy]}>
+                        <Text style={[styles.calNum, esHoy && styles.calNumHoyText]}>{dia}</Text>
+                      </View>
+                      {tieneTurnos && <View style={styles.calDot} />}
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+            </ScrollView>
+          )}
 
-          {grupos.length === 0 ? (
-            <View style={styles.vacio}>
-              <Ionicons name="brush-outline" size={36} color={cartasBosque.niebla} />
-              <Text style={styles.vacioText}>Sin turnos próximos</Text>
-            </View>
-          ) : (
-            <FlatList
-              data={grupos}
-              keyExtractor={g => g.fecha}
-              contentContainerStyle={{ padding: spacing[4], paddingBottom: spacing[10] }}
-              renderItem={({ item: grupo }) => (
-                <View>
-                  <Text style={styles.fechaHeader}>{grupo.fecha}</Text>
-                  {grupo.items.map(t => (
-                    <View key={t.id}>
-                      <TurnoCard
-                        turno={t}
-                        onMover={t2 => setTurnoMover(t2)}
-                      />
-                      {t.estado === 'pendiente' && (
-                        <TouchableOpacity
-                          style={styles.btnIncumplimiento}
-                          onPress={() => handleMarcarIncumplimiento(t)}
-                        >
-                          <Text style={styles.btnIncumplimientoText}>
-                            Registrar incumplimiento
-                          </Text>
-                        </TouchableOpacity>
-                      )}
+          {/* ══ TURNOS (contenido original) ══ */}
+          {vistaActiva === 'turnos' && (
+            <>
+              <View style={styles.tabs}>
+                {([
+                  ['lista',           `Turnos (${turnosFiltrados.length})`],
+                  ['permutas',        `Permutas (${permutas.length})`],
+                  ['incumplimientos', `Incumpl. (${incumplimientos.length})`],
+                ] as [SubVista, string][]).map(([v, label]) => (
+                  <TouchableOpacity
+                    key={v}
+                    style={[styles.tabBtn, tabTurnos === v && styles.tabBtnActivo]}
+                    onPress={() => setTabTurnos(v)}
+                  >
+                    <Text style={[styles.tabText, tabTurnos === v && styles.tabTextActivo]}>
+                      {label}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+
+              {tabTurnos === 'lista' ? (
+                <>
+                  <ScrollView
+                    horizontal showsHorizontalScrollIndicator={false}
+                    style={styles.areaScroll}
+                    contentContainerStyle={{ gap: spacing[2], padding: spacing[3] }}
+                  >
+                    {ALL_AREAS.map(a => (
+                      <TouchableOpacity
+                        key={a}
+                        style={[styles.areaChip, areaFiltro === a && styles.areaChipActivo]}
+                        onPress={() => setAreaFiltro(a)}
+                      >
+                        {a !== 'todas' && (
+                          <Ionicons
+                            name={AREA_ICONS[a as AreaLimpieza] as any}
+                            size={12}
+                            color={areaFiltro === a ? cartasBosque.bruma : cartasBosque.bosque}
+                          />
+                        )}
+                        <Text style={[styles.areaChipText, areaFiltro === a && styles.areaChipTextActivo]}>
+                          {a === 'todas' ? 'Todas' : AREA_LABELS[a as AreaLimpieza]}
+                        </Text>
+                      </TouchableOpacity>
+                    ))}
+                  </ScrollView>
+                  {grupos.length === 0 ? (
+                    <View style={styles.vacio}>
+                      <Ionicons name="brush-outline" size={36} color={cartasBosque.niebla} />
+                      <Text style={styles.vacioText}>Sin turnos próximos</Text>
                     </View>
-                  ))}
-                </View>
+                  ) : (
+                    <FlatList
+                      data={grupos}
+                      keyExtractor={g => g.fecha}
+                      contentContainerStyle={{ padding: spacing[4], paddingBottom: spacing[10] }}
+                      renderItem={({ item: grupo }) => (
+                        <View>
+                          <Text style={styles.fechaHeader}>{grupo.fecha}</Text>
+                          {grupo.items.map(t => (
+                            <View key={t.id}>
+                              <TurnoCard turno={t} onMover={t2 => setTurnoMover(t2)} />
+                              {t.estado === 'pendiente' && (
+                                <TouchableOpacity
+                                  style={styles.btnIncumplimiento}
+                                  onPress={() => handleMarcarIncumplimiento(t)}
+                                >
+                                  <Text style={styles.btnIncumplimientoText}>
+                                    Registrar incumplimiento
+                                  </Text>
+                                </TouchableOpacity>
+                              )}
+                            </View>
+                          ))}
+                        </View>
+                      )}
+                    />
+                  )}
+                </>
+              ) : tabTurnos === 'permutas' ? (
+                <FlatList
+                  data={permutas}
+                  keyExtractor={p => p.id}
+                  contentContainerStyle={{ padding: spacing[4], paddingBottom: spacing[10] }}
+                  ListEmptyComponent={
+                    <View style={styles.vacio}>
+                      <Ionicons name="swap-horizontal-outline" size={36} color={cartasBosque.niebla} />
+                      <Text style={styles.vacioText}>Sin permutas pendientes</Text>
+                    </View>
+                  }
+                  renderItem={({ item }) => (
+                    <PermutaRow
+                      permuta={item}
+                      onAprobar={() => handleAprobar(item)}
+                      onBloquear={() => handleBloquear(item)}
+                    />
+                  )}
+                />
+              ) : (
+                <FlatList
+                  data={incumplimientos}
+                  keyExtractor={t => t.id}
+                  contentContainerStyle={{ padding: spacing[4], paddingBottom: spacing[10] }}
+                  ListEmptyComponent={
+                    <View style={styles.vacio}>
+                      <Ionicons name="shield-checkmark-outline" size={36} color={cartasBosque.niebla} />
+                      <Text style={styles.vacioText}>Sin incumplimientos registrados</Text>
+                    </View>
+                  }
+                  renderItem={({ item }) => <IncumpRow turno={item} />}
+                />
               )}
-            />
+            </>
+          )}
+
+          {/* ══ POR ÁREA ══ */}
+          {vistaActiva === 'areas' && (
+            <ScrollView>
+              <View style={styles.areaGrid}>
+                {AREA_KEYS.map(area => {
+                  const ta = turnos.filter(t => t.area === area);
+                  const completados = ta.filter(t => t.estado === 'completado').length;
+                  const pendientes  = ta.filter(t => t.estado === 'pendiente').length;
+                  const incumplidos = ta.filter(t => t.estado === 'incumplimiento').length;
+                  return (
+                    <View key={area} style={styles.areaCard}>
+                      <Ionicons name={AREA_ICONS[area] as any} size={22} color={cartasBosque.bosque} />
+                      <Text style={styles.areaCardNombre}>{AREA_LABELS[area]}</Text>
+                      <Text style={[styles.areaMetricVal, { color: '#3B82F6' }]}>
+                        {ta.length} total
+                      </Text>
+                      <View style={styles.areaMetricRow}>
+                        <Text style={[styles.areaMetricVal, { color: '#4A9B6F' }]}>{completados} ✓</Text>
+                        <Text style={[styles.areaMetricVal, { color: '#E8A838' }]}>{pendientes} ⏳</Text>
+                        <Text style={[styles.areaMetricVal, { color: '#E05C2A' }]}>{incumplidos} ✗</Text>
+                      </View>
+                    </View>
+                  );
+                })}
+              </View>
+            </ScrollView>
           )}
         </>
-      ) : vista === 'permutas' ? (
-        <FlatList
-          data={permutas}
-          keyExtractor={p => p.id}
-          contentContainerStyle={{ padding: spacing[4], paddingBottom: spacing[10] }}
-          ListEmptyComponent={
-            <View style={styles.vacio}>
-              <Ionicons name="swap-horizontal-outline" size={36} color={cartasBosque.niebla} />
-              <Text style={styles.vacioText}>Sin permutas pendientes</Text>
-            </View>
-          }
-          renderItem={({ item }) => (
-            <PermutaRow
-              permuta={item}
-              onAprobar={() => handleAprobar(item)}
-              onBloquear={() => handleBloquear(item)}
-            />
-          )}
-        />
-      ) : (
-        <FlatList
-          data={incumplimientos}
-          keyExtractor={t => t.id}
-          contentContainerStyle={{ padding: spacing[4], paddingBottom: spacing[10] }}
-          ListEmptyComponent={
-            <View style={styles.vacio}>
-              <Ionicons name="shield-checkmark-outline" size={36} color={cartasBosque.niebla} />
-              <Text style={styles.vacioText}>Sin incumplimientos registrados</Text>
-            </View>
-          }
-          renderItem={({ item }) => <IncumpRow turno={item} />}
-        />
       )}
+
+      {/* ── Modal detalle día ── */}
+      <Modal
+        visible={diaModal !== null}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setDiaModal(null)}
+      >
+        <TouchableOpacity style={styles.overlay} activeOpacity={1} onPress={() => setDiaModal(null)} />
+        <View style={styles.sheet}>
+          {diaModal && (
+            <>
+              <Text style={styles.sheetTitulo}>
+                {diaModal.toLocaleDateString('es-MX', { weekday: 'long', day: 'numeric', month: 'long' })}
+              </Text>
+              {turnosDiaModal.length === 0 ? (
+                <Text style={styles.sheetSub}>Sin turnos este día</Text>
+              ) : (
+                <ScrollView style={{ maxHeight: 320 }} nestedScrollEnabled>
+                  {turnosDiaModal.map(t => (
+                    <View key={t.id} style={styles.diaModalRow}>
+                      <View style={{ flex: 1 }}>
+                        <Text style={styles.diaModalNombre}>{t.inquilinoNombre}</Text>
+                        <Text style={styles.diaModalSub}>
+                          {AREA_LABELS[t.area]} · {t.horaInicio} · {t.estado}
+                        </Text>
+                      </View>
+                    </View>
+                  ))}
+                </ScrollView>
+              )}
+              <TouchableOpacity style={styles.btnSecundario} onPress={() => setDiaModal(null)}>
+                <Text style={styles.btnSecundarioText}>Cerrar</Text>
+              </TouchableOpacity>
+            </>
+          )}
+        </View>
+      </Modal>
 
       <ModalMover
         turno={turnoMover}
@@ -377,6 +549,84 @@ export default function LimpiezaAdminScreen() {
 // ─── Estilos ──────────────────────────────────────────────────
 
 const styles = StyleSheet.create({
+  // ─── Nuevas pestañas de vista ─────────────────────────────
+  vistaTabs: {
+    flexDirection: 'row',
+    borderBottomWidth: 1,
+    borderBottomColor: cartasBosque.pergaminoOscuro,
+  },
+  vistaTab: {
+    flex: 1, paddingVertical: spacing[2] + 2,
+    alignItems: 'center',
+    borderBottomWidth: 2,
+    borderBottomColor: 'transparent',
+  },
+  vistaTabActiva:     { borderBottomColor: cartasBosque.bosque },
+  vistaTabText:       { fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.helecho, letterSpacing: 0.5 },
+  vistaTabTextActiva: { color: cartasBosque.bosque },
+
+  // ─── Grid POR ÁREA ────────────────────────────────────────
+  areaGrid: {
+    flexDirection: 'row', flexWrap: 'wrap',
+    padding: spacing[4], gap: spacing[3],
+  },
+  areaCard: {
+    width: '47%',
+    backgroundColor: cartasBosque.pergamino,
+    borderRadius: borderRadius.md,
+    padding: spacing[3],
+    borderWidth: 1,
+    borderColor: cartasBosque.pergaminoOscuro,
+    gap: spacing[1],
+  },
+  areaCardNombre: {
+    fontFamily: 'Inter_600SemiBold',
+    fontSize: 13, color: cartasBosque.tinta,
+  },
+  areaMetricRow: {
+    flexDirection: 'row', gap: spacing[3], marginTop: spacing[1],
+  },
+  areaMetricVal: {
+    fontFamily: 'SpaceMono_400Regular', fontSize: 11,
+  },
+
+  // ─── Calendario ───────────────────────────────────────────
+  calNav: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+    marginBottom: spacing[4],
+  },
+  calNavTitulo: {
+    fontFamily: 'Inter_600SemiBold', fontSize: 15, color: cartasBosque.tinta,
+  },
+  calGridRow: { flexDirection: 'row', marginBottom: spacing[2] },
+  calDiaNombre: {
+    flex: 1, textAlign: 'center',
+    fontFamily: 'SpaceMono_400Regular', fontSize: 9, color: cartasBosque.helecho,
+  },
+  calGrid: { flexDirection: 'row', flexWrap: 'wrap' },
+  calCelda: {
+    width: `${100 / 7}%` as any,
+    alignItems: 'center', paddingVertical: spacing[1],
+    minHeight: 44,
+  },
+  calNumWrap: {
+    width: 28, height: 28, borderRadius: 14,
+    alignItems: 'center', justifyContent: 'center',
+  },
+  calNumHoy:     { backgroundColor: cartasBosque.bosque },
+  calNum:        { fontFamily: 'Inter_400Regular', fontSize: 13, color: cartasBosque.tinta },
+  calNumHoyText: { color: cartasBosque.bruma },
+  calDot:        { width: 5, height: 5, borderRadius: 3, marginTop: 2, backgroundColor: cartasBosque.bosque },
+
+  // ─── Modal día ────────────────────────────────────────────
+  diaModalRow: {
+    paddingVertical: spacing[3],
+    borderBottomWidth: 1, borderBottomColor: cartasBosque.pergaminoOscuro,
+  },
+  diaModalNombre: { fontFamily: 'Inter_600SemiBold', fontSize: 13, color: cartasBosque.tinta },
+  diaModalSub:    { fontFamily: 'Inter_400Regular', fontSize: 11, color: cartasBosque.helecho, marginTop: 2 },
+
+  // ─── Sub-pestañas TURNOS ──────────────────────────────────
   tabs: {
     flexDirection: 'row',
     borderBottomWidth: 1, borderBottomColor: cartasBosque.pergaminoOscuro,

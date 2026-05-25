@@ -7,9 +7,10 @@ import { Ionicons } from '@expo/vector-icons';
 import { getDocs, query, where, onSnapshot } from 'firebase/firestore';
 import { collections } from '@/services/firebase/firestore';
 import { listenAlertasSeguridad } from '@/services/firebase/sesiones';
+import { listenTodasVisitasActivas } from '@/services/firebase/visitas';
 import { cartasBosque } from '@/constants/colors';
 import { spacing, borderRadius } from '@/constants/spacing';
-import type { Habitacion, Pago, Ticket, ScoreReputacion, Inquilino, AlertaSeguridad } from '@/types/firestore';
+import type { Habitacion, Pago, Ticket, ScoreReputacion, Inquilino, AlertaSeguridad, Visita } from '@/types/firestore';
 
 // ─── CSV export (web only) ────────────────────────────────────
 
@@ -79,7 +80,7 @@ function MetricCard({
       <View style={[mc.iconBox, { backgroundColor: color + '20' }]}>
         <Ionicons name={icon as any} size={22} color={color} />
       </View>
-      <Text style={mc.value}>{value}</Text>
+      <Text style={[mc.value, { color }]}>{value}</Text>
       <Text style={mc.title}>{title}</Text>
       {sub ? <Text style={mc.sub}>{sub}</Text> : null}
     </View>
@@ -136,6 +137,7 @@ interface DashData {
 export default function DashboardWebScreen() {
   const [data, setData]         = useState<DashData | null>(null);
   const [alertas, setAlertas]   = useState<AlertaSeguridad[]>([]);
+  const [visitasHoy, setVisitasHoy] = useState<Visita[]>([]);
   const [cargando, setCargando] = useState(true);
   const [exporting, setExporting] = useState(false);
 
@@ -162,7 +164,16 @@ export default function DashboardWebScreen() {
     }
     cargar();
     const unsubAl = listenAlertasSeguridad(list => setAlertas(list.slice(0, 8)));
-    return unsubAl;
+    const unsubVisitas = listenTodasVisitasActivas(visitas => {
+      const hoy = new Date();
+      setVisitasHoy(visitas.filter(v => {
+        const fe = v.fechaEntrada.toDate();
+        return fe.getDate() === hoy.getDate() &&
+               fe.getMonth() === hoy.getMonth() &&
+               fe.getFullYear() === hoy.getFullYear();
+      }));
+    });
+    return () => { unsubAl(); unsubVisitas(); };
   }, []);
 
   const handleExportarPagos = useCallback(() => {
@@ -259,28 +270,28 @@ export default function DashboardWebScreen() {
           title="Ocupación"
           value={`${ocupacionPct}%`}
           sub={`${ocupadas} / ${habsActivas.length} cuartos`}
-          color={cartasBosque.bosque}
+          color="#3B82F6"
           icon="home"
         />
         <MetricCard
           title="Recaudado (mes)"
           value={`$${recaudadoMes.toLocaleString('es-MX')}`}
           sub={`${pagosDelMes.filter(p => p.estado === 'pagado').length} pagos verificados`}
-          color="#4A5E48"
+          color="#4A9B6F"
           icon="card"
         />
         <MetricCard
           title="Pagos vencidos"
           value={String(vencidos)}
           sub={vencidos > 0 ? 'Requieren atención' : 'Todo al corriente'}
-          color={vencidos > 0 ? '#960018' : '#4A5E48'}
+          color={vencidos > 0 ? '#C0392B' : '#4A9B6F'}
           icon={vencidos > 0 ? 'warning' : 'checkmark-circle'}
         />
         <MetricCard
           title="Tickets abiertos"
           value={String(ticketsAbiertos)}
           sub={ticketsAbiertos > 0 ? 'Pendientes de resolver' : 'Sin tickets activos'}
-          color={ticketsAbiertos > 0 ? '#8A6A72' : cartasBosque.helecho}
+          color={ticketsAbiertos > 0 ? '#E8A838' : '#4A9B6F'}
           icon="headset"
         />
       </View>
@@ -380,6 +391,27 @@ export default function DashboardWebScreen() {
         </View>
       </View>
 
+      {/* ── Visitas hoy ── */}
+      <View style={s.seccion}>
+        <Text style={s.seccionTitulo}>VISITAS HOY</Text>
+        {visitasHoy.length === 0 ? (
+          <Text style={s.vacioText}>Sin visitas registradas hoy</Text>
+        ) : (
+          visitasHoy.map(v => (
+            <View key={v.id} style={s.visitaRow}>
+              <View style={s.visitaDot} />
+              <View style={{ flex: 1 }}>
+                <Text style={s.visitaNombre}>{v.nombreVisitante ?? '—'}</Text>
+                <Text style={s.visitaSub}>
+                  {v.inquilinoNombre} · Hab. {v.habitacionNumero} ·{' '}
+                  {v.fechaEntrada.toDate().toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' })}
+                </Text>
+              </View>
+            </View>
+          ))
+        )}
+      </View>
+
       <View style={{ height: spacing[8] }} />
     </ScrollView>
   );
@@ -466,6 +498,46 @@ const s = StyleSheet.create({
 
   emptyRow: { alignItems: 'center', paddingVertical: spacing[4], gap: spacing[2] },
   emptyText: { fontFamily: 'Inter_400Regular', fontSize: 12, color: cartasBosque.helecho, textAlign: 'center' },
+
+  // Visitas hoy
+  seccion: {
+    marginHorizontal: spacing[4],
+    marginBottom: spacing[4],
+  },
+  seccionTitulo: {
+    fontFamily: 'SpaceMono_400Regular',
+    fontSize: 10,
+    color: cartasBosque.helecho,
+    letterSpacing: 1,
+    marginBottom: spacing[2],
+  },
+  vacioText: {
+    fontFamily: 'Inter_400Regular',
+    fontSize: 13,
+    color: cartasBosque.niebla,
+  },
+  visitaRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing[3],
+    paddingVertical: spacing[2],
+    borderBottomWidth: 1,
+    borderBottomColor: cartasBosque.pergaminoOscuro,
+  },
+  visitaDot: {
+    width: 8, height: 8, borderRadius: 4,
+    backgroundColor: '#4A9B6F',
+  },
+  visitaNombre: {
+    fontFamily: 'Inter_600SemiBold',
+    fontSize: 13,
+    color: cartasBosque.tinta,
+  },
+  visitaSub: {
+    fontFamily: 'Inter_400Regular',
+    fontSize: 11,
+    color: cartasBosque.helecho,
+  },
 });
 
 const mc = StyleSheet.create({

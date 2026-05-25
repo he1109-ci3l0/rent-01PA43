@@ -656,7 +656,19 @@ export default function NoticiasScreen() {
         {/* HEADER */}
         <View style={st.header}>
           <Text style={st.titulo}>Comunidad</Text>
-          <TouchableOpacity onPress={openPanel} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+          <TouchableOpacity
+            onPress={openPanel}
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}
+          >
+            <Text style={{
+              fontFamily: 'SpaceMono_400Regular',
+              fontSize: 10,
+              color: cartasBosque.helecho,
+              letterSpacing: 0.5,
+            }}>
+              CHATS
+            </Text>
             <Ionicons name="menu-outline" size={24} color={cartasBosque.tinta} />
           </TouchableOpacity>
         </View>
@@ -670,6 +682,28 @@ export default function NoticiasScreen() {
             <View style={st.seccionHeader}>
               <Text style={st.seccionLabel}>MIS CHATS</Text>
             </View>
+
+            {/* Chat General — siempre visible */}
+            <TouchableOpacity
+              style={st.chatRow}
+              onPress={() => chatGeneral && abrirChat(chatGeneral)}
+              activeOpacity={0.75}
+            >
+              <View style={[st.chatAvatar, { backgroundColor: cartasBosque.bosque }]}>
+                <Ionicons name="people" size={18} color={cartasBosque.bruma} />
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text style={st.chatNombre}>General</Text>
+                <Text style={st.chatUltimo} numberOfLines={1}>
+                  {chatGeneral?.ultimoMensaje ?? 'Canal de la comunidad'}
+                </Text>
+              </View>
+              {(chatGeneral?.noLeidosPor?.[uid] ?? 0) > 0 && (
+                <View style={st.badge}>
+                  <Text style={st.badgeText}>{chatGeneral!.noLeidosPor[uid]}</Text>
+                </View>
+              )}
+            </TouchableOpacity>
 
             {/* Noticias banners */}
             {noticias.length > 0 ? (
@@ -686,11 +720,6 @@ export default function NoticiasScreen() {
                 <Ionicons name="newspaper-outline" size={14} color={cartasBosque.niebla} />
                 <Text style={st.noticiaPlaceholderText}>Sin noticias recientes</Text>
               </View>
-            )}
-
-            {/* Chat General */}
-            {chatGeneral && (
-              <ChatRowFeed chat={chatGeneral} uid={uid} onPress={() => abrirChat(chatGeneral)} />
             )}
 
             {/* Chats fijados */}

@@ -8,8 +8,9 @@ import LavanderiaAdminScreen      from '@/screens/admin/LavanderiaAdminScreen';
 import AlmacenamientoAdminScreen  from '@/screens/admin/AlmacenamientoAdminScreen';
 import LimpiezaAdminScreen        from '@/screens/admin/LimpiezaAdminScreen';
 import ExpedienteAdminScreen      from '@/screens/admin/ExpedienteAdminScreen';
+import MobiliarioAdminScreen      from '@/screens/admin/MobiliarioAdminScreen';
 
-type Tab = 'expedientes' | 'huespedes' | 'lavanderia' | 'almacenamiento' | 'limpieza';
+type Tab = 'expedientes' | 'huespedes' | 'lavanderia' | 'almacenamiento' | 'limpieza' | 'mobiliario';
 
 const TAB_LABELS: Record<Tab, string> = {
   expedientes:    'Expedientes',
@@ -17,6 +18,7 @@ const TAB_LABELS: Record<Tab, string> = {
   lavanderia:     'Lavandería',
   almacenamiento: 'Almacén',
   limpieza:       'Limpieza',
+  mobiliario:     'Mobiliario',
 };
 
 export default function ServiciosAdminScreen() {
@@ -45,6 +47,7 @@ export default function ServiciosAdminScreen() {
       {tab === 'lavanderia'     && <LavanderiaAdminScreen />}
       {tab === 'almacenamiento' && <AlmacenamientoAdminScreen />}
       {tab === 'limpieza'       && <LimpiezaAdminScreen />}
+      {tab === 'mobiliario'     && <MobiliarioAdminScreen />}
     </View>
   );
 }

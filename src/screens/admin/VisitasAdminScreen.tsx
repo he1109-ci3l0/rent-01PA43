@@ -54,9 +54,9 @@ export default function VisitasAdminScreen() {
 
       {/* Stats */}
       <View style={styles.statsRow}>
-        <StatCard label="Total" valor={visitas.length} color={cartasBosque.bosque} />
-        <StatCard label="En alerta" valor={enAlerta.length} color="#CDB29D" />
-        <StatCard label="Cargo 72h" valor={cargoPendiente.length} color="#670010" />
+        <StatCard label="Total" valor={visitas.length} color="#3B82F6" />
+        <StatCard label="En alerta" valor={enAlerta.length} color="#E8A838" />
+        <StatCard label="Cargo 72h" valor={cargoPendiente.length} color="#C0392B" />
       </View>
 
       {cargando ? (

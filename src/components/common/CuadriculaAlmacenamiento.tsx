@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  View, Text, TouchableOpacity, StyleSheet, useWindowDimensions,
+  View, Text, TouchableOpacity, StyleSheet,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { cartasBosque } from '@/constants/colors';
@@ -25,15 +25,12 @@ interface Props {
 
 // ─── Componente ───────────────────────────────────────────────
 
-const COLS = 5;
-const GAP  = spacing[1];     // 4 px
-const PAD  = spacing[4];     // 16 px — padding estándar del screen padre
+const GAP      = spacing[1];   // 4 px
+const CELL_SIZE = 56;
 
 export default function CuadriculaAlmacenamiento({
   espacios, tipo, miInquilinoId, showNombres, onPress,
 }: Props) {
-  const { width: W } = useWindowDimensions();
-  const cellSize = Math.floor((W - PAD * 2 - GAP * (COLS - 1)) / COLS);
 
   const celdas = espacios
     .filter(e => e.tipo === tipo)
@@ -64,7 +61,7 @@ export default function CuadriculaAlmacenamiento({
           return (
             <TouchableOpacity
               key={e.id}
-              style={[styles.celda, { width: cellSize, height: cellSize, backgroundColor: bg }]}
+              style={[styles.celda, { width: CELL_SIZE, height: CELL_SIZE, backgroundColor: bg }]}
               onPress={() => onPress?.(e)}
               disabled={!onPress}
               activeOpacity={onPress ? 0.75 : 1}
@@ -124,10 +121,10 @@ const styles = StyleSheet.create({
     alignItems: 'center', justifyContent: 'center',
   },
   num: {
-    fontFamily: 'Inter_600SemiBold', fontSize: 16,
+    fontFamily: 'Inter_600SemiBold', fontSize: 12,
   },
   nombre: {
-    fontFamily: 'SpaceMono_400Regular', fontSize: 7,
+    fontFamily: 'SpaceMono_400Regular', fontSize: 9,
     color: cartasBosque.tinta, marginTop: 1,
   },
   leyenda: {

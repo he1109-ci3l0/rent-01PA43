@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import {
   View, Text, TouchableOpacity, StyleSheet, FlatList,
-  Modal, ScrollView, ActivityIndicator, Alert, Switch, TextInput,
+  Modal, ScrollView, ActivityIndicator, Alert, Switch, TextInput, Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -24,6 +24,16 @@ const CATEGORIAS_FILTER: Array<CategoriaTicket | 'todas'> = [
 const ESTADOS_FILTER: Array<EstadoTicket | 'todos'> = ['todos', 'en_revision', 'en_proceso', 'resuelto'];
 const ETIQUETAS: EtiquetaTicket[] = ['mal_uso', 'admin_cubre', 'sin_culpa', 'reportar_proveedor'];
 
+const AREA_ICONS: Record<string, string> = {
+  internet:           'wifi-outline',
+  pago:               'card-outline',
+  reporte_limpieza:   'brush-outline',
+  reporte_inquilino:  'person-outline',
+  lavadora:           'water-outline',
+  almacenamiento:     'archive-outline',
+  mantenimiento:      'construct-outline',
+};
+
 const ETIQUETA_COLORES: Record<EtiquetaTicket, string> = {
   mal_uso:            'rgba(103,0,16,0.15)',
   admin_cubre:        '#E8EBE0',
@@ -32,9 +42,9 @@ const ETIQUETA_COLORES: Record<EtiquetaTicket, string> = {
 };
 
 const ESTADO_COLORES: Record<EstadoTicket, { bg: string; text: string }> = {
-  en_revision: { bg: '#E8EBE0', text: '#4A5E48' },
-  en_proceso:  { bg: 'rgba(138,106,114,0.1)', text: '#8A6A72' },
-  resuelto:    { bg: '#E8EBE0', text: '#4A5E48' },
+  en_revision: { bg: '#E8EBE0', text: '#E8A838' },
+  en_proceso:  { bg: 'rgba(138,106,114,0.1)', text: '#E05C2A' },
+  resuelto:    { bg: '#E8EBE0', text: '#4A9B6F' },
 };
 
 // ─── Modal detalle ────────────────────────────────────────────
@@ -265,77 +275,130 @@ export default function TicketsAdminScreen() {
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: cartasBosque.bruma }}>
-      <SafeAreaView edges={['top']} style={{ backgroundColor: cartasBosque.bruma }}>
+    <View style={[styles.root, Platform.OS === 'web' && styles.rootWeb]}>
 
-        {/* Contadores rápidos */}
-        <View style={styles.contadoresRow}>
-          {(Object.keys(conteos) as EstadoTicket[]).map(est => {
-            const col = ESTADO_COLORES[est];
+      {/* COLUMNA IZQUIERDA — lista de tickets */}
+      <View style={[styles.colLeft, Platform.OS !== 'web' && { flex: 1 }]}>
+        <SafeAreaView edges={['top']} style={{ backgroundColor: cartasBosque.bruma }}>
+
+          {/* Contadores rápidos */}
+          <View style={styles.contadoresRow}>
+            {(Object.keys(conteos) as EstadoTicket[]).map(est => {
+              const col = ESTADO_COLORES[est];
+              return (
+                <View key={est} style={[styles.contador, { backgroundColor: col.bg }]}>
+                  <Text style={[styles.contadorNum, { color: col.text }]}>{conteos[est]}</Text>
+                  <Text style={[styles.contadorLabel, { color: col.text }]}>{ESTADO_LABELS[est]}</Text>
+                </View>
+              );
+            })}
+          </View>
+
+          {/* Filtro estado */}
+          <ScrollView
+            horizontal showsHorizontalScrollIndicator={false}
+            style={styles.filtroBar}
+            contentContainerStyle={{ paddingHorizontal: spacing[4], gap: spacing[2] }}
+          >
+            {ESTADOS_FILTER.map(est => (
+              <TouchableOpacity
+                key={est}
+                style={[styles.chip, filtroEst === est && styles.chipActivo]}
+                onPress={() => setFiltroEst(est)}
+              >
+                <Text style={[styles.chipText, filtroEst === est && styles.chipTextActivo]}>
+                  {est === 'todos' ? 'Todos' : ESTADO_LABELS[est]}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+
+          {/* Filtro categoría */}
+          <ScrollView
+            horizontal showsHorizontalScrollIndicator={false}
+            style={[styles.filtroBar, { borderTopWidth: 0 }]}
+            contentContainerStyle={{ paddingHorizontal: spacing[4], gap: spacing[2] }}
+          >
+            {CATEGORIAS_FILTER.map(cat => (
+              <TouchableOpacity
+                key={cat}
+                style={[styles.chip, filtroCat === cat && styles.chipActivo]}
+                onPress={() => setFiltroCat(cat)}
+              >
+                <Text style={[styles.chipText, filtroCat === cat && styles.chipTextActivo]}>
+                  {cat === 'todas' ? 'Todas' : CATEGORIA_LABELS[cat]}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        </SafeAreaView>
+
+        {cargando ? (
+          <ActivityIndicator color={cartasBosque.bosque} style={{ marginTop: spacing[8] }} />
+        ) : tickets.length === 0 ? (
+          <View style={styles.vacio}>
+            <Ionicons name="headset-outline" size={36} color={cartasBosque.niebla} />
+            <Text style={styles.vacioText}>Sin tickets en este filtro</Text>
+          </View>
+        ) : (
+          <FlatList
+            data={tickets}
+            keyExtractor={t => t.id}
+            contentContainerStyle={{ padding: spacing[4], paddingBottom: spacing[10] }}
+            renderItem={({ item }) => (
+              <TicketCard ticket={item} esAdmin onPress={setTicketDetalle} />
+            )}
+          />
+        )}
+      </View>
+
+      {/* COLUMNA DERECHA — solo en web */}
+      {Platform.OS === 'web' && (
+        <View style={styles.colRight}>
+          <Text style={styles.colRightTitulo}>POR ÁREA</Text>
+          {CATEGORIAS_FILTER.filter(c => c !== 'todas').map(cat => {
+            const count = tickets.filter(t => t.categoria === cat).length;
+            const enProceso = tickets.filter(t =>
+              t.categoria === cat && t.estado === 'en_proceso'
+            ).length;
+            const resueltos = tickets.filter(t =>
+              t.categoria === cat && t.estado === 'resuelto'
+            ).length;
             return (
-              <View key={est} style={[styles.contador, { backgroundColor: col.bg }]}>
-                <Text style={[styles.contadorNum, { color: col.text }]}>{conteos[est]}</Text>
-                <Text style={[styles.contadorLabel, { color: col.text }]}>{ESTADO_LABELS[est]}</Text>
-              </View>
+              <TouchableOpacity
+                key={cat}
+                style={[
+                  styles.areaCard,
+                  filtroCat === cat && styles.areaCardActiva,
+                ]}
+                onPress={() => setFiltroCat(filtroCat === cat ? 'todas' : cat)}
+              >
+                <View style={styles.areaCardTop}>
+                  <Ionicons
+                    name={(AREA_ICONS[cat] ?? 'help-circle-outline') as any}
+                    size={20}
+                    color={count > 0 ? '#E05C2A' : cartasBosque.helecho}
+                  />
+                  <View style={[
+                    styles.areaBadge,
+                    { backgroundColor: count > 0 ? '#E05C2A' : cartasBosque.niebla },
+                  ]}>
+                    <Text style={styles.areaBadgeText}>{count}</Text>
+                  </View>
+                </View>
+                <Text style={styles.areaLabel}>{CATEGORIA_LABELS[cat as CategoriaTicket]}</Text>
+                <View style={styles.areaMetrics}>
+                  <Text style={[styles.areaMetricText, { color: '#E8A838' }]}>
+                    {enProceso} en proceso
+                  </Text>
+                  <Text style={[styles.areaMetricText, { color: '#4A9B6F' }]}>
+                    {resueltos} resueltos
+                  </Text>
+                </View>
+              </TouchableOpacity>
             );
           })}
         </View>
-
-        {/* Filtro estado */}
-        <ScrollView
-          horizontal showsHorizontalScrollIndicator={false}
-          style={styles.filtroBar}
-          contentContainerStyle={{ paddingHorizontal: spacing[4], gap: spacing[2] }}
-        >
-          {ESTADOS_FILTER.map(est => (
-            <TouchableOpacity
-              key={est}
-              style={[styles.chip, filtroEst === est && styles.chipActivo]}
-              onPress={() => setFiltroEst(est)}
-            >
-              <Text style={[styles.chipText, filtroEst === est && styles.chipTextActivo]}>
-                {est === 'todos' ? 'Todos' : ESTADO_LABELS[est]}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
-
-        {/* Filtro categoría */}
-        <ScrollView
-          horizontal showsHorizontalScrollIndicator={false}
-          style={[styles.filtroBar, { borderTopWidth: 0 }]}
-          contentContainerStyle={{ paddingHorizontal: spacing[4], gap: spacing[2] }}
-        >
-          {CATEGORIAS_FILTER.map(cat => (
-            <TouchableOpacity
-              key={cat}
-              style={[styles.chip, filtroCat === cat && styles.chipActivo]}
-              onPress={() => setFiltroCat(cat)}
-            >
-              <Text style={[styles.chipText, filtroCat === cat && styles.chipTextActivo]}>
-                {cat === 'todas' ? 'Todas' : CATEGORIA_LABELS[cat]}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
-      </SafeAreaView>
-
-      {cargando ? (
-        <ActivityIndicator color={cartasBosque.bosque} style={{ marginTop: spacing[8] }} />
-      ) : tickets.length === 0 ? (
-        <View style={styles.vacio}>
-          <Ionicons name="headset-outline" size={36} color={cartasBosque.niebla} />
-          <Text style={styles.vacioText}>Sin tickets en este filtro</Text>
-        </View>
-      ) : (
-        <FlatList
-          data={tickets}
-          keyExtractor={t => t.id}
-          contentContainerStyle={{ padding: spacing[4], paddingBottom: spacing[10] }}
-          renderItem={({ item }) => (
-            <TicketCard ticket={item} esAdmin onPress={setTicketDetalle} />
-          )}
-        />
       )}
 
       <ModalDetalle
@@ -348,6 +411,67 @@ export default function TicketsAdminScreen() {
 }
 
 const styles = StyleSheet.create({
+  root:    { flex: 1, backgroundColor: cartasBosque.bruma },
+  rootWeb: { flexDirection: 'row' },
+  colLeft: {
+    width: 420,
+    borderRightWidth: 1,
+    borderRightColor: cartasBosque.pergaminoOscuro,
+  },
+  colRight: {
+    flex: 1,
+    padding: spacing[4],
+  },
+  colRightTitulo: {
+    fontFamily: 'SpaceMono_400Regular',
+    fontSize: 10,
+    color: cartasBosque.helecho,
+    letterSpacing: 1,
+    marginBottom: spacing[3],
+  },
+  areaCard: {
+    backgroundColor: cartasBosque.pergamino,
+    borderRadius: borderRadius.md,
+    padding: spacing[3],
+    marginBottom: spacing[2],
+    borderWidth: 1,
+    borderColor: cartasBosque.pergaminoOscuro,
+  },
+  areaCardActiva: {
+    borderColor: cartasBosque.bosque,
+    backgroundColor: '#E8EBE0',
+  },
+  areaCardTop: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: spacing[1],
+  },
+  areaBadge: {
+    minWidth: 20, height: 20, borderRadius: 10,
+    alignItems: 'center', justifyContent: 'center',
+    paddingHorizontal: 4,
+  },
+  areaBadgeText: {
+    fontFamily: 'SpaceMono_400Regular',
+    fontSize: 10,
+    color: '#FFFFFF',
+  },
+  areaLabel: {
+    fontFamily: 'Inter_600SemiBold',
+    fontSize: 12,
+    color: cartasBosque.tinta,
+    marginBottom: 2,
+  },
+  areaMetrics: {
+    flexDirection: 'row',
+    gap: spacing[3],
+  },
+  areaMetricText: {
+    fontFamily: 'SpaceMono_400Regular',
+    fontSize: 10,
+  },
+
   contadoresRow: {
     flexDirection: 'row', paddingHorizontal: spacing[4],
     paddingVertical: spacing[2], gap: spacing[2],
