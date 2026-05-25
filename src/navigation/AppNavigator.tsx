@@ -23,6 +23,9 @@ import ConfigAdminScreen    from '@/screens/admin/ConfigAdminScreen';
 
 type IoniconsName = React.ComponentProps<typeof Ionicons>['name'];
 
+const ICON_ACTIVE   = '#CDB29D';
+const ICON_INACTIVE = '#4A5E48';
+
 // ─────────────────────────────────────────────────────────────
 //  TENANT — 5 tabs
 // ─────────────────────────────────────────────────────────────
@@ -42,7 +45,7 @@ function tabIcon(name: IoniconsName, nameFocused: IoniconsName) {
     <Ionicons
       name={focused ? nameFocused : name}
       size={size}
-      color={focused ? cartasBosque.bosque : cartasBosque.helecho}
+      color={focused ? ICON_ACTIVE : ICON_INACTIVE}
     />
   );
 }
@@ -53,8 +56,8 @@ function TenantNavigator() {
       initialRouteName="Home"
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: cartasBosque.bruma,
-        tabBarInactiveTintColor: cartasBosque.helecho,
+        tabBarActiveTintColor: ICON_ACTIVE,
+        tabBarInactiveTintColor: ICON_INACTIVE,
         tabBarStyle: styles.tabBar,
         tabBarLabelStyle: styles.tabLabel,
       }}
@@ -62,12 +65,12 @@ function TenantNavigator() {
       <TenantTab.Screen
         name="Dossier"
         component={DossierScreen}
-        options={{ tabBarIcon: tabIcon('id-card-outline', 'id-card') }}
+        options={{ tabBarIcon: tabIcon('document-text-outline', 'document-text') }}
       />
       <TenantTab.Screen
         name="Comunidad"
         component={NoticiasScreen}
-        options={{ tabBarIcon: tabIcon('chatbubbles-outline', 'chatbubbles'), tabBarLabel: 'Comunidad' }}
+        options={{ tabBarIcon: tabIcon('newspaper-outline', 'newspaper'), tabBarLabel: 'Comunidad' }}
       />
 
       {/* Home — tab central con pill destacado */}
@@ -79,7 +82,7 @@ function TenantNavigator() {
             <View style={[styles.homePill, focused && styles.homePillActive]}>
               <Ionicons
                 name={focused ? 'home' : 'home-outline'}
-                size={22}
+                size={24}
                 color={focused ? '#122A1F' : cartasBosque.helecho}
               />
             </View>
@@ -91,12 +94,12 @@ function TenantNavigator() {
       <TenantTab.Screen
         name="Servicios"
         component={ServiciosMenuScreen}
-        options={{ tabBarIcon: tabIcon('apps-outline', 'apps') }}
+        options={{ tabBarIcon: tabIcon('grid-outline', 'grid') }}
       />
       <TenantTab.Screen
         name="Soporte"
         component={SoporteScreen}
-        options={{ tabBarIcon: tabIcon('headset-outline', 'headset'), tabBarLabel: 'Soporte' }}
+        options={{ tabBarIcon: tabIcon('help-circle-outline', 'help-circle'), tabBarLabel: 'Soporte' }}
       />
     </TenantTab.Navigator>
   );
@@ -122,8 +125,8 @@ function AdminNavigator() {
       initialRouteName="Dashboard"
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: cartasBosque.bosque,
-        tabBarInactiveTintColor: cartasBosque.helecho,
+        tabBarActiveTintColor: ICON_ACTIVE,
+        tabBarInactiveTintColor: ICON_INACTIVE,
         tabBarStyle: styles.tabBar,
         tabBarLabelStyle: styles.tabLabel,
       }}
@@ -173,9 +176,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#122A1F',
     borderTopColor: '#122A1F',
     borderTopWidth: 0,
-    height: 60,
-    paddingBottom: 6,
-    paddingTop: 4,
+    height: 64,
+    paddingBottom: 8,
+    paddingTop: 6,
+    overflow: 'visible',
   },
   tabLabel: {
     fontFamily: 'SpaceMono_400Regular',
@@ -184,14 +188,15 @@ const styles = StyleSheet.create({
   },
   // Home tab central
   homePill: {
-    width: 46,
-    height: 30,
-    borderRadius: 15,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#2E3C2C',
+    marginBottom: 20,
   },
   homePillActive: {
-    backgroundColor: cartasBosque.bruma,
+    backgroundColor: '#CDB29D',
   },
 });

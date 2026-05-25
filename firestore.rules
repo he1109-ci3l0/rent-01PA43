@@ -271,6 +271,14 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
+    // ─── reportes_limpieza ─────────────────────────────────────
+    match /reportes_limpieza/{rId} {
+      allow read:   if isAdmin();
+      allow create: if isAuth();
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+
     // ─── alertas_seguridad ─────────────────────────────────────
     match /alertas_seguridad/{aId} {
       allow read:   if isAdmin();
