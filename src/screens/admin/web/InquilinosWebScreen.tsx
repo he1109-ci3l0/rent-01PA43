@@ -15,7 +15,7 @@ import {
   PLANTILLAS_META, listenDocumentosPlantillas, actualizarPlantillaUrl,
 } from '@/services/firebase/documentosPlantillas';
 import { useAuth } from '@/hooks/useAuth';
-import type { Habitacion, DocumentoPlantilla } from '@/types/firestore';
+import type { Habitacion, Inquilino, DocumentoPlantilla } from '@/types/firestore';
 
 type Tab = 'lista' | 'nuevo' | 'plantillas';
 
@@ -365,6 +365,36 @@ function PlantillasPanel() {
 
 export default function InquilinosWebScreen() {
   const [tab, setTab] = useState<Tab>('lista');
+  const [inquilinos, setInquilinos] = useState<Inquilino[]>([]);
+  const [pagosMorosos, setPagosMorosos] = useState<
+    Record<string, 'vencido' | 'por_verificar'>
+  >({});
+
+  useEffect(() => {
+    getDocs(collections.inquilinos).then(snap => {
+      setInquilinos(
+        snap.docs
+          .map(d => ({ ...d.data(), id: d.id } as Inquilino))
+          .filter(i => i.estado !== 'inactivo')
+          .sort((a, b) =>
+            `${a.nombre} ${a.apellido}`.localeCompare(`${b.nombre} ${b.apellido}`)
+          )
+      );
+    }).catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    getDocs(collections.pagos).then(snap => {
+      const map: Record<string, 'vencido' | 'por_verificar'> = {};
+      snap.docs.forEach(d => {
+        const p = d.data() as any;
+        if (p.estado === 'vencido' || p.estado === 'por_verificar') {
+          map[p.inquilinoId] = p.estado;
+        }
+      });
+      setPagosMorosos(map);
+    }).catch(() => {});
+  }, []);
 
   return (
     <View style={{ flex: 1, backgroundColor: cartasBosque.bruma }}>
@@ -382,7 +412,33 @@ export default function InquilinosWebScreen() {
         </TouchableOpacity>
       </View>
 
-      {tab === 'lista'      && <ServiciosAdminScreen />}
+      {tab === 'lista' && (
+        <ScrollView contentContainerStyle={il.listContent}>
+          {inquilinos.length === 0 ? (
+            <Text style={il.vacio}>Cargando inquilinos…</Text>
+          ) : (
+            inquilinos.map(inq => (
+              <View key={inq.id} style={il.row}>
+                <View style={il.rowNombreWrap}>
+                  <Text style={il.nombre}>{inq.nombre} {inq.apellido}</Text>
+                  {pagosMorosos[inq.uid ?? inq.id] === 'vencido' && (
+                    <View style={il.moroBadge}>
+                      <Text style={il.moroBadgeText}>VENCIDO</Text>
+                    </View>
+                  )}
+                  {pagosMorosos[inq.uid ?? inq.id] === 'por_verificar' && (
+                    <View style={[il.moroBadge, { backgroundColor: '#E8A83822', borderColor: '#E8A83866' }]}>
+                      <Text style={[il.moroBadgeText, { color: '#E8A838' }]}>POR VERIFICAR</Text>
+                    </View>
+                  )}
+                </View>
+                <Text style={il.hab}>Hab. {inq.habitacionId ?? '—'}</Text>
+                <Text style={il.estado}>{inq.estado}</Text>
+              </View>
+            ))
+          )}
+        </ScrollView>
+      )}
       {tab === 'nuevo'      && <NuevoInquilinoForm onDone={() => setTab('lista')} />}
       {tab === 'plantillas' && <PlantillasPanel />}
     </View>
@@ -469,4 +525,34 @@ const f = StyleSheet.create({
   btnSecundarioText: { fontFamily: 'Inter_600SemiBold', fontSize: 14, color: cartasBosque.bosque },
   btnPrimario:   { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: spacing[2], paddingVertical: spacing[3], borderRadius: borderRadius.md, backgroundColor: cartasBosque.bosque },
   btnPrimarioText:{ fontFamily: 'Inter_600SemiBold', fontSize: 14, color: '#FFFFFF' },
+});
+
+const il = StyleSheet.create({
+  listContent: { padding: spacing[4], paddingBottom: spacing[10] },
+  vacio: { fontFamily: 'Inter_400Regular', fontSize: 13, color: cartasBosque.helecho, textAlign: 'center', marginTop: spacing[8] },
+  row: {
+    flexDirection: 'row', alignItems: 'center',
+    paddingVertical: spacing[3],
+    borderBottomWidth: 1, borderBottomColor: cartasBosque.pergaminoOscuro,
+    gap: spacing[3],
+  },
+  rowNombreWrap: { flex: 1, flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', gap: spacing[1] },
+  nombre: { fontFamily: 'Inter_600SemiBold', fontSize: 13, color: cartasBosque.tinta },
+  hab:    { fontFamily: 'SpaceMono_400Regular', fontSize: 11, color: cartasBosque.helecho, width: 64 },
+  estado: { fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.helecho, width: 72, textAlign: 'right' },
+  moroBadge: {
+    paddingHorizontal: spacing[2],
+    paddingVertical: 2,
+    borderRadius: borderRadius.sm,
+    backgroundColor: '#C0392B22',
+    borderWidth: 1,
+    borderColor: '#C0392B55',
+    marginLeft: spacing[2],
+  },
+  moroBadgeText: {
+    fontFamily: 'SpaceMono_400Regular',
+    fontSize: 9,
+    color: '#C0392B',
+    letterSpacing: 0.5,
+  },
 });

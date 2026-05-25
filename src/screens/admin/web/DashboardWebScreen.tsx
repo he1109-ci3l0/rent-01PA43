@@ -53,6 +53,19 @@ function agruparPorMes(pagos: Pago[]): { mes: string; total: number }[] {
   });
 }
 
+function calcularMesAnterior(pagos: Pago[]): number {
+  const ahora = new Date();
+  const inicioMesAnt = new Date(ahora.getFullYear(), ahora.getMonth() - 1, 1);
+  const finMesAnt    = new Date(ahora.getFullYear(), ahora.getMonth(), 0);
+  return pagos
+    .filter(p => {
+      if (p.estado !== 'pagado' || !p.fechaPago) return false;
+      const fp = (p.fechaPago as any).toDate();
+      return fp >= inicioMesAnt && fp <= finMesAnt;
+    })
+    .reduce((s, p) => s + p.montoPagado, 0);
+}
+
 // ─── Sub-components ───────────────────────────────────────────
 
 const ESTADO_HAB_COLOR: Record<string, string> = {
@@ -60,16 +73,6 @@ const ESTADO_HAB_COLOR: Record<string, string> = {
   ocupada:       cartasBosque.bosque,
   mantenimiento: '#8A6A72',
   reservada:     cartasBosque.musgo,
-};
-
-const NIVEL_COLOR: Record<string, string> = {
-  pesimo: '#960018', moroso: '#8A6A72', regular: cartasBosque.helecho,
-  bueno:  cartasBosque.musgo, excelente: cartasBosque.bosque,
-};
-
-const NIVEL_LABEL: Record<string, string> = {
-  pesimo: 'Pésimo', moroso: 'Moroso', regular: 'Regular',
-  bueno: 'Bueno',   excelente: 'Excelente',
 };
 
 function MetricCard({
@@ -94,10 +97,16 @@ function BarChart({ data }: { data: { mes: string; total: number }[] }) {
       {data.map(({ mes, total }) => (
         <View key={mes} style={bc.col}>
           <Text style={bc.valLabel}>
-            {total > 0 ? `$${Math.round(total / 1000)}k` : ''}
+            {total > 0 ? `$${Math.round(total / 1000)}k` : '$0'}
           </Text>
           <View style={bc.barBg}>
-            <View style={[bc.bar, { height: Math.max((total / max) * 120, total > 0 ? 4 : 2) }]} />
+            <View style={[
+              bc.bar,
+              {
+                height: Math.max((total / max) * 120, 3),
+                backgroundColor: total > 0 ? cartasBosque.bosque : cartasBosque.pergaminoOscuro,
+              },
+            ]} />
           </View>
           <Text style={bc.mesLabel}>{mes}</Text>
         </View>
@@ -135,11 +144,11 @@ interface DashData {
 }
 
 export default function DashboardWebScreen() {
-  const [data, setData]         = useState<DashData | null>(null);
-  const [alertas, setAlertas]   = useState<AlertaSeguridad[]>([]);
+  const [data, setData]             = useState<DashData | null>(null);
+  const [alertas, setAlertas]       = useState<AlertaSeguridad[]>([]);
   const [visitasHoy, setVisitasHoy] = useState<Visita[]>([]);
-  const [cargando, setCargando] = useState(true);
-  const [exporting, setExporting] = useState(false);
+  const [cargando, setCargando]     = useState(true);
+  const [exporting, setExporting]   = useState(false);
 
   useEffect(() => {
     async function cargar() {
@@ -220,26 +229,48 @@ export default function DashboardWebScreen() {
   const { habitaciones, pagos, inquilinos, tickets, scores } = data;
   const inicio = inicioMesActual();
 
-  const habsActivas = habitaciones.filter(h => h.habilitada);
-  const ocupadas    = habsActivas.filter(h => h.estado === 'ocupada').length;
+  const habsActivas  = habitaciones.filter(h => h.habilitada);
+  const ocupadas     = habsActivas.filter(h => h.estado === 'ocupada').length;
   const ocupacionPct = habsActivas.length > 0
     ? Math.round((ocupadas / habsActivas.length) * 100) : 0;
 
-  const pagosDelMes   = pagos.filter(p => p.fechaPago && (p.fechaPago as any).toDate() >= inicio);
-  const recaudadoMes  = pagosDelMes.filter(p => p.estado === 'pagado').reduce((s, p) => s + p.montoPagado, 0);
-  const vencidos      = pagos.filter(p => p.estado === 'vencido').length;
+  const pagosDelMes     = pagos.filter(p => p.fechaPago && (p.fechaPago as any).toDate() >= inicio);
+  const recaudadoMes    = pagosDelMes.filter(p => p.estado === 'pagado').reduce((s, p) => s + p.montoPagado, 0);
+  const recaudadoMesAnt = calcularMesAnterior(pagos);
+  const diffRecaudado   = recaudadoMesAnt > 0
+    ? Math.round(((recaudadoMes - recaudadoMesAnt) / recaudadoMesAnt) * 100)
+    : null;
+  const vencidos        = pagos.filter(p => p.estado === 'vencido').length;
   const ticketsAbiertos = tickets.filter(t => t.estado !== 'resuelto').length;
 
-  const barData = agruparPorMes(pagos);
+  const pagosPorVerificar = pagos.filter(p => p.estado === 'en_revision').length;
+  const ticketsSinResp    = tickets.filter(t => {
+    if (t.estado === 'resuelto') return false;
+    const hrs = (Date.now() - (t.creadoEn as any).toDate().getTime()) / 36e5;
+    return hrs > 24;
+  }).length;
+  const totalPendientes = pagosPorVerificar + ticketsSinResp + visitasHoy.length;
 
-  const scoreMap: Record<string, ScoreReputacion> = {};
-  scores.forEach(sc => { scoreMap[sc.inquilinoId] = sc; });
+  const barData    = agruparPorMes(pagos);
   const inqActivos = inquilinos.filter(i => i.estado !== 'inactivo');
+
+  const hoy7dias = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+  const proximosVencimientos = pagos
+    .filter(p => {
+      if (p.estado !== 'pendiente' || !p.fechaVencimiento) return false;
+      const fv = (p.fechaVencimiento as any).toDate() as Date;
+      return fv >= new Date() && fv <= hoy7dias;
+    })
+    .sort((a, b) =>
+      (a.fechaVencimiento as any).toDate().getTime() -
+      (b.fechaVencimiento as any).toDate().getTime()
+    );
 
   const alertasSinVer = alertas.filter(a => !a.adminVio);
 
   return (
     <ScrollView style={s.root} contentContainerStyle={s.scroll}>
+
       {/* ── Header ── */}
       <View style={s.header}>
         <View>
@@ -264,6 +295,37 @@ export default function DashboardWebScreen() {
         </View>
       </View>
 
+      {/* ── Pendientes de acción hoy ── */}
+      {totalPendientes > 0 && (
+        <View style={s.pendientesBar}>
+          <Ionicons name="alert-circle" size={16} color="#E8A838" />
+          <Text style={s.pendientesTitulo}>PENDIENTES HOY</Text>
+          <View style={s.pendientesItems}>
+            {pagosPorVerificar > 0 && (
+              <View style={s.pendienteChip}>
+                <Text style={s.pendienteChipText}>
+                  {pagosPorVerificar} pago{pagosPorVerificar !== 1 ? 's' : ''} por verificar
+                </Text>
+              </View>
+            )}
+            {ticketsSinResp > 0 && (
+              <View style={[s.pendienteChip, { backgroundColor: '#E05C2A22' }]}>
+                <Text style={[s.pendienteChipText, { color: '#E05C2A' }]}>
+                  {ticketsSinResp} ticket{ticketsSinResp !== 1 ? 's' : ''} sin respuesta +24h
+                </Text>
+              </View>
+            )}
+            {visitasHoy.length > 0 && (
+              <View style={[s.pendienteChip, { backgroundColor: '#3B82F622' }]}>
+                <Text style={[s.pendienteChipText, { color: '#3B82F6' }]}>
+                  {visitasHoy.length} visita{visitasHoy.length !== 1 ? 's' : ''} activas hoy
+                </Text>
+              </View>
+            )}
+          </View>
+        </View>
+      )}
+
       {/* ── Métricas ── */}
       <View style={s.metricsRow}>
         <MetricCard
@@ -276,7 +338,10 @@ export default function DashboardWebScreen() {
         <MetricCard
           title="Recaudado (mes)"
           value={`$${recaudadoMes.toLocaleString('es-MX')}`}
-          sub={`${pagosDelMes.filter(p => p.estado === 'pagado').length} pagos verificados`}
+          sub={diffRecaudado !== null
+            ? `${diffRecaudado >= 0 ? '↑' : '↓'} ${Math.abs(diffRecaudado)}% vs mes anterior`
+            : `${pagosDelMes.filter(p => p.estado === 'pagado').length} pagos verificados`
+          }
           color="#4A9B6F"
           icon="card"
         />
@@ -294,20 +359,30 @@ export default function DashboardWebScreen() {
           color={ticketsAbiertos > 0 ? '#E8A838' : '#4A9B6F'}
           icon="headset"
         />
+        <MetricCard
+          title="Visitas hoy"
+          value={String(visitasHoy.length)}
+          sub={visitasHoy.length > 0
+            ? `Última: ${visitasHoy[visitasHoy.length - 1]
+                ?.fechaEntrada.toDate()
+                .toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' })}`
+            : 'Sin visitas registradas'
+          }
+          color="#3B82F6"
+          icon="walk"
+        />
       </View>
 
       {/* ── Segunda fila: gráfica + habitaciones ── */}
       <View style={s.row2}>
-        {/* Ingresos 6 meses */}
         <View style={[s.card, { flex: 3 }]}>
           <Text style={s.cardTitulo}>Ingresos últimos 6 meses</Text>
           <BarChart data={barData} />
           <Text style={s.cardNote}>
-            Total acumulado: ${barData.reduce((s, d) => s + d.total, 0).toLocaleString('es-MX')}
+            Total acumulado: ${barData.reduce((acc, d) => acc + d.total, 0).toLocaleString('es-MX')}
           </Text>
         </View>
 
-        {/* Grid de habitaciones */}
         <View style={[s.card, { flex: 2 }]}>
           <Text style={s.cardTitulo}>Habitaciones ({habsActivas.length})</Text>
           <View style={s.leyenda}>
@@ -322,33 +397,37 @@ export default function DashboardWebScreen() {
         </View>
       </View>
 
-      {/* ── Tercera fila: scores + alertas ── */}
+      {/* ── Tercera fila: vencimientos + alertas ── */}
       <View style={s.row2}>
-        {/* Score de inquilinos */}
+
+        {/* Vencimientos próximos */}
         <View style={[s.card, { flex: 1 }]}>
           <View style={s.cardHeaderRow}>
-            <Text style={s.cardTitulo}>Score de inquilinos</Text>
-            <Text style={s.cardHeaderSub}>{inqActivos.length} activos</Text>
+            <Text style={s.cardTitulo}>Vencimientos próximos</Text>
+            <Text style={s.cardHeaderSub}>próximos 7 días</Text>
           </View>
-          {inqActivos.length === 0 ? (
-            <Text style={s.emptyText}>Sin inquilinos activos</Text>
+          {proximosVencimientos.length === 0 ? (
+            <View style={s.emptyRow}>
+              <Ionicons name="checkmark-circle-outline" size={24} color="#4A9B6F" />
+              <Text style={s.emptyText}>Sin vencimientos esta semana</Text>
+            </View>
           ) : (
-            inqActivos.slice(0, 10).map(inq => {
-              const sc = scoreMap[inq.id];
-              const color = sc ? (NIVEL_COLOR[sc.nivel] ?? cartasBosque.helecho) : cartasBosque.helecho;
+            proximosVencimientos.slice(0, 8).map(p => {
+              const fv = (p.fechaVencimiento as any).toDate() as Date;
+              const diasRestantes = Math.ceil((fv.getTime() - new Date().getTime()) / 864e5);
+              const color = diasRestantes <= 1 ? '#C0392B'
+                : diasRestantes <= 3 ? '#E05C2A' : '#E8A838';
               return (
-                <View key={inq.id} style={s.scoreRow}>
+                <View key={p.id} style={s.scoreRow}>
                   <Text style={s.scoreNombre} numberOfLines={1}>
-                    {inq.nombre} {inq.apellido}
+                    {p.inquilinoNombre ?? '—'}
                   </Text>
-                  <Text style={s.scoreHab}>Hab {inq.habitacionId?.replace('hab_', '') ?? '—'}</Text>
-                  {sc ? (
-                    <View style={[s.scoreBadge, { backgroundColor: color + '22' }]}>
-                      <Text style={[s.scorePts, { color }]}>{sc.puntos}</Text>
-                    </View>
-                  ) : (
-                    <Text style={s.scoreNA}>—</Text>
-                  )}
+                  <Text style={s.scoreHab}>Hab {p.habitacionNumero ?? '—'}</Text>
+                  <View style={[s.scoreBadge, { backgroundColor: color + '22' }]}>
+                    <Text style={[s.scorePts, { color }]}>
+                      {diasRestantes === 0 ? 'hoy' : `${diasRestantes}d`}
+                    </Text>
+                  </View>
                 </View>
               );
             })
@@ -361,16 +440,13 @@ export default function DashboardWebScreen() {
             <Text style={s.cardTitulo}>Alertas de seguridad</Text>
             {alertasSinVer.length > 0 && (
               <View style={s.alertaBadge}>
-                <Text style={s.alertaBadgeText}>{alertasSinVer.length} nueva{alertasSinVer.length !== 1 ? 's' : ''}</Text>
+                <Text style={s.alertaBadgeText}>
+                  {alertasSinVer.length} nueva{alertasSinVer.length !== 1 ? 's' : ''}
+                </Text>
               </View>
             )}
           </View>
-          {alertas.length === 0 ? (
-            <View style={s.emptyRow}>
-              <Ionicons name="shield-checkmark-outline" size={24} color={cartasBosque.niebla} />
-              <Text style={s.emptyText}>Sin alertas</Text>
-            </View>
-          ) : (
+          {alertas.length > 0 ? (
             alertas.map(al => (
               <View key={al.id} style={[s.alertaRow, !al.adminVio && s.alertaRowNoVista]}>
                 <Ionicons
@@ -387,29 +463,9 @@ export default function DashboardWebScreen() {
                 {!al.adminVio && <View style={s.dotNueva} />}
               </View>
             ))
-          )}
+          ) : null}
         </View>
-      </View>
 
-      {/* ── Visitas hoy ── */}
-      <View style={s.seccion}>
-        <Text style={s.seccionTitulo}>VISITAS HOY</Text>
-        {visitasHoy.length === 0 ? (
-          <Text style={s.vacioText}>Sin visitas registradas hoy</Text>
-        ) : (
-          visitasHoy.map(v => (
-            <View key={v.id} style={s.visitaRow}>
-              <View style={s.visitaDot} />
-              <View style={{ flex: 1 }}>
-                <Text style={s.visitaNombre}>{v.nombreVisitante ?? '—'}</Text>
-                <Text style={s.visitaSub}>
-                  {v.inquilinoNombre} · Hab. {v.habitacionNumero} ·{' '}
-                  {v.fechaEntrada.toDate().toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' })}
-                </Text>
-              </View>
-            </View>
-          ))
-        )}
       </View>
 
       <View style={{ height: spacing[8] }} />
@@ -441,9 +497,45 @@ const s = StyleSheet.create({
   exportBtnPrimary: { backgroundColor: cartasBosque.bosque, borderColor: cartasBosque.bosque },
   exportText: { fontFamily: 'Inter_400Regular', fontSize: 12, color: cartasBosque.bosque },
 
-  metricsRow: { flexDirection: 'row', gap: spacing[4], marginBottom: spacing[4], flexWrap: 'wrap' },
+  // Pendientes hoy
+  pendientesBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    gap: spacing[3],
+    backgroundColor: '#E8A83811',
+    borderRadius: borderRadius.md,
+    borderWidth: 1,
+    borderColor: '#E8A83844',
+    padding: spacing[3],
+    marginBottom: spacing[4],
+  },
+  pendientesTitulo: {
+    fontFamily: 'SpaceMono_400Regular',
+    fontSize: 10,
+    color: '#E8A838',
+    letterSpacing: 0.8,
+  },
+  pendientesItems: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: spacing[2],
+    flex: 1,
+  },
+  pendienteChip: {
+    paddingHorizontal: spacing[2],
+    paddingVertical: 3,
+    borderRadius: borderRadius.sm,
+    backgroundColor: '#E8A83822',
+  },
+  pendienteChipText: {
+    fontFamily: 'Inter_400Regular',
+    fontSize: 11,
+    color: '#E8A838',
+  },
 
-  row2: { flexDirection: 'row', gap: spacing[4], marginBottom: spacing[4], flexWrap: 'wrap' },
+  metricsRow: { flexDirection: 'row', gap: spacing[4], marginBottom: spacing[4], flexWrap: 'wrap' },
+  row2:       { flexDirection: 'row', gap: spacing[4], marginBottom: spacing[4], flexWrap: 'wrap' },
 
   card: {
     backgroundColor: cartasBosque.bruma,
@@ -460,22 +552,25 @@ const s = StyleSheet.create({
     fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.helecho,
     marginTop: spacing[3], textAlign: 'right',
   },
-  cardHeaderRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: spacing[3] },
+  cardHeaderRow: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+    marginBottom: spacing[3],
+  },
   cardHeaderSub: { fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.helecho },
 
-  leyenda: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing[2], marginBottom: spacing[3] },
-  leyendaItem: { flexDirection: 'row', alignItems: 'center', gap: 4 },
-  leyendaDot:  { width: 8, height: 8, borderRadius: 4 },
-  leyendaLabel:{ fontFamily: 'SpaceMono_400Regular', fontSize: 9, color: cartasBosque.helecho },
+  leyenda:      { flexDirection: 'row', flexWrap: 'wrap', gap: spacing[2], marginBottom: spacing[3] },
+  leyendaItem:  { flexDirection: 'row', alignItems: 'center', gap: 4 },
+  leyendaDot:   { width: 8, height: 8, borderRadius: 4 },
+  leyendaLabel: { fontFamily: 'SpaceMono_400Regular', fontSize: 9, color: cartasBosque.helecho },
 
-  // Scores
+  // Scores / vencimientos
   scoreRow: {
     flexDirection: 'row', alignItems: 'center', gap: spacing[2],
     paddingVertical: spacing[2],
     borderBottomWidth: 1, borderBottomColor: cartasBosque.pergaminoOscuro,
   },
   scoreNombre: { flex: 1, fontFamily: 'Inter_400Regular', fontSize: 12, color: cartasBosque.tinta },
-  scoreHab:    { fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.helecho, width: 48 },
+  scoreHab:    { fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.helecho, width: 56 },
   scoreBadge:  { paddingHorizontal: 8, paddingVertical: 2, borderRadius: 20 },
   scorePts:    { fontFamily: 'SpaceMono_400Regular', fontSize: 11 },
   scoreNA:     { fontFamily: 'SpaceMono_400Regular', fontSize: 11, color: cartasBosque.niebla, width: 30, textAlign: 'center' },
@@ -492,52 +587,12 @@ const s = StyleSheet.create({
     borderBottomWidth: 1, borderBottomColor: cartasBosque.pergaminoOscuro,
   },
   alertaRowNoVista: { backgroundColor: '#E8EBE0' + '33' },
-  alertaNombre: { fontFamily: 'Inter_400Regular', fontSize: 12, color: cartasBosque.tinta },
-  alertaMeta:   { fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.helecho },
-  dotNueva:     { width: 7, height: 7, borderRadius: 4, backgroundColor: cartasBosque.bosque },
+  alertaNombre:     { fontFamily: 'Inter_400Regular', fontSize: 12, color: cartasBosque.tinta },
+  alertaMeta:       { fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.helecho },
+  dotNueva:         { width: 7, height: 7, borderRadius: 4, backgroundColor: cartasBosque.bosque },
 
-  emptyRow: { alignItems: 'center', paddingVertical: spacing[4], gap: spacing[2] },
+  emptyRow:  { alignItems: 'center', paddingVertical: spacing[4], gap: spacing[2] },
   emptyText: { fontFamily: 'Inter_400Regular', fontSize: 12, color: cartasBosque.helecho, textAlign: 'center' },
-
-  // Visitas hoy
-  seccion: {
-    marginHorizontal: spacing[4],
-    marginBottom: spacing[4],
-  },
-  seccionTitulo: {
-    fontFamily: 'SpaceMono_400Regular',
-    fontSize: 10,
-    color: cartasBosque.helecho,
-    letterSpacing: 1,
-    marginBottom: spacing[2],
-  },
-  vacioText: {
-    fontFamily: 'Inter_400Regular',
-    fontSize: 13,
-    color: cartasBosque.niebla,
-  },
-  visitaRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing[3],
-    paddingVertical: spacing[2],
-    borderBottomWidth: 1,
-    borderBottomColor: cartasBosque.pergaminoOscuro,
-  },
-  visitaDot: {
-    width: 8, height: 8, borderRadius: 4,
-    backgroundColor: '#4A9B6F',
-  },
-  visitaNombre: {
-    fontFamily: 'Inter_600SemiBold',
-    fontSize: 13,
-    color: cartasBosque.tinta,
-  },
-  visitaSub: {
-    fontFamily: 'Inter_400Regular',
-    fontSize: 11,
-    color: cartasBosque.helecho,
-  },
 });
 
 const mc = StyleSheet.create({
@@ -547,15 +602,18 @@ const mc = StyleSheet.create({
     borderRadius: borderRadius.lg, padding: spacing[4],
     borderWidth: 1, borderColor: cartasBosque.pergaminoOscuro,
   },
-  iconBox: { width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center', marginBottom: spacing[3] },
-  value: { fontFamily: 'Inter_700Bold', fontSize: 28, color: cartasBosque.tinta, lineHeight: 32 },
+  iconBox: {
+    width: 40, height: 40, borderRadius: 20,
+    alignItems: 'center', justifyContent: 'center', marginBottom: spacing[3],
+  },
+  value: { fontFamily: 'Inter_700Bold', fontSize: 28, lineHeight: 32 },
   title: { fontFamily: 'Inter_600SemiBold', fontSize: 13, color: cartasBosque.tinta, marginTop: spacing[1] },
   sub:   { fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.helecho, marginTop: 3 },
 });
 
 const bc = StyleSheet.create({
-  root: { flexDirection: 'row', alignItems: 'flex-end', height: 160, gap: 8, paddingTop: spacing[2] },
-  col:  { flex: 1, alignItems: 'center' },
+  root:  { flexDirection: 'row', alignItems: 'flex-end', height: 160, gap: 8, paddingTop: spacing[2] },
+  col:   { flex: 1, alignItems: 'center' },
   barBg: {
     width: '80%', height: 120,
     justifyContent: 'flex-end',
@@ -563,16 +621,13 @@ const bc = StyleSheet.create({
     borderRadius: 4,
     overflow: 'hidden',
   },
-  bar:  { width: '100%', backgroundColor: cartasBosque.bosque, borderRadius: 4 },
+  bar:      { width: '100%', borderRadius: 4 },
   valLabel: { fontFamily: 'SpaceMono_400Regular', fontSize: 9, color: cartasBosque.helecho, marginBottom: 2, height: 14 },
   mesLabel: { fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.helecho, marginTop: 4, textTransform: 'uppercase' },
 });
 
 const rg = StyleSheet.create({
-  cell: {
-    width: 52, height: 44, borderRadius: 8,
-    alignItems: 'center', justifyContent: 'center',
-  },
+  cell: { width: 52, height: 44, borderRadius: 8, alignItems: 'center', justifyContent: 'center' },
   num:  { fontFamily: 'Inter_600SemiBold', fontSize: 12, color: '#FFFFFF' },
   piso: { fontFamily: 'SpaceMono_400Regular', fontSize: 8, color: '#FFFFFFAA' },
 });

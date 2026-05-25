@@ -204,7 +204,7 @@ const s = StyleSheet.create({
     paddingTop: spacing[5],
     paddingBottom: spacing[4],
     borderBottomWidth: 1,
-    borderBottomColor: '#2E3C2C',
+    borderBottomColor: '#1A4233',
   },
   brandLogo: {
     width: 36, height: 36, borderRadius: 10,
@@ -236,7 +236,7 @@ const s = StyleSheet.create({
   navActiveBar: {
     position: 'absolute', left: 0, top: '20%' as any,
     width: 3, height: '60%' as any,
-    backgroundColor: '#CDB29D',
+    backgroundColor: '#8A9E80',
     borderRadius: 2,
   },
   navLabel:       { fontFamily: 'Inter_400Regular', fontSize: 13, color: SIDEBAR_TEXT },
