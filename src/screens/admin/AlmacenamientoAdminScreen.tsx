@@ -241,6 +241,7 @@ export default function AlmacenamientoAdminScreen() {
   }, []);
 
   const activos = espacios.filter(e => e.estado === 'ocupado');
+  const libres  = espacios.filter(e => e.estado === 'libre');
 
   function handleTapCuadricula(e: EspacioAlmacenamiento) {
     if (e.estado === 'libre') {
@@ -295,40 +296,78 @@ export default function AlmacenamientoAdminScreen() {
       {cargando ? (
         <ActivityIndicator color={cartasBosque.bosque} style={{ marginTop: spacing[8] }} />
       ) : vista === 'cuadricula' ? (
-        <ScrollView contentContainerStyle={styles.content}>
-          <CuadriculaAlmacenamiento
-            espacios={espacios}
-            tipo="locker"
-            showNombres
-            onPress={handleTapCuadricula}
-          />
-          <CuadriculaAlmacenamiento
-            espacios={espacios}
-            tipo="refrigerador"
-            showNombres
-            onPress={handleTapCuadricula}
-          />
-          <Text style={styles.hint}>Toca un espacio libre para asignarlo</Text>
-        </ScrollView>
-      ) : (
-        <FlatList
-          data={activos}
-          keyExtractor={e => e.id}
-          contentContainerStyle={styles.content}
-          ListEmptyComponent={
-            <View style={styles.vacioCont}>
-              <Ionicons name="archive-outline" size={36} color={cartasBosque.niebla} />
-              <Text style={styles.vacioText}>Sin espacios activos</Text>
-            </View>
-          }
-          renderItem={({ item }) => (
-            <EspacioRow
-              espacio={item}
-              onRenovar={() => { setSelec(item); setSheetRenovar(true); }}
-              onLiberar={() => handleLiberar(item)}
+        <>
+          <View style={styles.hintCard}>
+            <Ionicons name="information-circle-outline" size={16} color="#3B82F6" />
+            <Text style={styles.hintCardText}>
+              Toca cualquier espacio verde para asignarlo a un inquilino
+            </Text>
+          </View>
+          <ScrollView contentContainerStyle={styles.content}>
+            <CuadriculaAlmacenamiento
+              espacios={espacios}
+              tipo="locker"
+              showNombres
+              onPress={handleTapCuadricula}
             />
-          )}
-        />
+            <CuadriculaAlmacenamiento
+              espacios={espacios}
+              tipo="refrigerador"
+              showNombres
+              onPress={handleTapCuadricula}
+            />
+          </ScrollView>
+        </>
+      ) : (
+        <ScrollView contentContainerStyle={{ paddingTop: spacing[2], paddingBottom: spacing[8] }}>
+          <Text style={styles.seccionHeader}>OCUPADOS ({activos.length})</Text>
+          <View style={{ paddingHorizontal: spacing[4] }}>
+            {activos.length === 0 ? (
+              <View style={styles.vacioCont}>
+                <Ionicons name="archive-outline" size={36} color={cartasBosque.niebla} />
+                <Text style={styles.vacioText}>Sin espacios ocupados</Text>
+              </View>
+            ) : (
+              activos.map(item => (
+                <EspacioRow
+                  key={item.id}
+                  espacio={item}
+                  onRenovar={() => { setSelec(item); setSheetRenovar(true); }}
+                  onLiberar={() => handleLiberar(item)}
+                />
+              ))
+            )}
+          </View>
+          <Text style={styles.seccionHeader}>DISPONIBLES ({libres.length})</Text>
+          <View style={{ paddingHorizontal: spacing[4] }}>
+            {libres.length === 0 ? (
+              <View style={styles.vacioCont}>
+                <Text style={styles.vacioText}>Sin espacios disponibles</Text>
+              </View>
+            ) : (
+              libres.map(item => (
+                <View key={item.id} style={styles.card}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <View style={{ flex: 1 }}>
+                      <Text style={{ fontFamily: 'SpaceMono_400Regular', fontSize: 13, color: cartasBosque.tinta }}>
+                        #{item.numero}
+                      </Text>
+                      <Text style={{ fontFamily: 'Inter_400Regular', fontSize: 12, color: cartasBosque.helecho, marginTop: 2 }}>
+                        {item.tipo === 'locker' ? 'Locker' : 'Refrigerador'}
+                      </Text>
+                    </View>
+                    <TouchableOpacity
+                      style={styles.btnAsignar}
+                      onPress={() => { setSelec(item); setSheetAsignar(true); }}
+                    >
+                      <Text style={styles.btnAsignarText}>Asignar</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              ))
+            )}
+          </View>
+        </ScrollView>
       )}
 
       {/* Modal asignar */}
@@ -401,6 +440,34 @@ const styles = StyleSheet.create({
   hint: {
     fontFamily: 'SpaceMono_400Regular', fontSize: 9, color: cartasBosque.niebla,
     textAlign: 'center', marginTop: spacing[1],
+  },
+  hintCard: {
+    flexDirection: 'row', alignItems: 'center', gap: spacing[2],
+    backgroundColor: '#3B82F611',
+    borderRadius: borderRadius.md,
+    borderWidth: 1, borderColor: '#3B82F633',
+    padding: spacing[3],
+    marginHorizontal: spacing[4],
+    marginBottom: spacing[3],
+  },
+  hintCardText: {
+    fontFamily: 'Inter_400Regular', fontSize: 12, color: '#3B82F6', flex: 1,
+  },
+  seccionHeader: {
+    fontFamily: 'SpaceMono_400Regular', fontSize: 9,
+    color: cartasBosque.helecho, letterSpacing: 1,
+    textTransform: 'uppercase',
+    marginTop: spacing[4], marginBottom: spacing[2],
+    paddingHorizontal: spacing[4],
+  },
+  btnAsignar: {
+    backgroundColor: '#4A9B6F',
+    borderRadius: borderRadius.sm,
+    paddingHorizontal: spacing[3],
+    paddingVertical: spacing[1] + 2,
+  },
+  btnAsignarText: {
+    fontFamily: 'Inter_600SemiBold', fontSize: 12, color: '#FFFFFF',
   },
   vacioCont: { alignItems: 'center', gap: spacing[2], marginTop: spacing[8] },
   vacioText: { fontFamily: 'Inter_400Regular', fontSize: 14, color: cartasBosque.helecho },

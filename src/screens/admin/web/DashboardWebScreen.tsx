@@ -268,6 +268,18 @@ export default function DashboardWebScreen() {
 
   const alertasSinVer = alertas.filter(a => !a.adminVio);
 
+  const hoy = new Date();
+  const proximosDesocupar = inquilinos
+    .filter(i => i.fechaSalida !== null && i.fechaSalida !== undefined)
+    .map(i => {
+      const fechaSalida = (i.fechaSalida as any).toDate();
+      const diasRestantes = Math.ceil(
+        (fechaSalida.getTime() - hoy.getTime()) / 864e5
+      );
+      return { ...i, fechaSalida, diasRestantes };
+    })
+    .sort((a, b) => a.diasRestantes - b.diasRestantes);
+
   return (
     <ScrollView style={s.root} contentContainerStyle={s.scroll}>
 
@@ -371,6 +383,20 @@ export default function DashboardWebScreen() {
           color="#3B82F6"
           icon="walk"
         />
+        {proximosDesocupar.length > 0 && (
+          <MetricCard
+            title="Desocupan pronto"
+            value={String(proximosDesocupar.length)}
+            sub={proximosDesocupar[0]
+              ? `Próximo: Hab ${proximosDesocupar[0].habitacionId} en ${
+                  proximosDesocupar[0].diasRestantes <= 0 ? 'hoy'
+                  : proximosDesocupar[0].diasRestantes + 'd'
+                }`
+              : ''}
+            color="#E05C2A"
+            icon="exit-outline"
+          />
+        )}
       </View>
 
       {/* ── Segunda fila: gráfica + habitaciones ── */}
@@ -426,6 +452,57 @@ export default function DashboardWebScreen() {
                   <View style={[s.scoreBadge, { backgroundColor: color + '22' }]}>
                     <Text style={[s.scorePts, { color }]}>
                       {diasRestantes === 0 ? 'hoy' : `${diasRestantes}d`}
+                    </Text>
+                  </View>
+                </View>
+              );
+            })
+          )}
+        </View>
+
+        {/* Próximos a desocupar */}
+        <View style={[s.card, { flex: 1 }]}>
+          <View style={s.cardHeaderRow}>
+            <Text style={s.cardTitulo}>Próximos a desocupar</Text>
+            <Text style={s.cardHeaderSub}>depósito en curso</Text>
+          </View>
+          {proximosDesocupar.length === 0 ? (
+            <View style={s.emptyRow}>
+              <Ionicons
+                name="home-outline"
+                size={24}
+                color="#4A9B6F"
+              />
+              <Text style={s.emptyText}>
+                Sin habitaciones en protocolo de salida
+              </Text>
+            </View>
+          ) : (
+            proximosDesocupar.map(inq => {
+              const color = inq.diasRestantes <= 3  ? '#C0392B'
+                          : inq.diasRestantes <= 7  ? '#E05C2A'
+                          : inq.diasRestantes <= 15 ? '#E8A838'
+                          : '#3B82F6';
+              return (
+                <View key={inq.id} style={s.scoreRow}>
+                  <View style={{ flex: 1 }}>
+                    <Text style={s.scoreNombre} numberOfLines={1}>
+                      {inq.nombre} {inq.apellido}
+                    </Text>
+                    <Text style={[s.scoreHab, { marginTop: 2 }]}>
+                      Hab. {inq.habitacionId ?? '—'} ·{' '}
+                      {inq.fechaSalida.toLocaleDateString('es-MX', {
+                        day: '2-digit', month: 'short', year: 'numeric'
+                      })}
+                    </Text>
+                  </View>
+                  <View style={[s.scoreBadge, { backgroundColor: color + '22' }]}>
+                    <Text style={[s.scorePts, { color }]}>
+                      {inq.diasRestantes <= 0
+                        ? 'HOY'
+                        : inq.diasRestantes === 1
+                        ? 'mañana'
+                        : `${inq.diasRestantes}d`}
                     </Text>
                   </View>
                 </View>

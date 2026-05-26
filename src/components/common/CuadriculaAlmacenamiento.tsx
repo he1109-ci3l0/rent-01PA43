@@ -67,11 +67,16 @@ export default function CuadriculaAlmacenamiento({
               activeOpacity={onPress ? 0.75 : 1}
             >
               <Text style={[styles.num, { color: numColor }]}>{e.numero}</Text>
-              {showNombres && e.inquilinoNombre && (
+              {e.estado === 'libre' ? (
+                <View style={styles.celdaLibre}>
+                  <Ionicons name="add-circle-outline" size={16} color="#4A9B6F" />
+                  <Text style={styles.celdaLibreText}>Asignar</Text>
+                </View>
+              ) : (showNombres && e.inquilinoNombre ? (
                 <Text style={styles.nombre} numberOfLines={1}>
                   {primerNombre(e.inquilinoNombre)}
                 </Text>
-              )}
+              ) : null)}
             </TouchableOpacity>
           );
         })}
@@ -134,5 +139,11 @@ const styles = StyleSheet.create({
   dot: { width: 8, height: 8, borderRadius: 2 },
   dotLabel: {
     fontFamily: 'SpaceMono_400Regular', fontSize: 9, color: cartasBosque.helecho,
+  },
+  celdaLibre: {
+    alignItems: 'center', justifyContent: 'center', gap: 2,
+  },
+  celdaLibreText: {
+    fontFamily: 'SpaceMono_400Regular', fontSize: 8, color: '#4A9B6F',
   },
 });
