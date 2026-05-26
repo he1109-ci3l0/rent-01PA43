@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { cartasBosque } from '@/constants/colors';
 import { spacing, borderRadius } from '@/constants/spacing';
@@ -34,9 +34,11 @@ interface Props {
   sesion: Sesion;
   esActual?: boolean;
   onCerrar: () => void;
+  cerrando?: boolean;
+  cerrada?: boolean;
 }
 
-export default function SesionCard({ sesion, esActual = false, onCerrar }: Props) {
+export default function SesionCard({ sesion, esActual = false, onCerrar, cerrando = false, cerrada = false }: Props) {
   return (
     <View style={[styles.card, esActual && styles.cardActual, sesion.reporteRobo && styles.cardRobo]}>
       <View style={styles.iconBox}>
@@ -67,9 +69,19 @@ export default function SesionCard({ sesion, esActual = false, onCerrar }: Props
         <Text style={styles.fecha}>{formatFechaHora(sesion.fechaInicio)}</Text>
       </View>
 
-      <TouchableOpacity style={styles.cerrarBtn} onPress={onCerrar}>
-        <Ionicons name="close-outline" size={18} color={cartasBosque.helecho} />
-      </TouchableOpacity>
+      {cerrada ? (
+        <View style={styles.cerrarBtn}>
+          <Ionicons name="checkmark-circle" size={18} color="#4A9B6F" />
+        </View>
+      ) : cerrando ? (
+        <View style={styles.cerrarBtn}>
+          <ActivityIndicator size="small" color={cartasBosque.helecho} />
+        </View>
+      ) : (
+        <TouchableOpacity style={styles.cerrarBtn} onPress={onCerrar}>
+          <Ionicons name="close-outline" size={18} color={cartasBosque.helecho} />
+        </TouchableOpacity>
+      )}
     </View>
   );
 }

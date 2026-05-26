@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import {
   View, Text, ScrollView, TouchableOpacity,
   StyleSheet, SafeAreaView, TextInput, ActivityIndicator,
+  Platform, Linking,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { cartasBosque } from '@/constants/colors';
@@ -12,17 +13,23 @@ import {
   listenTodasSolicitudes, subirFactura, rechazarSolicitud,
   eliminarSolicitud, vaciarPapelera, CONCEPTOS_LABEL,
 } from '@/services/firebase/facturas';
-import CuponesAdminScreen from './CuponesAdminScreen';
 
-type Tab = 'facturas' | 'cupones';
 type SubTab = 'pendientes' | 'emitidas' | 'papelera';
 
 const ESTADO_COLOR: Record<SolicitudFactura['estado'], string> = {
-  pendiente:   '#CDB29D',
-  procesando:  cartasBosque.musgo,
-  emitida:     cartasBosque.bosque,
-  rechazada:   cartasBosque.corteza,
-  eliminada:   cartasBosque.niebla,
+  pendiente:  '#E8A838',
+  procesando: '#3B82F6',
+  emitida:    '#4A9B6F',
+  rechazada:  '#C0392B',
+  eliminada:  cartasBosque.niebla,
+};
+
+const ESTADO_LABEL: Record<SolicitudFactura['estado'], string> = {
+  pendiente:  'PENDIENTE',
+  procesando: 'PROCESANDO',
+  emitida:    'EMITIDA',
+  rechazada:  'RECHAZADA',
+  eliminada:  'ELIMINADA',
 };
 
 const MESES = [
@@ -35,34 +42,382 @@ function formatFecha(ts: any): string {
   return ts.toDate().toLocaleDateString('es-MX', { day: '2-digit', month: 'short' });
 }
 
-// ─── Panel subir factura ──────────────────────────────────────
+// ─── Tarjeta de solicitud ─────────────────────────────────────
+
+function SolicitudCard({
+  s, activa, onPress, onEliminar, mostrarEliminar,
+}: {
+  s: SolicitudFactura;
+  activa: boolean;
+  onPress: () => void;
+  onEliminar: () => void;
+  mostrarEliminar: boolean;
+}) {
+  return (
+    <TouchableOpacity
+      style={[sc.card, activa && sc.cardActiva]}
+      onPress={onPress}
+      activeOpacity={0.75}
+    >
+      <View style={sc.top}>
+        <Text style={sc.nombre} numberOfLines={1}>{s.inquilinoNombre ?? s.inquilinoId}</Text>
+        <View style={[sc.badge, { backgroundColor: ESTADO_COLOR[s.estado] }]}>
+          <Text style={sc.badgeText}>{ESTADO_LABEL[s.estado]}</Text>
+        </View>
+      </View>
+      <Text style={sc.hab}>Hab. {s.habitacionNumero ?? '—'} · {formatFecha(s.creadoEn)}</Text>
+      <Text style={sc.concepto}>{CONCEPTOS_LABEL[s.concepto]} · {MESES[s.mes]} {s.anio}</Text>
+      <Text style={sc.rfc}>{s.datosFiscales.rfc} · {s.datosFiscales.razonSocial}</Text>
+      <View style={sc.bottom}>
+        {s.emisor === 'fisica'
+          ? <View style={[sc.chip, { backgroundColor: '#8A6A7218' }]}>
+              <Text style={[sc.chipText, { color: '#8A6A72' }]}>RESICO · Sin IVA</Text>
+            </View>
+          : <View style={[sc.chip, { backgroundColor: '#3B82F618' }]}>
+              <Text style={[sc.chipText, { color: '#3B82F6' }]}>IVA 16%</Text>
+            </View>
+        }
+        {mostrarEliminar && (
+          <TouchableOpacity style={sc.eliminarBtn} onPress={onEliminar}>
+            <Ionicons name="trash-outline" size={13} color={cartasBosque.niebla} />
+          </TouchableOpacity>
+        )}
+      </View>
+    </TouchableOpacity>
+  );
+}
+
+// ─── Columna lista ────────────────────────────────────────────
+
+function ColumnaLista({
+  lista, subTab, setSubTab,
+  pendientesCount, emitidasCount, rechazadasCount,
+  papelera, seleccionadaId, onSeleccionar, cargando, userUid, isWeb,
+}: {
+  lista: SolicitudFactura[];
+  subTab: SubTab;
+  setSubTab: (t: SubTab) => void;
+  pendientesCount: number;
+  emitidasCount: number;
+  rechazadasCount: number;
+  papelera: SolicitudFactura[];
+  seleccionadaId: string | null;
+  onSeleccionar: (id: string | null) => void;
+  cargando: boolean;
+  userUid: string | undefined;
+  isWeb: boolean;
+}) {
+  return (
+    <View style={isWeb ? cl.containerWeb : cl.container}>
+      {/* Header */}
+      <View style={cl.header}>
+        <Text style={cl.titulo}>Facturación</Text>
+        <View style={cl.metricas}>
+          <View style={cl.metrica}>
+            <Text style={[cl.metricaNum, { color: '#E8A838' }]}>{pendientesCount}</Text>
+            <Text style={cl.metricaLabel}>Pendientes</Text>
+          </View>
+          <View style={cl.metricaSep} />
+          <View style={cl.metrica}>
+            <Text style={[cl.metricaNum, { color: '#4A9B6F' }]}>{emitidasCount}</Text>
+            <Text style={cl.metricaLabel}>Emitidas</Text>
+          </View>
+          <View style={cl.metricaSep} />
+          <View style={cl.metrica}>
+            <Text style={[cl.metricaNum, { color: '#C0392B' }]}>{rechazadasCount}</Text>
+            <Text style={cl.metricaLabel}>Rechazadas</Text>
+          </View>
+        </View>
+      </View>
+
+      {/* Subtabs */}
+      <View style={cl.subTabRow}>
+        {([
+          ['pendientes', `Pendientes (${pendientesCount})`],
+          ['emitidas', 'Emitidas'],
+          ['papelera', 'Papelera'],
+        ] as [SubTab, string][]).map(([st, label]) => (
+          <TouchableOpacity
+            key={st}
+            style={[cl.subTab, subTab === st && cl.subTabActivo]}
+            onPress={() => setSubTab(st)}
+          >
+            <Text style={[cl.subTabText, subTab === st && cl.subTabTextActivo]}>{label}</Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+
+      {/* Vaciar papelera */}
+      {subTab === 'papelera' && papelera.length > 0 && (
+        <TouchableOpacity
+          style={cl.vaciarBtn}
+          onPress={() => userUid && vaciarPapelera(userUid)}
+        >
+          <Ionicons name="trash-outline" size={13} color={cartasBosque.corteza} />
+          <Text style={cl.vaciarText}>Vaciar papelera</Text>
+        </TouchableOpacity>
+      )}
+
+      {/* Lista */}
+      {cargando ? (
+        <View style={cl.centro}><ActivityIndicator color={cartasBosque.bosque} /></View>
+      ) : lista.length === 0 ? (
+        <View style={cl.centro}>
+          <Ionicons name="receipt-outline" size={32} color={cartasBosque.niebla} />
+          <Text style={cl.vacioText}>
+            {subTab === 'pendientes' ? 'Sin solicitudes pendientes'
+             : subTab === 'emitidas' ? 'Sin facturas emitidas'
+             : 'Papelera vacía'}
+          </Text>
+        </View>
+      ) : (
+        <ScrollView style={{ flex: 1 }} contentContainerStyle={cl.scroll}>
+          {lista.map(s => (
+            <SolicitudCard
+              key={s.id}
+              s={s}
+              activa={seleccionadaId === s.id}
+              onPress={() => onSeleccionar(seleccionadaId === s.id ? null : s.id)}
+              onEliminar={() => eliminarSolicitud(s.id)}
+              mostrarEliminar={subTab !== 'papelera' && s.estado !== 'eliminada'}
+            />
+          ))}
+        </ScrollView>
+      )}
+    </View>
+  );
+}
+
+// ─── Panel derecho (web) ──────────────────────────────────────
+
+function PanelDerechoWeb({
+  solicitud,
+  adminUid,
+}: { solicitud: SolicitudFactura | null; adminUid: string }) {
+  const [pdfUrl, setPdfUrl]         = useState('');
+  const [rechazando, setRechazando] = useState(false);
+  const [motivo, setMotivo]         = useState('');
+  const [cargando, setCargando]     = useState(false);
+
+  async function handleSubir() {
+    if (!pdfUrl.trim() || !solicitud) return;
+    setCargando(true);
+    try { await subirFactura(solicitud.id, pdfUrl.trim(), adminUid); }
+    finally { setCargando(false); }
+  }
+
+  async function handleRechazar() {
+    if (!motivo.trim() || !solicitud) return;
+    setCargando(true);
+    try { await rechazarSolicitud(solicitud.id, adminUid, motivo.trim()); }
+    finally { setCargando(false); }
+  }
+
+  function handleVerPdf() {
+    if (!solicitud?.pdfUrl) return;
+    if (typeof window !== 'undefined') window.open(solicitud.pdfUrl, '_blank');
+  }
+
+  function handleCorreo() {
+    if (!solicitud) return;
+    const nombre   = solicitud.inquilinoNombre ?? solicitud.inquilinoId;
+    const concepto = CONCEPTOS_LABEL[solicitud.concepto];
+    const mes      = MESES[solicitud.mes];
+    const subject  = encodeURIComponent(
+      `Tu factura CFDI — ${concepto} ${mes} ${solicitud.anio} — Antioquia 43`,
+    );
+    const body = encodeURIComponent(
+      `Hola ${nombre}, adjuntamos tu factura. URL: ${solicitud.pdfUrl ?? ''}`,
+    );
+    Linking.openURL(`mailto:${solicitud.datosFiscales.emailFiscal}?subject=${subject}&body=${body}`);
+  }
+
+  if (!solicitud) {
+    return (
+      <View style={pd.empty}>
+        <Ionicons name="receipt-outline" size={48} color={cartasBosque.niebla} />
+        <Text style={pd.emptyText}>Selecciona una solicitud para procesarla</Text>
+      </View>
+    );
+  }
+
+  const df = solicitud.datosFiscales;
+  const filas: [string, string][] = [
+    ['Inquilino',      solicitud.inquilinoNombre ?? solicitud.inquilinoId],
+    ['Habitación',     solicitud.habitacionNumero ?? '—'],
+    ['Concepto',       `${CONCEPTOS_LABEL[solicitud.concepto]} · ${MESES[solicitud.mes]} ${solicitud.anio}`],
+    ['RFC',            df.rfc],
+    ['Razón social',   df.razonSocial],
+    ['Régimen fiscal', df.regimenFiscal || '—'],
+    ['CP',             df.codigoPostal || '—'],
+    ['Domicilio',      df.domicilioFiscal || '—'],
+    ['Email fiscal',   df.emailFiscal || '—'],
+    ['Emisor',         solicitud.emisor === 'fisica'
+                         ? 'Persona física RESICO · Exento IVA'
+                         : 'Servicios Kadamees Integrales · IVA 16%'],
+  ];
+
+  return (
+    <ScrollView style={pd.scroll} contentContainerStyle={pd.content}>
+
+      {/* Datos fiscales */}
+      <Text style={pd.seccionLabel}>DATOS FISCALES DEL INQUILINO</Text>
+      <View style={pd.tabla}>
+        {filas.map(([label, valor], i) => (
+          <View key={label} style={[pd.fila, i === filas.length - 1 && pd.filaUltima]}>
+            <Text style={pd.filaLabel}>{label}</Text>
+            <Text style={pd.filaValor}>{valor}</Text>
+          </View>
+        ))}
+      </View>
+
+      {/* Subir factura */}
+      {(solicitud.estado === 'pendiente' || solicitud.estado === 'procesando') && (
+        <>
+          <Text style={pd.seccionLabel}>SUBIR FACTURA</Text>
+          <View style={pd.instrCard}>
+            <Text style={pd.instrTexto}>
+              {'1. Genera el CFDI en tu PAC con los datos fiscales de arriba\n' +
+               '2. Sube el PDF a Firebase Storage en facturas/[solicitudId].pdf\n' +
+               '3. Copia la URL de descarga y pégala abajo\n' +
+               '4. El inquilino recibirá notificación automática en la app'}
+            </Text>
+          </View>
+
+          {!rechazando ? (
+            <>
+              <Text style={pd.inputLabel}>URL del PDF (Storage o drive)</Text>
+              <TextInput
+                style={pd.input}
+                value={pdfUrl}
+                onChangeText={setPdfUrl}
+                placeholder="https://…"
+                placeholderTextColor={cartasBosque.niebla}
+                autoCapitalize="none"
+              />
+              <TouchableOpacity
+                style={[pd.btnPrimario, (!pdfUrl.trim() || cargando) && { opacity: 0.5 }]}
+                onPress={handleSubir}
+                disabled={!pdfUrl.trim() || cargando}
+              >
+                {cargando
+                  ? <ActivityIndicator color={cartasBosque.bruma} />
+                  : <Text style={pd.btnText}>Subir y notificar</Text>
+                }
+              </TouchableOpacity>
+              <TouchableOpacity style={pd.btnSecundario} onPress={() => setRechazando(true)}>
+                <Text style={pd.btnSecText}>Rechazar solicitud</Text>
+              </TouchableOpacity>
+            </>
+          ) : (
+            <>
+              <Text style={pd.inputLabel}>Motivo de rechazo</Text>
+              <TextInput
+                style={[pd.input, { minHeight: 80 }]}
+                value={motivo}
+                onChangeText={setMotivo}
+                placeholder="ej. Datos fiscales incorrectos"
+                placeholderTextColor={cartasBosque.niebla}
+                multiline
+              />
+              <TouchableOpacity
+                style={[pd.btnRechazo, (!motivo.trim() || cargando) && { opacity: 0.5 }]}
+                onPress={handleRechazar}
+                disabled={!motivo.trim() || cargando}
+              >
+                {cargando
+                  ? <ActivityIndicator color={cartasBosque.bruma} />
+                  : <Text style={pd.btnText}>Confirmar rechazo</Text>
+                }
+              </TouchableOpacity>
+              <TouchableOpacity style={pd.btnSecundario} onPress={() => setRechazando(false)}>
+                <Text style={pd.btnSecText}>Cancelar</Text>
+              </TouchableOpacity>
+            </>
+          )}
+        </>
+      )}
+
+      {/* Factura emitida */}
+      {solicitud.estado === 'emitida' && solicitud.pdfUrl && (
+        <>
+          <Text style={pd.seccionLabel}>FACTURA EMITIDA</Text>
+          <View style={pd.emitidaCard}>
+            <Text style={pd.emitidaTitulo}>Factura emitida correctamente</Text>
+            {solicitud.adminSubidoEn && (
+              <Text style={pd.emitidaFecha}>Emitida: {formatFecha(solicitud.adminSubidoEn)}</Text>
+            )}
+            <View style={pd.descargasRow}>
+              <Text style={pd.descargasLabel}>Descargas restantes:</Text>
+              <Text style={[pd.descargasNum, {
+                color: solicitud.descargasRestantes > 1 ? '#4A9B6F'
+                     : solicitud.descargasRestantes === 1 ? '#E8A838'
+                     : '#C0392B',
+              }]}>
+                {solicitud.descargasRestantes}
+              </Text>
+            </View>
+          </View>
+          <TouchableOpacity style={pd.btnPrimario} onPress={handleVerPdf}>
+            <View style={pd.btnInner}>
+              <Ionicons name="document-outline" size={15} color={cartasBosque.bruma} />
+              <Text style={pd.btnText}>Ver PDF</Text>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity style={pd.btnCorreo} onPress={handleCorreo}>
+            <View style={pd.btnInner}>
+              <Ionicons name="mail-outline" size={15} color={cartasBosque.bosque} />
+              <Text style={pd.btnCorreoText} numberOfLines={1}>
+                Enviar al correo — {df.emailFiscal || '—'}
+              </Text>
+            </View>
+          </TouchableOpacity>
+        </>
+      )}
+
+      {/* Rechazada */}
+      {solicitud.estado === 'rechazada' && (
+        <>
+          <Text style={pd.seccionLabel}>SOLICITUD RECHAZADA</Text>
+          <View style={pd.rechazadaCard}>
+            <Text style={pd.rechazadaTitulo}>Motivo de rechazo</Text>
+            <Text style={pd.rechazadaMotivo}>{solicitud.notas || '—'}</Text>
+          </View>
+          <TouchableOpacity style={pd.btnPapelera} onPress={() => eliminarSolicitud(solicitud.id)}>
+            <View style={pd.btnInner}>
+              <Ionicons name="trash-outline" size={15} color={cartasBosque.bruma} />
+              <Text style={pd.btnText}>Mover a papelera</Text>
+            </View>
+          </TouchableOpacity>
+        </>
+      )}
+
+    </ScrollView>
+  );
+}
+
+// ─── Panel subir (móvil — overlay) ───────────────────────────
 
 function PanelSubir({
-  solicitud,
-  onClose,
-  adminUid,
+  solicitud, onClose, adminUid,
 }: { solicitud: SolicitudFactura; onClose: () => void; adminUid: string }) {
-  const [pdfUrl, setPdfUrl] = useState('');
+  const [pdfUrl, setPdfUrl]         = useState('');
   const [rechazando, setRechazando] = useState(false);
-  const [notas, setNotas] = useState('');
-  const [cargando, setCargando] = useState(false);
+  const [notas, setNotas]           = useState('');
+  const [cargando, setCargando]     = useState(false);
 
   async function handleSubir() {
     if (!pdfUrl.trim()) return;
     setCargando(true);
-    try {
-      await subirFactura(solicitud.id, pdfUrl.trim(), adminUid);
-      onClose();
-    } finally { setCargando(false); }
+    try { await subirFactura(solicitud.id, pdfUrl.trim(), adminUid); onClose(); }
+    finally { setCargando(false); }
   }
 
   async function handleRechazar() {
     if (!notas.trim()) return;
     setCargando(true);
-    try {
-      await rechazarSolicitud(solicitud.id, adminUid, notas.trim());
-      onClose();
-    } finally { setCargando(false); }
+    try { await rechazarSolicitud(solicitud.id, adminUid, notas.trim()); onClose(); }
+    finally { setCargando(false); }
   }
 
   return (
@@ -77,24 +432,18 @@ function PanelSubir({
 
         <Text style={panelStyles.label}>Inquilino</Text>
         <Text style={panelStyles.valor}>{solicitud.inquilinoNombre ?? solicitud.inquilinoId}</Text>
-
         <Text style={panelStyles.label}>Concepto</Text>
         <Text style={panelStyles.valor}>{CONCEPTOS_LABEL[solicitud.concepto]} · {MESES[solicitud.mes]} {solicitud.anio}</Text>
-
         <Text style={panelStyles.label}>RFC</Text>
         <Text style={panelStyles.valor}>{solicitud.datosFiscales.rfc} · {solicitud.datosFiscales.razonSocial}</Text>
-
         <Text style={panelStyles.label}>Régimen</Text>
         <Text style={panelStyles.valor}>{solicitud.datosFiscales.regimenFiscal || '—'}</Text>
-
         <Text style={panelStyles.label}>CP · Domicilio</Text>
         <Text style={panelStyles.valor}>
           {solicitud.datosFiscales.codigoPostal} · {solicitud.datosFiscales.domicilioFiscal || '—'}
         </Text>
-
         <Text style={panelStyles.label}>Email fiscal</Text>
         <Text style={panelStyles.valor}>{solicitud.datosFiscales.emailFiscal || '—'}</Text>
-
         <Text style={panelStyles.label}>Emisor</Text>
         <Text style={panelStyles.valor}>
           {solicitud.emisor === 'fisica'
@@ -162,141 +511,77 @@ function PanelSubir({
 
 export default function FacturasAdminScreen() {
   const { user } = useAuth();
-  const [tab, setTab] = useState<Tab>('facturas');
-  const [subTab, setSubTab] = useState<SubTab>('pendientes');
-  const [todas, setTodas] = useState<SolicitudFactura[]>([]);
-  const [cargando, setCargando] = useState(true);
-  const [seleccionada, setSeleccionada] = useState<SolicitudFactura | null>(null);
+  const [subTab, setSubTab]               = useState<SubTab>('pendientes');
+  const [todas, setTodas]                 = useState<SolicitudFactura[]>([]);
+  const [cargando, setCargando]           = useState(true);
+  const [seleccionadaId, setSeleccionadaId] = useState<string | null>(null);
 
   useEffect(() => {
     return listenTodasSolicitudes(data => { setTodas(data); setCargando(false); });
   }, []);
 
-  const pendientes = todas.filter(s => s.estado === 'pendiente' || s.estado === 'procesando');
-  const emitidas   = todas.filter(s => s.estado === 'emitida' || s.estado === 'rechazada');
-  const papelera   = todas.filter(s => s.estado === 'eliminada');
+  const pendientes      = todas.filter(s => s.estado === 'pendiente' || s.estado === 'procesando');
+  const emitidasTab     = todas.filter(s => s.estado === 'emitida' || s.estado === 'rechazada');
+  const papelera        = todas.filter(s => s.estado === 'eliminada');
+  const emitidasCount   = todas.filter(s => s.estado === 'emitida').length;
+  const rechazadasCount = todas.filter(s => s.estado === 'rechazada').length;
 
   const lista = subTab === 'pendientes' ? pendientes
-              : subTab === 'emitidas'   ? emitidas
+              : subTab === 'emitidas'   ? emitidasTab
               : papelera;
 
+  const seleccionada = seleccionadaId
+    ? todas.find(s => s.id === seleccionadaId) ?? null
+    : null;
+
+  if (Platform.OS === 'web') {
+    return (
+      <View style={web.root}>
+        <ColumnaLista
+          lista={lista}
+          subTab={subTab}
+          setSubTab={setSubTab}
+          pendientesCount={pendientes.length}
+          emitidasCount={emitidasCount}
+          rechazadasCount={rechazadasCount}
+          papelera={papelera}
+          seleccionadaId={seleccionadaId}
+          onSeleccionar={setSeleccionadaId}
+          cargando={cargando}
+          userUid={user?.uid}
+          isWeb
+        />
+        <View style={web.divider} />
+        <PanelDerechoWeb
+          key={seleccionadaId ?? 'empty'}
+          solicitud={seleccionada}
+          adminUid={user?.uid ?? ''}
+        />
+      </View>
+    );
+  }
+
+  // ── Móvil ──────────────────────────────────────────────────
   return (
     <SafeAreaView style={styles.safe}>
-      {/* Título */}
-      <View style={styles.header}>
-        <Text style={styles.titulo}>Facturación</Text>
-      </View>
-
-      {/* Tab principal: Facturas | Cupones */}
-      <View style={styles.mainTabRow}>
-        {(['facturas', 'cupones'] as Tab[]).map(t => (
-          <TouchableOpacity
-            key={t}
-            style={[styles.mainTab, tab === t && styles.mainTabActivo]}
-            onPress={() => setTab(t)}
-          >
-            <Text style={[styles.mainTabText, tab === t && styles.mainTabTextActivo]}>
-              {t === 'facturas' ? 'Facturas' : 'Cupones'}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </View>
-
-      {tab === 'cupones' ? (
-        <CuponesAdminScreen />
-      ) : (
-        <>
-          {/* Sub-tabs */}
-          <View style={styles.subTabRow}>
-            {([
-              ['pendientes', `Pendientes (${pendientes.length})`],
-              ['emitidas', 'Emitidas'],
-              ['papelera', 'Papelera'],
-            ] as [SubTab, string][]).map(([st, label]) => (
-              <TouchableOpacity
-                key={st}
-                style={[styles.subTab, subTab === st && styles.subTabActivo]}
-                onPress={() => setSubTab(st)}
-              >
-                <Text style={[styles.subTabText, subTab === st && styles.subTabTextActivo]}>
-                  {label}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-
-          {/* Papelera: botón vaciar */}
-          {subTab === 'papelera' && papelera.length > 0 && (
-            <TouchableOpacity
-              style={styles.vaciarBtn}
-              onPress={() => user?.uid && vaciarPapelera(user.uid)}
-            >
-              <Ionicons name="trash-outline" size={14} color={cartasBosque.corteza} />
-              <Text style={styles.vaciarText}>Vaciar papelera</Text>
-            </TouchableOpacity>
-          )}
-
-          {cargando ? (
-            <View style={styles.center}><ActivityIndicator color={cartasBosque.bosque} /></View>
-          ) : lista.length === 0 ? (
-            <View style={styles.center}>
-              <Ionicons name="receipt-outline" size={36} color={cartasBosque.niebla} />
-              <Text style={styles.vacioText}>
-                {subTab === 'pendientes' ? 'Sin solicitudes pendientes'
-                 : subTab === 'emitidas' ? 'Sin facturas emitidas'
-                 : 'Papelera vacía'}
-              </Text>
-            </View>
-          ) : (
-            <ScrollView contentContainerStyle={styles.scrollContent}>
-              {lista.map(s => (
-                <TouchableOpacity
-                  key={s.id}
-                  style={styles.card}
-                  onPress={() => subTab === 'pendientes' && setSeleccionada(s)}
-                  activeOpacity={subTab === 'pendientes' ? 0.7 : 1}
-                >
-                  <View style={styles.cardHeader}>
-                    <Text style={styles.cardNombre}>{s.inquilinoNombre ?? s.inquilinoId}</Text>
-                    <View style={[styles.badge, { backgroundColor: ESTADO_COLOR[s.estado] }]}>
-                      <Text style={styles.badgeText}>{s.estado}</Text>
-                    </View>
-                  </View>
-                  <Text style={styles.cardConcepto}>
-                    {CONCEPTOS_LABEL[s.concepto]} · {MESES[s.mes]} {s.anio}
-                  </Text>
-                  <Text style={styles.cardRfc}>{s.datosFiscales.rfc} · {s.datosFiscales.razonSocial}</Text>
-                  <Text style={styles.cardFecha}>
-                    Hab. {s.habitacionNumero ?? '—'} · {formatFecha(s.creadoEn)}
-                  </Text>
-                  <View style={styles.cardActions}>
-                    {s.estado === 'emitida' && s.pdfUrl && (
-                      <View style={styles.pdfRow}>
-                        <Ionicons name="document" size={12} color={cartasBosque.bosque} />
-                        <Text style={styles.pdfText}>PDF · desc. ilimitadas (admin)</Text>
-                      </View>
-                    )}
-                    {subTab !== 'papelera' && s.estado !== 'eliminada' && (
-                      <TouchableOpacity
-                        style={styles.eliminarBtn}
-                        onPress={() => eliminarSolicitud(s.id)}
-                      >
-                        <Ionicons name="trash-outline" size={14} color={cartasBosque.niebla} />
-                      </TouchableOpacity>
-                    )}
-                  </View>
-                </TouchableOpacity>
-              ))}
-            </ScrollView>
-          )}
-        </>
-      )}
-
-      {/* Panel subir */}
+      <ColumnaLista
+        lista={lista}
+        subTab={subTab}
+        setSubTab={setSubTab}
+        pendientesCount={pendientes.length}
+        emitidasCount={emitidasCount}
+        rechazadasCount={rechazadasCount}
+        papelera={papelera}
+        seleccionadaId={seleccionadaId}
+        onSeleccionar={id => { if (subTab === 'pendientes') setSeleccionadaId(id); }}
+        cargando={cargando}
+        userUid={user?.uid}
+        isWeb={false}
+      />
       {seleccionada && user?.uid && (
         <PanelSubir
           solicitud={seleccionada}
-          onClose={() => setSeleccionada(null)}
+          onClose={() => setSeleccionadaId(null)}
           adminUid={user.uid}
         />
       )}
@@ -304,7 +589,401 @@ export default function FacturasAdminScreen() {
   );
 }
 
-// ─── Estilos ──────────────────────────────────────────────────
+// ─── Estilos — web layout ─────────────────────────────────────
+
+const web = StyleSheet.create({
+  root: {
+    flex: 1,
+    flexDirection: 'row',
+    backgroundColor: cartasBosque.bruma,
+    overflow: 'hidden' as any,
+  },
+  divider: {
+    width: 1,
+    backgroundColor: cartasBosque.pergaminoOscuro,
+  },
+});
+
+// ─── Estilos — ColumnaLista ───────────────────────────────────
+
+const cl = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: cartasBosque.bruma,
+  },
+  containerWeb: {
+    width: 380,
+    flexShrink: 0,
+    backgroundColor: cartasBosque.bruma,
+    borderRightWidth: 1,
+    borderRightColor: cartasBosque.pergaminoOscuro,
+  },
+  header: {
+    paddingHorizontal: spacing[4],
+    paddingTop: spacing[4],
+    paddingBottom: spacing[3],
+    borderBottomWidth: 1,
+    borderBottomColor: cartasBosque.pergaminoOscuro,
+  },
+  titulo: {
+    fontFamily: 'Inter_700Bold',
+    fontSize: 18,
+    color: cartasBosque.tinta,
+    marginBottom: spacing[3],
+  },
+  metricas: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  metrica: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  metricaNum: {
+    fontFamily: 'SpaceMono_400Regular',
+    fontSize: 20,
+    lineHeight: 24,
+  },
+  metricaLabel: {
+    fontFamily: 'SpaceMono_400Regular',
+    fontSize: 10,
+    color: cartasBosque.helecho,
+    marginTop: 2,
+  },
+  metricaSep: {
+    width: 1,
+    height: 28,
+    backgroundColor: cartasBosque.pergaminoOscuro,
+  },
+  subTabRow: {
+    flexDirection: 'row',
+    paddingHorizontal: spacing[4],
+    paddingTop: spacing[3],
+    gap: spacing[2],
+    marginBottom: spacing[2],
+  },
+  subTab: {
+    paddingHorizontal: spacing[3],
+    paddingVertical: spacing[1] + 2,
+    borderRadius: borderRadius.sm,
+    borderWidth: 1,
+    borderColor: cartasBosque.pergaminoOscuro,
+  },
+  subTabActivo: {
+    backgroundColor: cartasBosque.musgo,
+    borderColor: cartasBosque.musgo,
+  },
+  subTabText: {
+    fontFamily: 'SpaceMono_400Regular',
+    fontSize: 10,
+    color: cartasBosque.helecho,
+  },
+  subTabTextActivo: { color: cartasBosque.bruma },
+  vaciarBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing[1],
+    marginHorizontal: spacing[4],
+    marginBottom: spacing[2],
+  },
+  vaciarText: {
+    fontFamily: 'Inter_400Regular',
+    fontSize: 12,
+    color: cartasBosque.corteza,
+  },
+  centro: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: spacing[2],
+    padding: spacing[4],
+  },
+  vacioText: {
+    fontFamily: 'Inter_400Regular',
+    fontSize: 14,
+    color: cartasBosque.helecho,
+  },
+  scroll: { padding: spacing[3] },
+});
+
+// ─── Estilos — SolicitudCard ──────────────────────────────────
+
+const sc = StyleSheet.create({
+  card: {
+    backgroundColor: cartasBosque.pergamino,
+    borderRadius: borderRadius.md,
+    padding: spacing[3],
+    marginBottom: spacing[2],
+    borderWidth: 1,
+    borderColor: cartasBosque.pergaminoOscuro,
+  },
+  cardActiva: {
+    borderColor: cartasBosque.bosque,
+    borderWidth: 2,
+  },
+  top: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    marginBottom: 4,
+  },
+  nombre: {
+    fontFamily: 'Inter_600SemiBold',
+    fontSize: 13,
+    color: cartasBosque.tinta,
+    flex: 1,
+    marginRight: spacing[2],
+  },
+  badge: {
+    borderRadius: borderRadius.sm,
+    paddingHorizontal: spacing[2],
+    paddingVertical: 2,
+  },
+  badgeText: {
+    fontFamily: 'SpaceMono_400Regular',
+    fontSize: 9,
+    color: '#FFFFFF',
+  },
+  hab: {
+    fontFamily: 'SpaceMono_400Regular',
+    fontSize: 10,
+    color: cartasBosque.helecho,
+    marginBottom: 2,
+  },
+  concepto: {
+    fontFamily: 'Inter_400Regular',
+    fontSize: 12,
+    color: cartasBosque.tinta,
+    marginBottom: 2,
+  },
+  rfc: {
+    fontFamily: 'SpaceMono_400Regular',
+    fontSize: 10,
+    color: cartasBosque.helecho,
+    marginBottom: spacing[2],
+  },
+  bottom: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  chip: {
+    borderRadius: borderRadius.sm,
+    paddingHorizontal: spacing[2],
+    paddingVertical: 2,
+  },
+  chipText: {
+    fontFamily: 'SpaceMono_400Regular',
+    fontSize: 9,
+  },
+  eliminarBtn: { padding: spacing[1] },
+});
+
+// ─── Estilos — PanelDerechoWeb ────────────────────────────────
+
+const pd = StyleSheet.create({
+  empty: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: spacing[3],
+    backgroundColor: cartasBosque.bruma,
+  },
+  emptyText: {
+    fontFamily: 'Inter_400Regular',
+    fontSize: 14,
+    color: cartasBosque.helecho,
+    textAlign: 'center',
+  },
+  scroll: {
+    flex: 1,
+    backgroundColor: cartasBosque.bruma,
+  },
+  content: {
+    padding: spacing[5],
+    paddingBottom: spacing[5],
+  },
+  seccionLabel: {
+    fontFamily: 'SpaceMono_400Regular',
+    fontSize: 10,
+    color: cartasBosque.helecho,
+    letterSpacing: 1,
+    marginTop: spacing[5],
+    marginBottom: spacing[3],
+  },
+  tabla: {
+    backgroundColor: cartasBosque.pergamino,
+    borderRadius: borderRadius.md,
+    borderWidth: 1,
+    borderColor: cartasBosque.pergaminoOscuro,
+    overflow: 'hidden',
+  },
+  fila: {
+    flexDirection: 'row',
+    paddingHorizontal: spacing[3],
+    paddingVertical: spacing[2],
+    borderBottomWidth: 1,
+    borderBottomColor: cartasBosque.pergaminoOscuro,
+    alignItems: 'flex-start',
+  },
+  filaUltima: { borderBottomWidth: 0 },
+  filaLabel: {
+    fontFamily: 'SpaceMono_400Regular',
+    fontSize: 9,
+    color: cartasBosque.helecho,
+    width: 110,
+    paddingTop: 2,
+  },
+  filaValor: {
+    fontFamily: 'Inter_400Regular',
+    fontSize: 13,
+    color: cartasBosque.tinta,
+    flex: 1,
+  },
+  instrCard: {
+    backgroundColor: '#E8A83811',
+    borderRadius: borderRadius.md,
+    borderWidth: 1,
+    borderColor: '#E8A83844',
+    padding: spacing[3],
+    marginBottom: spacing[3],
+  },
+  instrTexto: {
+    fontFamily: 'Inter_400Regular',
+    fontSize: 12,
+    color: '#E8A838',
+    lineHeight: 20,
+  },
+  inputLabel: {
+    fontFamily: 'SpaceMono_400Regular',
+    fontSize: 10,
+    color: cartasBosque.helecho,
+    letterSpacing: 0.5,
+    marginBottom: spacing[1],
+  },
+  input: {
+    backgroundColor: cartasBosque.pergamino,
+    borderRadius: borderRadius.sm,
+    borderWidth: 1,
+    borderColor: cartasBosque.pergaminoOscuro,
+    paddingHorizontal: spacing[3],
+    paddingVertical: spacing[2],
+    fontFamily: 'Inter_400Regular',
+    fontSize: 13,
+    color: cartasBosque.tinta,
+    marginBottom: spacing[3],
+  },
+  btnPrimario: {
+    backgroundColor: cartasBosque.bosque,
+    borderRadius: borderRadius.sm,
+    paddingVertical: spacing[2] + 2,
+    alignItems: 'center',
+    marginBottom: spacing[2],
+  },
+  btnRechazo: {
+    backgroundColor: cartasBosque.corteza,
+    borderRadius: borderRadius.sm,
+    paddingVertical: spacing[2] + 2,
+    alignItems: 'center',
+    marginBottom: spacing[2],
+  },
+  btnPapelera: {
+    backgroundColor: '#C0392B',
+    borderRadius: borderRadius.sm,
+    paddingVertical: spacing[2] + 2,
+    alignItems: 'center',
+    marginBottom: spacing[2],
+  },
+  btnSecundario: {
+    paddingVertical: spacing[2],
+    alignItems: 'center',
+    marginBottom: spacing[2],
+  },
+  btnText: {
+    fontFamily: 'Inter_600SemiBold',
+    fontSize: 14,
+    color: cartasBosque.bruma,
+  },
+  btnSecText: {
+    fontFamily: 'Inter_400Regular',
+    fontSize: 13,
+    color: cartasBosque.corteza,
+  },
+  btnCorreo: {
+    backgroundColor: cartasBosque.pergamino,
+    borderRadius: borderRadius.sm,
+    paddingVertical: spacing[2] + 2,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: cartasBosque.bosque,
+    marginBottom: spacing[2],
+  },
+  btnCorreoText: {
+    fontFamily: 'Inter_400Regular',
+    fontSize: 13,
+    color: cartasBosque.bosque,
+  },
+  btnInner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing[2],
+  },
+  emitidaCard: {
+    backgroundColor: '#4A9B6F11',
+    borderRadius: borderRadius.md,
+    borderWidth: 1,
+    borderColor: '#4A9B6F44',
+    padding: spacing[3],
+    marginBottom: spacing[3],
+  },
+  emitidaTitulo: {
+    fontFamily: 'Inter_600SemiBold',
+    fontSize: 14,
+    color: '#4A9B6F',
+    marginBottom: spacing[1],
+  },
+  emitidaFecha: {
+    fontFamily: 'SpaceMono_400Regular',
+    fontSize: 11,
+    color: cartasBosque.helecho,
+    marginBottom: spacing[2],
+  },
+  descargasRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing[2],
+  },
+  descargasLabel: {
+    fontFamily: 'Inter_400Regular',
+    fontSize: 13,
+    color: cartasBosque.tinta,
+  },
+  descargasNum: {
+    fontFamily: 'Inter_700Bold',
+    fontSize: 16,
+  },
+  rechazadaCard: {
+    backgroundColor: '#C0392B11',
+    borderRadius: borderRadius.md,
+    borderWidth: 1,
+    borderColor: '#C0392B44',
+    padding: spacing[3],
+    marginBottom: spacing[3],
+  },
+  rechazadaTitulo: {
+    fontFamily: 'Inter_600SemiBold',
+    fontSize: 13,
+    color: '#C0392B',
+    marginBottom: spacing[1],
+  },
+  rechazadaMotivo: {
+    fontFamily: 'Inter_400Regular',
+    fontSize: 13,
+    color: cartasBosque.tinta,
+  },
+});
+
+// ─── Estilos — heredados (móvil) ──────────────────────────────
 
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: cartasBosque.bruma },
@@ -325,10 +1004,7 @@ const styles = StyleSheet.create({
   mainTabText: { fontFamily: 'Inter_400Regular', fontSize: 13, color: cartasBosque.helecho },
   mainTabTextActivo: { fontFamily: 'Inter_600SemiBold', color: cartasBosque.tinta },
   subTabRow: {
-    flexDirection: 'row',
-    paddingHorizontal: spacing[4],
-    gap: spacing[2],
-    marginBottom: spacing[2],
+    flexDirection: 'row', paddingHorizontal: spacing[4], gap: spacing[2], marginBottom: spacing[2],
   },
   subTab: {
     paddingHorizontal: spacing[3], paddingVertical: spacing[1] + 2,
@@ -372,7 +1048,7 @@ const panelStyles = StyleSheet.create({
   panel: {
     backgroundColor: cartasBosque.bruma,
     borderTopLeftRadius: 20, borderTopRightRadius: 20,
-    padding: spacing[4], maxHeight: '85%',
+    padding: spacing[4], maxHeight: '85%' as any,
   },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: spacing[3] },
   titulo: { fontFamily: 'Inter_600SemiBold', fontSize: 17, color: cartasBosque.tinta },
@@ -393,9 +1069,7 @@ const panelStyles = StyleSheet.create({
     borderRadius: borderRadius.sm, paddingVertical: spacing[2] + 2, alignItems: 'center',
   },
   btnText: { fontFamily: 'Inter_600SemiBold', fontSize: 14, color: cartasBosque.bruma },
-  btnRechazo: {
-    marginTop: spacing[2], paddingVertical: spacing[2], alignItems: 'center',
-  },
+  btnRechazo: { marginTop: spacing[2], paddingVertical: spacing[2], alignItems: 'center' },
   btnRechazoText: { fontFamily: 'Inter_400Regular', fontSize: 13, color: cartasBosque.corteza },
   btnRechazoConfirm: {
     marginTop: spacing[3], backgroundColor: cartasBosque.corteza,

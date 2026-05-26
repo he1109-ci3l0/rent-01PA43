@@ -48,6 +48,9 @@ export default function SesionesAdminScreen() {
   const [nombres, setNombres]         = useState<Record<string, string>>({});
   const [requiresAuth, setRequiresAuth] = useState<Set<string>>(new Set());
   const [cargando, setCargando]       = useState(true);
+  const [roles, setRoles]             = useState<Record<string, 'admin' | 'inquilino'>>({});
+  const [cerrando, setCerrando]       = useState<Set<string>>(new Set());
+  const [cerradas, setCerradas]       = useState<Set<string>>(new Set());
 
   useEffect(() => {
     const unsubSes = listenTodasSesionesActivas(list => {
@@ -57,13 +60,16 @@ export default function SesionesAdminScreen() {
     const unsubAl = listenAlertasSeguridad(setAlertas);
     const unsubInq = onSnapshot(collections.inquilinos, snap => {
       const map: Record<string, string> = {};
+      const rolesMap: Record<string, 'admin' | 'inquilino'> = {};
       const authSet = new Set<string>();
       snap.docs.forEach(d => {
         const data = d.data() as Inquilino;
         map[d.id] = `${data.nombre} ${data.apellido}`;
+        rolesMap[d.id] = 'inquilino';
         if (data.requiresAdminAuth) authSet.add(d.id);
       });
       setNombres(map);
+      setRoles(rolesMap);
       setRequiresAuth(authSet);
     }, () => {});
 
@@ -80,8 +86,26 @@ export default function SesionesAdminScreen() {
   const sinVer = alertas.filter(a => !a.adminVio).length;
 
   async function handleCerrarSesion(sesionId: string) {
-    try { await cerrarSesion(sesionId); }
-    catch { Alert.alert('Error', 'No se pudo cerrar la sesión'); }
+    setCerrando(prev => new Set(prev).add(sesionId));
+    try {
+      await cerrarSesion(sesionId);
+      setCerradas(prev => new Set(prev).add(sesionId));
+      setTimeout(() => {
+        setCerradas(prev => {
+          const ns = new Set(prev); ns.delete(sesionId); return ns;
+        });
+      }, 2000);
+    } catch {
+      Alert.alert('Error', 'No se pudo cerrar la sesión');
+    } finally {
+      setCerrando(prev => {
+        const ns = new Set(prev); ns.delete(sesionId); return ns;
+      });
+    }
+  }
+
+  function esAdmin(uid: string): boolean {
+    return !roles[uid] || roles[uid] === 'admin';
   }
 
   function handleCerrarTodas(uid: string) {
@@ -108,6 +132,66 @@ export default function SesionesAdminScreen() {
     } catch {
       Alert.alert('Error', 'No se pudo habilitar el acceso');
     }
+  }
+
+  const gruposAdmin     = Object.entries(grupos).filter(([uid]) => esAdmin(uid));
+  const gruposInquilino = Object.entries(grupos).filter(([uid]) => !esAdmin(uid));
+
+  function renderGrupo([uid, sGroup]: [string, Sesion[]]) {
+    return (
+      <View key={uid} style={s.grupoCard}>
+        <View style={s.grupoHeader}>
+          <View style={{ flex: 1 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <Text style={s.grupoNombre}>
+                {nombres[uid] ?? (esAdmin(uid) ? 'Administrador' : uid)}
+              </Text>
+              {esAdmin(uid) ? (
+                <View style={[s.rolBadge, { backgroundColor: '#3B82F622', borderColor: '#3B82F666' }]}>
+                  <Text style={[s.rolBadgeText, { color: '#3B82F6' }]}>ADMIN</Text>
+                </View>
+              ) : (
+                <View style={[s.rolBadge, { backgroundColor: '#4A9B6F22', borderColor: '#4A9B6F66' }]}>
+                  <Text style={[s.rolBadgeText, { color: '#4A9B6F' }]}>INQUILINO</Text>
+                </View>
+              )}
+            </View>
+            <Text style={s.grupoMeta}>
+              {sGroup.length} sesión{sGroup.length !== 1 ? 'es' : ''} activa{sGroup.length !== 1 ? 's' : ''}
+              {!esAdmin(uid) && sGroup[0]?.ciudad ? ` · Hab. ${sGroup[0].ciudad}` : ''}
+            </Text>
+          </View>
+          <TouchableOpacity
+            style={s.cerrarTodasBtn}
+            onPress={() => handleCerrarTodas(uid)}
+          >
+            <Text style={s.cerrarTodasText}>Cerrar todas</Text>
+          </TouchableOpacity>
+        </View>
+
+        {requiresAuth.has(uid) && (
+          <TouchableOpacity
+            style={s.liberarBtn}
+            onPress={() => handleLiberarCuenta(uid)}
+            activeOpacity={0.75}
+          >
+            <Ionicons name="shield-checkmark-outline" size={15} color="#960018" />
+            <Text style={s.liberarText}>Autorizar acceso (protocolo robo activo)</Text>
+            <Ionicons name="chevron-forward" size={13} color="#960018" />
+          </TouchableOpacity>
+        )}
+
+        {sGroup.map(ses => (
+          <SesionCard
+            key={ses.id}
+            sesion={ses}
+            onCerrar={() => handleCerrarSesion(ses.id)}
+            cerrando={cerrando.has(ses.id)}
+            cerrada={cerradas.has(ses.id)}
+          />
+        ))}
+      </View>
+    );
   }
 
   return (
@@ -149,46 +233,20 @@ export default function SesionesAdminScreen() {
               <Text style={s.emptyText}>No hay sesiones activas</Text>
             </View>
           ) : (
-            Object.entries(grupos).map(([uid, sGroup]) => (
-              <View key={uid} style={s.grupoCard}>
-                {/* Cabecera del grupo */}
-                <View style={s.grupoHeader}>
-                  <View style={{ flex: 1 }}>
-                    <Text style={s.grupoNombre}>{nombres[uid] ?? uid}</Text>
-                    <Text style={s.grupoMeta}>
-                      {sGroup.length} sesión{sGroup.length !== 1 ? 'es' : ''} activa{sGroup.length !== 1 ? 's' : ''}
-                    </Text>
-                  </View>
-                  <TouchableOpacity
-                    style={s.cerrarTodasBtn}
-                    onPress={() => handleCerrarTodas(uid)}
-                  >
-                    <Text style={s.cerrarTodasText}>Cerrar todas</Text>
-                  </TouchableOpacity>
-                </View>
-
-                {/* Banner protocolo robo */}
-                {requiresAuth.has(uid) && (
-                  <TouchableOpacity
-                    style={s.liberarBtn}
-                    onPress={() => handleLiberarCuenta(uid)}
-                    activeOpacity={0.75}
-                  >
-                    <Ionicons name="shield-checkmark-outline" size={15} color="#960018" />
-                    <Text style={s.liberarText}>Autorizar acceso (protocolo robo activo)</Text>
-                    <Ionicons name="chevron-forward" size={13} color="#960018" />
-                  </TouchableOpacity>
-                )}
-
-                {sGroup.map(ses => (
-                  <SesionCard
-                    key={ses.id}
-                    sesion={ses}
-                    onCerrar={() => handleCerrarSesion(ses.id)}
-                  />
-                ))}
-              </View>
-            ))
+            <>
+              {gruposAdmin.length > 0 && (
+                <>
+                  <Text style={s.seccionHeader}>ADMINISTRADOR</Text>
+                  {gruposAdmin.map(renderGrupo)}
+                </>
+              )}
+              {gruposInquilino.length > 0 && (
+                <>
+                  <Text style={s.seccionHeader}>INQUILINOS</Text>
+                  {gruposInquilino.map(renderGrupo)}
+                </>
+              )}
+            </>
           )}
           <View style={{ height: spacing[8] }} />
         </ScrollView>
@@ -304,6 +362,30 @@ const s = StyleSheet.create({
     marginBottom: spacing[2],
   },
   liberarText: { flex: 1, fontFamily: 'Inter_400Regular', fontSize: 12, color: '#960018' },
+
+  // Roles
+  seccionHeader: {
+    fontFamily: 'SpaceMono_400Regular',
+    fontSize: 9,
+    color: cartasBosque.helecho,
+    letterSpacing: 1,
+    textTransform: 'uppercase',
+    marginTop: spacing[4],
+    marginBottom: spacing[2],
+    paddingHorizontal: spacing[1],
+  },
+  rolBadge: {
+    paddingHorizontal: spacing[2],
+    paddingVertical: 2,
+    borderRadius: borderRadius.sm,
+    borderWidth: 1,
+    marginLeft: spacing[2],
+  },
+  rolBadgeText: {
+    fontFamily: 'SpaceMono_400Regular',
+    fontSize: 9,
+    letterSpacing: 0.5,
+  },
 
   // Alertas
   alertaCard: {
