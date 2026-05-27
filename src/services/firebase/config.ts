@@ -6,7 +6,7 @@ import { initializeApp, getApps, getApp, FirebaseApp } from 'firebase/app';
 //  Sección "Tu app" → SDK de configuración → Config
 // ─────────────────────────────────────────────────────────────
 const firebaseConfig = {
-  apiKey:            'AIzaSyAKaWkwBVJa18OiASeg7tQ_fipBD-wn9Jo',
+  apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY,
   authDomain:        'rent-001pa43.firebaseapp.com',
   projectId:         'rent-001pa43',
   storageBucket:     'rent-001pa43.firebasestorage.app',
