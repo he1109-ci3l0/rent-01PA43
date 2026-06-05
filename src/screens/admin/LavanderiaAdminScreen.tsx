@@ -32,7 +32,7 @@ function estadoColor(estado: EstadoReserva): string {
   switch (estado) {
     case 'confirmada':    return cartasBosque.bosque;
     case 'pendiente':     return '#CDB29D';
-    case 'pendiente_auth': return cartasBosque.corteza;
+    case 'pendiente_auth': return cartasBosque.alertaBorde;
     case 'completada':    return cartasBosque.helecho;
     case 'cancelada':     return cartasBosque.niebla;
   }
@@ -335,7 +335,7 @@ const styles = StyleSheet.create({
   reservaInfo: { flex: 1 },
   reservaHora: { fontFamily: 'SpaceMono_400Regular', fontSize: 16, color: cartasBosque.tinta },
   reservaNombre: { fontFamily: 'Inter_400Regular', fontSize: 12, color: cartasBosque.helecho, marginTop: 2 },
-  extraTag: { fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.corteza, marginTop: 2 },
+  extraTag: { fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.alertaBorde, marginTop: 2 },
   estadoBadge: { borderRadius: borderRadius.sm, paddingHorizontal: spacing[2], paddingVertical: 2 },
   estadoText: { fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.bruma },
   accionesRow: { flexDirection: 'row', gap: spacing[2], marginTop: spacing[2] },

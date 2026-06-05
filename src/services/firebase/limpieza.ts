@@ -94,6 +94,126 @@ function turnoDocId(area: string, inquilinoId: string, fecha: Date): string {
   return `${area}_${inquilinoId.slice(0, 8)}_${d}`;
 }
 
+export async function regenerarTurnos(diasAdelante = 60): Promise<void> {
+  const [inqSnap, habSnap] = await Promise.all([
+    getDocs(query(collections.inquilinos, where('estado', '==', 'activo'))),
+    getDocs(collections.habitaciones),
+  ]);
+  if (inqSnap.empty) throw new Error('No hay inquilinos activos.');
+
+  const inquilinos: Inquilino[]   = inqSnap.docs.map(d => ({ ...(d.data() as any), id: d.id }));
+  const habitaciones: Habitacion[] = habSnap.docs.map(d => ({ ...(d.data() as any), id: d.id }));
+  const habMap = new Map<string, Habitacion>();
+  habitaciones.forEach(h => habMap.set(h.id, h));
+
+  const base = {
+    estado: 'pendiente' as const,
+    fotoUrl: null, fotoSubidaEn: null, privacidad: false,
+    creadoEn: Timestamp.now(), actualizadoEn: Timestamp.now(),
+  };
+
+  const hoy = new Date(); hoy.setHours(0, 0, 0, 0);
+  const fin  = addDays(hoy, diasAdelante);
+  const writes: Array<() => Promise<void>> = [];
+
+  // ── Baños
+  const banoGrupos: Record<string, Inquilino[]> = {
+    bano_gris: [], bano_marron: [], bano_terraza: [],
+  };
+  for (const inq of inquilinos) {
+    const hab = inq.habitacionId ? habMap.get(inq.habitacionId) : undefined;
+    if (!hab) continue;
+    if (hab.bano === 'Baño gris')    banoGrupos['bano_gris'].push(inq);
+    if (hab.bano === 'Baño marrón')  banoGrupos['bano_marron'].push(inq);
+    if (hab.bano === 'Baño terraza') banoGrupos['bano_terraza'].push(inq);
+  }
+  for (const [areaKey, grupo] of Object.entries(banoGrupos)) {
+    if (grupo.length === 0) continue;
+    const area = areaKey as AreaLimpieza;
+    let cursor = new Date(hoy); let idx = 0;
+    while (cursor <= fin) {
+      const inq = grupo[idx % grupo.length];
+      const hab = habMap.get(inq.habitacionId!)!;
+      const id  = turnoDocId(area, inq.uid, cursor);
+      const d   = new Date(cursor);
+      writes.push(() => import('firebase/firestore').then(({ setDoc, doc: _doc }) =>
+        setDoc(_doc(db, 'turnos_limpieza', id), {
+          ...base, area, tipo: 'bano' as TipoAreaLimpieza,
+          inquilinoId: inq.uid, inquilinoNombre: `${inq.nombre} ${inq.apellido}`.trim(),
+          habitacionNumero: hab.numero, fechaProgramada: Timestamp.fromDate(d), horaInicio: '08:00',
+        }, { merge: true })
+      ));
+      cursor = addDays(cursor, INTERVALO_BANO); idx++;
+    }
+  }
+
+  // ── Cocinas
+  const cocinaGrupos: Record<string, Inquilino[]> = { cocina_pb: [], cocina_tp: [] };
+  for (const inq of inquilinos) {
+    const hab = inq.habitacionId ? habMap.get(inq.habitacionId) : undefined;
+    if (!hab) continue;
+    if (hab.cocina === 'CocinaPB') cocinaGrupos['cocina_pb'].push(inq);
+    if (hab.cocina === 'CocinaTP') cocinaGrupos['cocina_tp'].push(inq);
+  }
+  for (const [areaKey, grupo] of Object.entries(cocinaGrupos)) {
+    if (grupo.length === 0) continue;
+    const area = areaKey as AreaLimpieza;
+    let cursor = new Date(hoy); let idx = 0;
+    while (cursor <= fin) {
+      const inq = grupo[idx % grupo.length];
+      const hab = habMap.get(inq.habitacionId!)!;
+      const id  = turnoDocId(area, inq.uid, cursor);
+      const d   = new Date(cursor);
+      writes.push(() => import('firebase/firestore').then(({ setDoc, doc: _doc }) =>
+        setDoc(_doc(db, 'turnos_limpieza', id), {
+          ...base, area, tipo: 'cocina' as TipoAreaLimpieza,
+          inquilinoId: inq.uid, inquilinoNombre: `${inq.nombre} ${inq.apellido}`.trim(),
+          habitacionNumero: hab.numero, fechaProgramada: Timestamp.fromDate(d), horaInicio: '09:00',
+        }, { merge: true })
+      ));
+      cursor = addDays(cursor, INTERVALO_COCINA); idx++;
+    }
+  }
+
+  // ── Áreas comunes
+  const shuffled = [...inquilinos].sort(() => Math.random() - 0.5);
+  const lastTurno = new Map<string, Date>();
+  for (const area of AREAS_COMUNES) {
+    let cursor = new Date(hoy); let inqIdx = 0;
+    while (cursor <= fin) {
+      let assigned: Inquilino | null = null;
+      for (let attempt = 0; attempt < shuffled.length; attempt++) {
+        const candidate = shuffled[(inqIdx + attempt) % shuffled.length];
+        if (!candidate.habitacionId) continue;
+        const key  = `${area}_${candidate.uid}`;
+        const last = lastTurno.get(key);
+        if (!last || (cursor.getTime() - last.getTime()) >= MIN_SEMANAS_MISMO_INQ * 7 * 86_400_000) {
+          assigned = candidate;
+          inqIdx   = (inqIdx + attempt + 1) % shuffled.length;
+          break;
+        }
+      }
+      if (!assigned) { cursor = addDays(cursor, INTERVALO_AREA_COMUN); continue; }
+      const hab = habMap.get(assigned.habitacionId!)!;
+      const id  = turnoDocId(area, assigned.uid, cursor);
+      const d   = new Date(cursor);
+      lastTurno.set(`${area}_${assigned.uid}`, d);
+      writes.push(() => import('firebase/firestore').then(({ setDoc, doc: _doc }) =>
+        setDoc(_doc(db, 'turnos_limpieza', id), {
+          ...base, area, tipo: 'area_comun' as TipoAreaLimpieza,
+          inquilinoId: assigned!.uid, inquilinoNombre: `${assigned!.nombre} ${assigned!.apellido}`.trim(),
+          habitacionNumero: hab.numero, fechaProgramada: Timestamp.fromDate(d), horaInicio: '10:00',
+        }, { merge: true })
+      ));
+      cursor = addDays(cursor, INTERVALO_AREA_COMUN);
+    }
+  }
+
+  for (let i = 0; i < writes.length; i += 5) {
+    await Promise.all(writes.slice(i, i + 5).map(fn => fn()));
+  }
+}
+
 // ─── Seed calendario ──────────────────────────────────────────
 // Genera 60 días hacia adelante para todas las áreas.
 // Idempotente: doc IDs deterministas → re-run no duplica.

@@ -604,7 +604,7 @@ export default function DossierScreen() {
             <View key={h.id}>
               <View style={s.ocupanteDivider} />
               <View style={s.ocupanteRow}>
-                <View style={[s.ocupanteAvatarSmall, { backgroundColor: cartasBosque.musgo }]}>
+                <View style={[s.ocupanteAvatarSmall, { backgroundColor: cartasBosque.helecho }]}>
                   <Ionicons name="person-outline" size={14} color={cartasBosque.bruma} />
                 </View>
                 <View style={{ flex: 1 }}>
@@ -834,7 +834,7 @@ const s = StyleSheet.create({
   },
   avatarInitial: { fontFamily: 'Inter_600SemiBold', fontSize: 22, color: cartasBosque.bruma },
   nombre: { fontFamily: 'Inter_600SemiBold', fontSize: 15, color: cartasBosque.tinta },
-  hab:    { fontFamily: 'SpaceMono_400Regular',  fontSize: 11, color: cartasBosque.musgo,   marginTop: 2 },
+  hab:    { fontFamily: 'SpaceMono_400Regular',  fontSize: 11, color: cartasBosque.helecho,   marginTop: 2 },
   meta:   { fontFamily: 'SpaceMono_400Regular',  fontSize: 10, color: cartasBosque.helecho, marginTop: 1 },
   scoreRing: {
     width: 58, height: 58, borderRadius: 29, borderWidth: 4,
@@ -937,10 +937,10 @@ const s = StyleSheet.create({
   },
   ocupanteNombre:    { fontFamily: 'Inter_600SemiBold', fontSize: 12, color: cartasBosque.tinta },
   ocupanteTipo:      { fontFamily: 'SpaceMono_400Regular',  fontSize: 10, color: cartasBosque.helecho },
-  ocupanteCosto:     { fontFamily: 'SpaceMono_400Regular',  fontSize: 11, color: cartasBosque.musgo },
+  ocupanteCosto:     { fontFamily: 'SpaceMono_400Regular',  fontSize: 11, color: cartasBosque.helecho },
   ocupanteDivider:   { height: 1, backgroundColor: cartasBosque.pergaminoOscuro, marginVertical: spacing[2] },
   ocupanteTotalLabel:{ flex: 1, fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.helecho },
-  ocupanteTotal:     { fontFamily: 'Inter_600SemiBold', fontSize: 12, color: cartasBosque.musgo },
+  ocupanteTotal:     { fontFamily: 'Inter_600SemiBold', fontSize: 12, color: cartasBosque.helecho },
 
   // ── MASCOTAS ──
   mascotaCard: {
@@ -999,7 +999,7 @@ const s = StyleSheet.create({
     paddingHorizontal: spacing[2], paddingVertical: 1,
     borderRadius: borderRadius.sm, backgroundColor: cartasBosque.niebla + '55',
   },
-  esteDispositivoText: { fontFamily: 'SpaceMono_400Regular', fontSize: 9, color: cartasBosque.musgo },
+  esteDispositivoText: { fontFamily: 'SpaceMono_400Regular', fontSize: 9, color: cartasBosque.helecho },
   cerrarSesBtn: {
     paddingHorizontal: spacing[3], paddingVertical: spacing[1] + 1,
     borderRadius: borderRadius.sm, borderWidth: 1, borderColor: '#960018' + '55',

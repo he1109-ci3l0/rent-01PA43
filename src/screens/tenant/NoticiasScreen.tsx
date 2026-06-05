@@ -45,7 +45,7 @@ function NoticiaBanner({ noticia, onPress }: {
     >
       {noticia.bannerFijado && (
         <View style={st.fijaRow}>
-          <Ionicons name="pin" size={10} color={cartasBosque.musgo} />
+          <Ionicons name="pin" size={10} color={cartasBosque.helecho} />
           <Text style={st.fijaText}>Fijado</Text>
         </View>
       )}
@@ -80,7 +80,7 @@ function NoticiaModal({ noticia, uid, onClose, onVotar }: {
         <ScrollView contentContainerStyle={st.modalScroll}>
           {noticia.bannerFijado && (
             <View style={st.fijaRow}>
-              <Ionicons name="pin" size={11} color={cartasBosque.musgo} />
+              <Ionicons name="pin" size={11} color={cartasBosque.helecho} />
               <Text style={st.fijaText}>Fijado</Text>
             </View>
           )}
@@ -144,7 +144,7 @@ function ChatRowFeed({ chat, uid, onPress }: {
       <View style={{ flex: 1 }}>
         <Text style={st.chatNombre}>{esGeneral ? 'General' : (chat.nombre ?? 'Chat')}</Text>
         <Text
-          style={[st.chatUltimo, pendiente && { color: cartasBosque.tierra }]}
+          style={[st.chatUltimo, pendiente && { color: cartasBosque.arena }]}
           numberOfLines={1}
         >
           {pendiente ? 'Solicitud de chat' : (chat.ultimoMensaje ?? '¡Escribe algo!')}
@@ -250,7 +250,7 @@ function PanelChatList({ chats, chatGeneral, uid, onSelect, onNuevoChat, onNuevo
           const pendiente = c.estado === 'solicitado' && c.solicitadoPor !== uid;
           return (
             <TouchableOpacity style={st.chatRow} onPress={() => onSelect(c)}>
-              <View style={[st.chatAvatar, c.tipo === 'grupal' && { backgroundColor: cartasBosque.musgo }]}>
+              <View style={[st.chatAvatar, c.tipo === 'grupal' && { backgroundColor: cartasBosque.helecho }]}>
                 <Ionicons
                   name={c.tipo === 'grupal' ? 'people-outline' : 'person'}
                   size={18} color={cartasBosque.bruma}
@@ -259,7 +259,7 @@ function PanelChatList({ chats, chatGeneral, uid, onSelect, onNuevoChat, onNuevo
               <View style={{ flex: 1 }}>
                 <Text style={st.chatNombre}>{c.nombre ?? 'Chat'}</Text>
                 <Text
-                  style={[st.chatUltimo, pendiente && { color: cartasBosque.tierra }]}
+                  style={[st.chatUltimo, pendiente && { color: cartasBosque.arena }]}
                   numberOfLines={1}
                 >
                   {pendiente ? 'Solicitud de chat' : (c.ultimoMensaje ?? '')}
@@ -359,7 +359,7 @@ function ChatView({ chat, uid, nombre, esAdmin, onBack, hideHeader }: {
             <Ionicons name="arrow-back" size={20} color={cartasBosque.tinta} />
           </TouchableOpacity>
           <Text style={st.chatHeaderNombre} numberOfLines={1}>{chat.nombre ?? 'Chat'}</Text>
-          {chat.congelado && <Ionicons name="lock-closed" size={14} color={cartasBosque.tierra} />}
+          {chat.congelado && <Ionicons name="lock-closed" size={14} color={cartasBosque.arena} />}
         </View>
       )}
       <FlatList
@@ -391,7 +391,7 @@ function ChatView({ chat, uid, nombre, esAdmin, onBack, hideHeader }: {
         <View style={st.mencionesPanel}>
           {inqFiltrados.slice(0, 4).map(i => (
             <TouchableOpacity key={i.uid} style={st.mencionRow} onPress={() => insertMencion(i)}>
-              <Ionicons name="person-circle-outline" size={16} color={cartasBosque.musgo} />
+              <Ionicons name="person-circle-outline" size={16} color={cartasBosque.helecho} />
               <Text style={st.mencionNombre}>{i.nombre} {i.apellido}</Text>
             </TouchableOpacity>
           ))}
@@ -416,7 +416,7 @@ function ChatView({ chat, uid, nombre, esAdmin, onBack, hideHeader }: {
       )}
       {bloqueado ? (
         <View style={st.congeladoBar}>
-          <Ionicons name="lock-closed-outline" size={14} color={cartasBosque.tierra} />
+          <Ionicons name="lock-closed-outline" size={14} color={cartasBosque.arena} />
           <Text style={st.congeladoText}>
             {chat.congelado ? 'Chat congelado' : 'No puedes enviar mensajes'}
           </Text>
@@ -901,11 +901,11 @@ const st = StyleSheet.create({
     borderRadius: borderRadius.md, padding: spacing[4],
     borderWidth: 1, borderColor: cartasBosque.pergaminoOscuro,
   },
-  bannerFijado: { borderColor: cartasBosque.musgo, borderWidth: 1.5 },
+  bannerFijado: { borderColor: cartasBosque.helecho, borderWidth: 1.5 },
   fijaRow:  { flexDirection: 'row', alignItems: 'center', gap: spacing[1], marginBottom: 2 },
-  fijaText: { fontFamily: 'SpaceMono_400Regular', fontSize: 9, color: cartasBosque.musgo },
+  fijaText: { fontFamily: 'SpaceMono_400Regular', fontSize: 9, color: cartasBosque.helecho },
   bannerTag: {
-    fontFamily: 'SpaceMono_400Regular', fontSize: 9, color: cartasBosque.musgo,
+    fontFamily: 'SpaceMono_400Regular', fontSize: 9, color: cartasBosque.helecho,
     letterSpacing: 0.4, marginBottom: spacing[1],
   },
   bannerTitulo: {
@@ -933,7 +933,7 @@ const st = StyleSheet.create({
     borderBottomWidth: 1, borderBottomColor: cartasBosque.pergaminoOscuro + '77',
   },
   chatAvatar: {
-    width: 40, height: 40, borderRadius: 20, backgroundColor: cartasBosque.musgo,
+    width: 40, height: 40, borderRadius: 20, backgroundColor: cartasBosque.helecho,
     alignItems: 'center', justifyContent: 'center',
   },
   chatNombre: { fontFamily: 'Inter_600SemiBold', fontSize: 14, color: cartasBosque.tinta },
@@ -1083,7 +1083,7 @@ const st = StyleSheet.create({
     borderTopWidth: 1, borderTopColor: cartasBosque.pergaminoOscuro,
     backgroundColor: '#E8EBE0',
   },
-  congeladoText: { fontFamily: 'Inter_400Regular', fontSize: 12, color: cartasBosque.tierra },
+  congeladoText: { fontFamily: 'Inter_400Regular', fontSize: 12, color: cartasBosque.arena },
 
   // Noticia modal
   modalRoot: { flex: 1 },
@@ -1092,7 +1092,7 @@ const st = StyleSheet.create({
     paddingHorizontal: spacing[4], paddingVertical: spacing[3],
     borderBottomWidth: 1, borderBottomColor: cartasBosque.pergaminoOscuro,
   },
-  modalTag: { fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.musgo, letterSpacing: 0.5 },
+  modalTag: { fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.helecho, letterSpacing: 0.5 },
   modalScroll: { padding: spacing[5], paddingBottom: spacing[10] },
   modalTitulo: {
     fontFamily: 'Inter_700Bold', fontSize: 22, color: cartasBosque.tinta,
@@ -1110,7 +1110,7 @@ const st = StyleSheet.create({
   },
   encuestaBarra: { position: 'absolute', left: 0, top: 0, bottom: 0, backgroundColor: cartasBosque.niebla + '66' },
   encuestaTexto: { fontFamily: 'Inter_400Regular', fontSize: 13, color: cartasBosque.tinta, flex: 1, zIndex: 1 },
-  encuestaPct:   { fontFamily: 'SpaceMono_400Regular', fontSize: 11, color: cartasBosque.musgo, zIndex: 1 },
+  encuestaPct:   { fontFamily: 'SpaceMono_400Regular', fontSize: 11, color: cartasBosque.helecho, zIndex: 1 },
   encuestaTotal: { fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.niebla, marginTop: spacing[1] },
 
   // Reporte acoso modal

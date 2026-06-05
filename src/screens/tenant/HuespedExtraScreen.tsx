@@ -149,7 +149,7 @@ export default function HuespedExtraScreen() {
 
         {/* Aviso anti-subarriendo */}
         <View style={styles.warningBox}>
-          <Ionicons name="shield-checkmark-outline" size={14} color={cartasBosque.corteza} />
+          <Ionicons name="shield-checkmark-outline" size={14} color={cartasBosque.alertaBorde} />
           <Text style={styles.warningText}>
             El huésped no puede usar la habitación en tu ausencia. Subarrendar anula el contrato.
           </Text>
@@ -211,8 +211,8 @@ export default function HuespedExtraScreen() {
                   </Text>
                   <View style={{ flex: 1.2, alignItems: 'flex-start' }}>
                     {c.requiereAuth
-                      ? <Ionicons name="lock-closed" size={13} color={cartasBosque.corteza} />
-                      : <Ionicons name="checkmark-circle" size={13} color={cartasBosque.musgo} />
+                      ? <Ionicons name="lock-closed" size={13} color={cartasBosque.alertaBorde} />
+                      : <Ionicons name="checkmark-circle" size={13} color={cartasBosque.helecho} />
                     }
                   </View>
                 </View>
@@ -247,13 +247,13 @@ export default function HuespedExtraScreen() {
       <View style={styles.root}>
         <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
           <TouchableOpacity onPress={() => setStep('lista')} style={styles.backBtn}>
-            <Ionicons name="arrow-back" size={20} color={cartasBosque.musgo} />
+            <Ionicons name="arrow-back" size={20} color={cartasBosque.helecho} />
             <Text style={styles.backTxt}>Volver</Text>
           </TouchableOpacity>
 
           <View style={styles.avisoBox}>
             <View style={styles.avisoIconWrap}>
-              <Ionicons name="warning" size={32} color={cartasBosque.corteza} />
+              <Ionicons name="warning" size={32} color={cartasBosque.alertaBorde} />
             </View>
             <Text style={styles.avisoTitle}>Antes de continuar</Text>
             <Text style={styles.avisoSubtitle}>
@@ -290,7 +290,7 @@ export default function HuespedExtraScreen() {
       >
         <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
           <TouchableOpacity onPress={() => setStep('aviso')} style={styles.backBtn}>
-            <Ionicons name="arrow-back" size={20} color={cartasBosque.musgo} />
+            <Ionicons name="arrow-back" size={20} color={cartasBosque.helecho} />
             <Text style={styles.backTxt}>Volver</Text>
           </TouchableOpacity>
 
@@ -420,7 +420,7 @@ export default function HuespedExtraScreen() {
         <Ionicons
           name={confirmOk ? 'checkmark-circle' : 'time-outline'}
           size={48}
-          color={confirmOk ? cartasBosque.bosque : cartasBosque.tierra}
+          color={confirmOk ? cartasBosque.bosque : cartasBosque.arena}
         />
       </View>
       <Text style={styles.confirmTitle}>
@@ -452,7 +452,7 @@ function estadoStyle(estado: string) {
     pendiente_auth: {
       badge:  { backgroundColor: 'rgba(205,178,157,0.15)', borderColor: '#FFCD39' + '60' },
       txt:    { color: '#8A6A72' },
-      avatar: { backgroundColor: cartasBosque.tierra + '20' },
+      avatar: { backgroundColor: cartasBosque.arena + '20' },
     },
     activo: {
       badge:  { backgroundColor: '#E8EBE0', borderColor: '#4A5E4840' },
@@ -466,7 +466,7 @@ function estadoStyle(estado: string) {
     },
     inactivo: {
       badge:  { backgroundColor: cartasBosque.pergaminoOscuro, borderColor: cartasBosque.helecho + '60' },
-      txt:    { color: cartasBosque.musgo },
+      txt:    { color: cartasBosque.helecho },
       avatar: { backgroundColor: cartasBosque.niebla + '40' },
     },
   };
@@ -483,7 +483,7 @@ const styles = StyleSheet.create({
   pageHeader: { gap: spacing[1] },
   eyebrow: {
     fontFamily: 'SpaceMono_400Regular', fontSize: 10,
-    color: cartasBosque.musgo, letterSpacing: 1.5, textTransform: 'uppercase',
+    color: cartasBosque.helecho, letterSpacing: 1.5, textTransform: 'uppercase',
   },
   pageTitle: {
     fontFamily: 'Inter_700Bold', fontSize: 26,
@@ -498,7 +498,7 @@ const styles = StyleSheet.create({
   },
   warningText: {
     fontFamily: 'SpaceMono_400Regular', fontSize: 11,
-    color: cartasBosque.corteza, flex: 1, lineHeight: 16,
+    color: cartasBosque.alertaBorde, flex: 1, lineHeight: 16,
   },
 
   section: { gap: spacing[3] },
@@ -548,7 +548,7 @@ const styles = StyleSheet.create({
   },
   tablaHdrCell: {
     flex: 1, fontFamily: 'SpaceMono_400Regular', fontSize: 9,
-    color: cartasBosque.musgo, letterSpacing: 0.5,
+    color: cartasBosque.helecho, letterSpacing: 0.5,
   },
   tablaRow: {
     flexDirection: 'row', alignItems: 'center',
@@ -575,7 +575,7 @@ const styles = StyleSheet.create({
   avisoBox: {
     backgroundColor: '#F5F2EC',
     borderRadius: borderRadius.lg,
-    borderWidth: 1, borderColor: cartasBosque.corteza + '30',
+    borderWidth: 1, borderColor: cartasBosque.alertaBorde + '30',
     padding: spacing[5], gap: spacing[4],
     alignItems: 'center',
   },
@@ -590,12 +590,12 @@ const styles = StyleSheet.create({
   },
   avisoSubtitle: {
     fontFamily: 'Inter_400Regular', fontSize: 14,
-    color: cartasBosque.musgo, textAlign: 'center', lineHeight: 20,
+    color: cartasBosque.helecho, textAlign: 'center', lineHeight: 20,
   },
   avisoItem: { flexDirection: 'row', alignItems: 'flex-start', gap: spacing[3], width: '100%' },
   avisoBullet: {
     width: 6, height: 6, borderRadius: 3,
-    backgroundColor: cartasBosque.corteza, marginTop: 5,
+    backgroundColor: cartasBosque.alertaBorde, marginTop: 5,
   },
   avisoItemTxt: {
     fontFamily: 'SpaceMono_400Regular', fontSize: 12,
@@ -620,12 +620,12 @@ const styles = StyleSheet.create({
     backgroundColor: cartasBosque.bruma,
   },
   chipActive: { borderColor: cartasBosque.bosque, backgroundColor: cartasBosque.bosque },
-  chipTxt: { fontFamily: 'Inter_500Medium', fontSize: 13, color: cartasBosque.musgo },
+  chipTxt: { fontFamily: 'Inter_500Medium', fontSize: 13, color: cartasBosque.helecho },
   chipTxtActive: { color: cartasBosque.bruma },
 
   // Back
   backBtn: { flexDirection: 'row', alignItems: 'center', gap: spacing[2] },
-  backTxt: { fontFamily: 'Inter_500Medium', fontSize: 14, color: cartasBosque.musgo },
+  backTxt: { fontFamily: 'Inter_500Medium', fontSize: 14, color: cartasBosque.helecho },
 
   // Botón principal
   btnRegistrar: {
@@ -655,7 +655,7 @@ const styles = StyleSheet.create({
   },
   confirmMsg: {
     fontFamily: 'Inter_400Regular', fontSize: 15,
-    color: cartasBosque.musgo, textAlign: 'center', lineHeight: 22,
+    color: cartasBosque.helecho, textAlign: 'center', lineHeight: 22,
     marginBottom: spacing[8], paddingHorizontal: spacing[4],
   },
 });

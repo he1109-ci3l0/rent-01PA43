@@ -154,6 +154,19 @@ export function listenTodasVisitasActivas(
   );
 }
 
+export async function marcarPagoCargo(visitaId: string): Promise<void> {
+  await updateDoc(doc(db, 'visitas', visitaId), {
+    cargoEstacionariaPagado: true,
+  });
+}
+
+export async function afectarDeposito(visitaId: string): Promise<void> {
+  await updateDoc(doc(db, 'visitas', visitaId), {
+    estadoEstacionaria: 'deposito_102h',
+    rutaElegida: 'A',
+  });
+}
+
 // ─── Seed ─────────────────────────────────────────────────────
 
 export async function seedVisitas(): Promise<void> {

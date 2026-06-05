@@ -23,7 +23,7 @@ function formatFecha(ts: Timestamp | undefined): string {
 function estadoCupon(c: Cupon): { label: string; color: string } {
   if (!c.disponible) return { label: 'inactivo', color: cartasBosque.niebla };
   const ahora = Date.now();
-  if (c.vigenciaFin.toDate().getTime() < ahora) return { label: 'vencido', color: cartasBosque.corteza };
+  if (c.vigenciaFin.toDate().getTime() < ahora) return { label: 'vencido', color: cartasBosque.alertaBorde };
   if (c.limiteUsos !== null && c.usosActuales >= c.limiteUsos) return { label: 'agotado', color: '#670010' };
   return { label: 'activo', color: cartasBosque.bosque };
 }
@@ -292,7 +292,7 @@ const styles = StyleSheet.create({
     paddingVertical: spacing[2], borderBottomWidth: 1, borderBottomColor: cartasBosque.pergaminoOscuro,
   },
   switchLabel: { fontFamily: 'Inter_400Regular', fontSize: 13, color: cartasBosque.tinta },
-  errorText: { fontFamily: 'Inter_400Regular', fontSize: 12, color: cartasBosque.corteza, marginTop: spacing[2] },
+  errorText: { fontFamily: 'Inter_400Regular', fontSize: 12, color: cartasBosque.alertaBorde, marginTop: spacing[2] },
   btnPrimario: {
     marginTop: spacing[4], backgroundColor: cartasBosque.bosque,
     borderRadius: borderRadius.sm, paddingVertical: spacing[3], alignItems: 'center',

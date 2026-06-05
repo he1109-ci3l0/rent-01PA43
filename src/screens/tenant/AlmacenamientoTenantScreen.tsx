@@ -84,7 +84,7 @@ export default function AlmacenamientoTenantScreen() {
       {/* Aviso vencimiento */}
       {proxVencer.length > 0 && (
         <View style={styles.avisoBanner}>
-          <Ionicons name="time-outline" size={16} color={cartasBosque.corteza} />
+          <Ionicons name="time-outline" size={16} color={cartasBosque.alertaBorde} />
           <Text style={styles.avisoText}>
             Vence pronto: {proxVencer
               .map(e => `${e.tipo === 'locker' ? 'locker' : 'refri'} #${e.numero}`)
@@ -237,7 +237,7 @@ const styles = StyleSheet.create({
   },
   avisoText: {
     fontFamily: 'Inter_400Regular', fontSize: 12,
-    color: cartasBosque.corteza, flex: 1,
+    color: cartasBosque.alertaBorde, flex: 1,
   },
   misCard: {
     backgroundColor: cartasBosque.pergamino, borderRadius: borderRadius.md,
@@ -301,10 +301,10 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter_600SemiBold', fontSize: 14, color: cartasBosque.bruma,
   },
   btnLiberar: {
-    marginTop: spacing[3], borderWidth: 1, borderColor: cartasBosque.corteza,
+    marginTop: spacing[3], borderWidth: 1, borderColor: cartasBosque.alertaBorde,
     borderRadius: borderRadius.sm, paddingVertical: spacing[2] + 2, alignItems: 'center',
   },
   btnLiberarText: {
-    fontFamily: 'Inter_400Regular', fontSize: 13, color: cartasBosque.corteza,
+    fontFamily: 'Inter_400Regular', fontSize: 13, color: cartasBosque.alertaBorde,
   },
 });

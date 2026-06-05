@@ -1,9 +1,9 @@
-export const formatCurrency = (amount: number, currency = 'USD'): string =>
-  new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(amount);
+export const formatCurrency = (amount: number, currency = 'MXN'): string =>
+  new Intl.NumberFormat('es-MX', { style: 'currency', currency }).format(amount);
 
 export const formatDate = (dateString: string): string => {
   const date = new Date(dateString);
-  return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+  return date.toLocaleDateString('es-MX', { year: 'numeric', month: 'short', day: 'numeric' });
 };
 
 export const getDaysUntil = (dateString: string): number => {

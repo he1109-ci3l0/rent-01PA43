@@ -60,7 +60,7 @@ function VistaChat({ chat, onBack }: { chat: Chat; onBack: () => void }) {
           )}
           {chat.congelado && (
             <View style={styles.congeladoBadge}>
-              <Ionicons name="lock-closed" size={12} color={cartasBosque.tierra} />
+              <Ionicons name="lock-closed" size={12} color={cartasBosque.arena} />
               <Text style={styles.congeladoBadgeText}>Congelado</Text>
             </View>
           )}
@@ -138,7 +138,7 @@ function ChatRow({ chat, onSelect }: { chat: Chat; onSelect: (c: Chat) => void }
     <TouchableOpacity style={styles.chatFila} onPress={() => onSelect(chat)}>
       <View style={[styles.chatAvatar,
         chat.tipo === 'grupal' && { backgroundColor: cartasBosque.bosque },
-        chat.congelado         && { backgroundColor: cartasBosque.tierra },
+        chat.congelado         && { backgroundColor: cartasBosque.arena },
       ]}>
         <Ionicons
           name={chat.tipo === 'grupal' ? 'people' : 'person'}
@@ -154,7 +154,7 @@ function ChatRow({ chat, onSelect }: { chat: Chat; onSelect: (c: Chat) => void }
             </View>
           )}
           {chat.congelado && (
-            <Ionicons name="lock-closed" size={11} color={cartasBosque.tierra} />
+            <Ionicons name="lock-closed" size={11} color={cartasBosque.arena} />
           )}
         </View>
         <Text style={styles.chatUltimo} numberOfLines={1}>{chat.ultimoMensaje ?? '—'}</Text>
@@ -304,7 +304,7 @@ export default function ChatAdminScreen() {
               <View style={styles.noticiaAdminRow}>
                 <View style={[styles.noticiaEstado, n.activo && styles.noticiaActiva]} />
                 <Text style={styles.noticiaAdminTitulo} numberOfLines={1}>{n.titulo}</Text>
-                {n.bannerFijado && <Ionicons name="pin" size={12} color={cartasBosque.musgo} />}
+                {n.bannerFijado && <Ionicons name="pin" size={12} color={cartasBosque.helecho} />}
               </View>
               <Text style={styles.noticiaAdminTipo}>{n.tipo} · {n.duracion}</Text>
               <Text style={styles.noticiaAdminFecha}>
@@ -352,7 +352,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1, borderBottomColor: cartasBosque.pergaminoOscuro + '77',
   },
   chatAvatar: {
-    width: 40, height: 40, borderRadius: 20, backgroundColor: cartasBosque.musgo,
+    width: 40, height: 40, borderRadius: 20, backgroundColor: cartasBosque.helecho,
     alignItems: 'center', justifyContent: 'center',
   },
   chatNombre: { fontFamily: 'Inter_600SemiBold', fontSize: 14, color: cartasBosque.tinta },
@@ -377,7 +377,7 @@ const styles = StyleSheet.create({
   strikeBtnText:    { fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: '#8A6A72' },
   congeladoBadge:   { flexDirection: 'row', alignItems: 'center', gap: spacing[1],
                       backgroundColor: '#E8EBE0', borderRadius: borderRadius.sm, paddingHorizontal: spacing[2], paddingVertical: spacing[1] },
-  congeladoBadgeText:{ fontFamily: 'SpaceMono_400Regular', fontSize: 9, color: cartasBosque.tierra },
+  congeladoBadgeText:{ fontFamily: 'SpaceMono_400Regular', fontSize: 9, color: cartasBosque.arena },
 
   // Strike modal
   overlay:   { flex: 1, backgroundColor: 'rgba(18,42,31,0.35)' },

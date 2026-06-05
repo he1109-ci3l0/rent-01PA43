@@ -77,7 +77,7 @@ export default function PromoCard({
           <Ionicons
             name="timer-outline"
             size={11}
-            color={expirada ? cartasBosque.corteza : cartasBosque.musgo}
+            color={expirada ? cartasBosque.alertaBorde : cartasBosque.helecho}
           />
           <Text style={[styles.countdownTxt, expirada && styles.countdownTxtExp]}>
             {expirada ? 'Expirada' : `${mins}:${String(segs).padStart(2, '0')}`}
@@ -94,9 +94,9 @@ export default function PromoCard({
 
       {/* Beneficios */}
       {[
-        { icon: 'checkmark-circle-outline', text: 'IVA exento · Art. 20 LIVA', color: cartasBosque.musgo },
-        { icon: 'checkmark-circle-outline', text: 'Se agrega al expediente como residente permanente', color: cartasBosque.musgo },
-        { icon: 'alert-circle-outline', text: 'Esta oferta no se repetirá. Decide ahora.', color: cartasBosque.corteza },
+        { icon: 'checkmark-circle-outline', text: 'IVA exento · Art. 20 LIVA', color: cartasBosque.helecho },
+        { icon: 'checkmark-circle-outline', text: 'Se agrega al expediente como residente permanente', color: cartasBosque.helecho },
+        { icon: 'alert-circle-outline', text: 'Esta oferta no se repetirá. Decide ahora.', color: cartasBosque.alertaBorde },
       ].map(({ icon, text, color }) => (
         <View key={text} style={styles.itemRow}>
           <Ionicons name={icon as any} size={14} color={color} />
@@ -113,7 +113,7 @@ export default function PromoCard({
           activeOpacity={0.8}
         >
           {accion === 'rechazar'
-            ? <ActivityIndicator size="small" color={cartasBosque.musgo} />
+            ? <ActivityIndicator size="small" color={cartasBosque.helecho} />
             : <Text style={styles.btnRechazarTxt}>Rechazar</Text>
           }
         </TouchableOpacity>
@@ -182,9 +182,9 @@ const styles = StyleSheet.create({
   countdownTxt: {
     fontFamily: 'SpaceMono_400Regular',
     fontSize: 11,
-    color: cartasBosque.musgo,
+    color: cartasBosque.helecho,
   },
-  countdownTxtExp: { color: cartasBosque.corteza },
+  countdownTxtExp: { color: cartasBosque.alertaBorde },
   desc: {
     fontFamily: 'Inter_400Regular',
     fontSize: 14,
@@ -207,7 +207,7 @@ const styles = StyleSheet.create({
     borderWidth: 1, borderColor: cartasBosque.pergaminoOscuro,
   },
   btnRechazarTxt: {
-    fontFamily: 'Inter_500Medium', fontSize: 14, color: cartasBosque.musgo,
+    fontFamily: 'Inter_500Medium', fontSize: 14, color: cartasBosque.helecho,
   },
   btnAceptar: {
     flex: 2, paddingVertical: spacing[3], alignItems: 'center',
@@ -220,7 +220,7 @@ const styles = StyleSheet.create({
   expMsg: {
     fontFamily: 'SpaceMono_400Regular',
     fontSize: 11,
-    color: cartasBosque.corteza,
+    color: cartasBosque.alertaBorde,
     textAlign: 'center',
     lineHeight: 16,
   },

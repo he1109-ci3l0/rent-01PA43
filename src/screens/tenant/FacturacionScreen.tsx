@@ -23,9 +23,9 @@ const MESES = [
 
 const ESTADO_COLOR: Record<SolicitudFactura['estado'], string> = {
   pendiente:   '#CDB29D',
-  procesando:  cartasBosque.musgo,
+  procesando:  cartasBosque.helecho,
   emitida:     cartasBosque.bosque,
-  rechazada:   cartasBosque.corteza,
+  rechazada:   cartasBosque.alertaBorde,
   eliminada:   cartasBosque.niebla,
 };
 
@@ -362,12 +362,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing[2], paddingVertical: spacing[1], marginRight: spacing[1],
     backgroundColor: cartasBosque.pergamino,
   },
-  mesChipActivo: { backgroundColor: cartasBosque.musgo, borderColor: cartasBosque.musgo },
+  mesChipActivo: { backgroundColor: cartasBosque.helecho, borderColor: cartasBosque.helecho },
   mesChipText: { fontFamily: 'SpaceMono_400Regular', fontSize: 11, color: cartasBosque.tinta },
   mesChipTextActivo: { color: cartasBosque.bruma },
   anioRow: { flexDirection: 'row', alignItems: 'center', gap: spacing[3] },
   anioText: { fontFamily: 'Inter_600SemiBold', fontSize: 16, color: cartasBosque.tinta },
-  errorText: { fontFamily: 'Inter_400Regular', fontSize: 13, color: cartasBosque.corteza, marginTop: spacing[2] },
+  errorText: { fontFamily: 'Inter_400Regular', fontSize: 13, color: cartasBosque.alertaBorde, marginTop: spacing[2] },
   btnPrimario: {
     marginTop: spacing[4], backgroundColor: cartasBosque.bosque,
     borderRadius: borderRadius.sm, paddingVertical: spacing[3], alignItems: 'center',
@@ -391,5 +391,5 @@ const styles = StyleSheet.create({
   cardFecha: { fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.niebla, marginTop: spacing[1] },
   downloadRow: { flexDirection: 'row', alignItems: 'center', gap: spacing[1], marginTop: spacing[2] },
   downloadText: { fontFamily: 'Inter_400Regular', fontSize: 12, color: cartasBosque.bosque },
-  notasText: { fontFamily: 'Inter_400Regular', fontSize: 12, color: cartasBosque.corteza, marginTop: spacing[1] },
+  notasText: { fontFamily: 'Inter_400Regular', fontSize: 12, color: cartasBosque.alertaBorde, marginTop: spacing[1] },
 });

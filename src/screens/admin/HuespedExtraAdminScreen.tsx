@@ -32,7 +32,7 @@ const ESTADO_COLORS: Record<string, { bg: string; txt: string; border: string }>
   pendiente_auth: { bg: 'rgba(205,178,157,0.15)', txt: '#8A6A72',    border: '#CDB29D60' },
   activo:         { bg: '#E8EBE0', txt: '#122A1F',    border: '#4A5E4840' },
   incorporado:    { bg: '#E8EBE0', txt: '#122A1F',    border: '#4A5E4840' },
-  inactivo:       { bg: cartasBosque.pergaminoOscuro, txt: cartasBosque.musgo, border: cartasBosque.helecho + '60' },
+  inactivo:       { bg: cartasBosque.pergaminoOscuro, txt: cartasBosque.helecho, border: cartasBosque.helecho + '60' },
 };
 
 export default function HuespedExtraAdminScreen() {
@@ -172,7 +172,7 @@ export default function HuespedExtraAdminScreen() {
                 </Text>
                 {c.requiereAuth && (
                   <View style={styles.authPill}>
-                    <Ionicons name="lock-closed" size={10} color={cartasBosque.corteza} />
+                    <Ionicons name="lock-closed" size={10} color={cartasBosque.alertaBorde} />
                     <Text style={styles.authPillTxt}>auth</Text>
                   </View>
                 )}
@@ -376,7 +376,7 @@ const cardStyles = StyleSheet.create({
     borderRadius: borderRadius.full,
     paddingHorizontal: spacing[2], paddingVertical: spacing[0.5],
   },
-  semanaChipTxt: { fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.musgo },
+  semanaChipTxt: { fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.helecho },
   montoTxt: { fontFamily: 'SpaceMono_400Regular', fontSize: 11, color: cartasBosque.bosque },
   notasBox: {
     flexDirection: 'row', alignItems: 'flex-start', gap: spacing[2],
@@ -385,15 +385,15 @@ const cardStyles = StyleSheet.create({
   },
   notasTxt: {
     fontFamily: 'SpaceMono_400Regular', fontSize: 10,
-    color: cartasBosque.musgo, flex: 1,
+    color: cartasBosque.helecho, flex: 1,
   },
   btns: { flexDirection: 'row', gap: spacing[3] },
   btnRechazar: {
     flex: 1, paddingVertical: spacing[2.5], alignItems: 'center',
     borderRadius: borderRadius.md, borderWidth: 1,
-    borderColor: cartasBosque.corteza + '60',
+    borderColor: cartasBosque.alertaBorde + '60',
   },
-  btnRechazarTxt: { fontFamily: 'Inter_500Medium', fontSize: 13, color: cartasBosque.corteza },
+  btnRechazarTxt: { fontFamily: 'Inter_500Medium', fontSize: 13, color: cartasBosque.alertaBorde },
   btnAutorizar: {
     flex: 2, flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
     gap: spacing[2], paddingVertical: spacing[2.5],
@@ -411,7 +411,7 @@ const styles = StyleSheet.create({
   header: { gap: spacing[1] },
   eyebrow: {
     fontFamily: 'SpaceMono_400Regular', fontSize: 10,
-    color: cartasBosque.musgo, letterSpacing: 1.5, textTransform: 'uppercase',
+    color: cartasBosque.helecho, letterSpacing: 1.5, textTransform: 'uppercase',
   },
   title: {
     fontFamily: 'Inter_700Bold', fontSize: 26,
@@ -464,7 +464,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(205,178,157,0.15)', borderRadius: borderRadius.full,
     paddingHorizontal: spacing[2], paddingVertical: spacing[0.5],
   },
-  authPillTxt: { fontFamily: 'SpaceMono_400Regular', fontSize: 9, color: cartasBosque.corteza },
+  authPillTxt: { fontFamily: 'SpaceMono_400Regular', fontSize: 9, color: cartasBosque.alertaBorde },
 
   // Modal
   modalOverlay: { flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(18,42,31,0.35)' },
@@ -481,7 +481,7 @@ const styles = StyleSheet.create({
   },
   modalTitle: { fontFamily: 'Inter_700Bold', fontSize: 18, color: cartasBosque.tinta },
   modalSub: { fontFamily: 'SpaceMono_400Regular', fontSize: 12, color: cartasBosque.helecho, marginTop: -spacing[2] },
-  inputLabel: { fontFamily: 'SpaceMono_400Regular', fontSize: 11, color: cartasBosque.musgo, letterSpacing: 0.5 },
+  inputLabel: { fontFamily: 'SpaceMono_400Regular', fontSize: 11, color: cartasBosque.helecho, letterSpacing: 0.5 },
   notasInput: {
     backgroundColor: cartasBosque.pergamino,
     borderWidth: 1.5, borderColor: cartasBosque.pergaminoOscuro,
@@ -496,10 +496,10 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.md, borderWidth: 1,
     borderColor: cartasBosque.pergaminoOscuro,
   },
-  modalBtnCancelTxt: { fontFamily: 'Inter_500Medium', fontSize: 14, color: cartasBosque.musgo },
+  modalBtnCancelTxt: { fontFamily: 'Inter_500Medium', fontSize: 14, color: cartasBosque.helecho },
   modalBtnRechazar: {
     flex: 1, paddingVertical: spacing[3], alignItems: 'center',
-    borderRadius: borderRadius.md, backgroundColor: cartasBosque.corteza,
+    borderRadius: borderRadius.md, backgroundColor: cartasBosque.alertaBorde,
   },
   modalBtnRechazarTxt: { fontFamily: 'Inter_600SemiBold', fontSize: 14, color: cartasBosque.bruma },
 });

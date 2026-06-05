@@ -69,7 +69,7 @@ interface MetricasData {
 // ─── Helpers ──────────────────────────────────────────────────
 
 function estadoTextColor(estado: EstadoHabitacion): string {
-  if (ESTADO_COLOR[estado] === cartasBosque.pergamino) return cartasBosque.musgo;
+  if (ESTADO_COLOR[estado] === cartasBosque.pergamino) return cartasBosque.helecho;
   if (ESTADO_COLOR[estado] === cartasBosque.bosque)    return cartasBosque.bruma;
   return ESTADO_COLOR[estado];
 }
@@ -151,7 +151,7 @@ export default function HabitacionesScreen() {
         style={styles.root}
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={cartasBosque.musgo} />}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={cartasBosque.helecho} />}
       >
         {/* ── Header ── */}
         <View style={styles.header}>
@@ -203,7 +203,7 @@ export default function HabitacionesScreen() {
         {/* ── Stats ── */}
         <View style={styles.statsRow}>
           <StatPill label="Ocupadas" value={ocupadas}      color={cartasBosque.bosque} />
-          <StatPill label="Vacías"   value={vacias}        color={cartasBosque.musgo} />
+          <StatPill label="Vacías"   value={vacias}        color={cartasBosque.helecho} />
           <StatPill label="Otras"    value={otras}         color={cartasBosque.helecho} />
           <StatPill label="Total"    value={rooms.length}  color={cartasBosque.tinta} />
         </View>
@@ -796,7 +796,7 @@ function DetalleHabitacion({
                   onPress={() => onCambiarEstado(estado)}
                   disabled={cambiandoEstado || room.estado === estado}
                 >
-                  <Text style={[detStyles.estadoChipText, { color: room.estado === estado && estado === 'disponible' ? cartasBosque.musgo : room.estado === estado ? cartasBosque.bruma : cartasBosque.musgo }]}>
+                  <Text style={[detStyles.estadoChipText, { color: room.estado === estado && estado === 'disponible' ? cartasBosque.helecho : room.estado === estado ? cartasBosque.bruma : cartasBosque.helecho }]}>
                     {ESTADO_LABEL[estado]}
                   </Text>
                 </TouchableOpacity>
@@ -1070,7 +1070,7 @@ const detStyles = StyleSheet.create({
   estadoChipText:   { fontFamily: 'Inter_500Medium', fontSize: 12 },
 
   remodelBox:  { flexDirection: 'row', alignItems: 'flex-start', gap: spacing[2], backgroundColor: 'rgba(205,178,157,0.12)', borderRadius: borderRadius.md, padding: spacing[3], marginBottom: spacing[2] },
-  remodelText: { fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.musgo, flex: 1, lineHeight: 16 },
+  remodelText: { fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.helecho, flex: 1, lineHeight: 16 },
 });
 
 const editStyles = StyleSheet.create({
@@ -1131,7 +1131,7 @@ const styles = StyleSheet.create({
   center:  { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: cartasBosque.bruma },
 
   header:     { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end' },
-  eyebrow:    { fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.musgo, letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: spacing[0] + 2 },
+  eyebrow:    { fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.helecho, letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: spacing[0] + 2 },
   title:      { fontFamily: 'Inter_700Bold', fontSize: 26, color: cartasBosque.bosque, letterSpacing: -0.3 },
   headerBtns: { flexDirection: 'row', alignItems: 'center', gap: spacing[2] },
 

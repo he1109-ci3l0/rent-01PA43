@@ -153,7 +153,7 @@ function ColumnaLista({
           style={cl.vaciarBtn}
           onPress={() => userUid && vaciarPapelera(userUid)}
         >
-          <Ionicons name="trash-outline" size={13} color={cartasBosque.corteza} />
+          <Ionicons name="trash-outline" size={13} color={cartasBosque.alertaBorde} />
           <Text style={cl.vaciarText}>Vaciar papelera</Text>
         </TouchableOpacity>
       )}
@@ -670,8 +670,8 @@ const cl = StyleSheet.create({
     borderColor: cartasBosque.pergaminoOscuro,
   },
   subTabActivo: {
-    backgroundColor: cartasBosque.musgo,
-    borderColor: cartasBosque.musgo,
+    backgroundColor: cartasBosque.helecho,
+    borderColor: cartasBosque.helecho,
   },
   subTabText: {
     fontFamily: 'SpaceMono_400Regular',
@@ -689,7 +689,7 @@ const cl = StyleSheet.create({
   vaciarText: {
     fontFamily: 'Inter_400Regular',
     fontSize: 12,
-    color: cartasBosque.corteza,
+    color: cartasBosque.alertaBorde,
   },
   centro: {
     flex: 1,
@@ -881,7 +881,7 @@ const pd = StyleSheet.create({
     marginBottom: spacing[2],
   },
   btnRechazo: {
-    backgroundColor: cartasBosque.corteza,
+    backgroundColor: cartasBosque.alertaBorde,
     borderRadius: borderRadius.sm,
     paddingVertical: spacing[2] + 2,
     alignItems: 'center',
@@ -907,7 +907,7 @@ const pd = StyleSheet.create({
   btnSecText: {
     fontFamily: 'Inter_400Regular',
     fontSize: 13,
-    color: cartasBosque.corteza,
+    color: cartasBosque.alertaBorde,
   },
   btnCorreo: {
     backgroundColor: cartasBosque.pergamino,
@@ -1010,14 +1010,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing[3], paddingVertical: spacing[1] + 2,
     borderRadius: borderRadius.sm, borderWidth: 1, borderColor: cartasBosque.pergaminoOscuro,
   },
-  subTabActivo: { backgroundColor: cartasBosque.musgo, borderColor: cartasBosque.musgo },
+  subTabActivo: { backgroundColor: cartasBosque.helecho, borderColor: cartasBosque.helecho },
   subTabText: { fontFamily: 'SpaceMono_400Regular', fontSize: 11, color: cartasBosque.helecho },
   subTabTextActivo: { color: cartasBosque.bruma },
   vaciarBtn: {
     flexDirection: 'row', alignItems: 'center', gap: spacing[1],
     marginHorizontal: spacing[4], marginBottom: spacing[2],
   },
-  vaciarText: { fontFamily: 'Inter_400Regular', fontSize: 12, color: cartasBosque.corteza },
+  vaciarText: { fontFamily: 'Inter_400Regular', fontSize: 12, color: cartasBosque.alertaBorde },
   scrollContent: { padding: spacing[4] },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: spacing[2] },
   vacioText: { fontFamily: 'Inter_400Regular', fontSize: 14, color: cartasBosque.helecho },
@@ -1070,9 +1070,9 @@ const panelStyles = StyleSheet.create({
   },
   btnText: { fontFamily: 'Inter_600SemiBold', fontSize: 14, color: cartasBosque.bruma },
   btnRechazo: { marginTop: spacing[2], paddingVertical: spacing[2], alignItems: 'center' },
-  btnRechazoText: { fontFamily: 'Inter_400Regular', fontSize: 13, color: cartasBosque.corteza },
+  btnRechazoText: { fontFamily: 'Inter_400Regular', fontSize: 13, color: cartasBosque.alertaBorde },
   btnRechazoConfirm: {
-    marginTop: spacing[3], backgroundColor: cartasBosque.corteza,
+    marginTop: spacing[3], backgroundColor: cartasBosque.alertaBorde,
     borderRadius: borderRadius.sm, paddingVertical: spacing[2] + 2, alignItems: 'center',
   },
 });

@@ -10,6 +10,7 @@ import { spacing, borderRadius } from '@/constants/spacing';
 import {
   listenTodosLosPagos, verificarPago, rechazarPago,
   setScoreManual, seedDemoPagos, SCORE_CONFIG,
+  descontarPrenda, suspenderCuenta,
 } from '@/services/firebase/pagos';
 import type { Pago, NivelScore } from '@/types/firestore';
 import { useAuth } from '@/hooks/useAuth';
@@ -131,6 +132,44 @@ function PanelVerificacion({ pago, todos, procesando, onVerificar, onRechazar }:
   const stripe = ESTADO_STRIPE[pago.estado] ?? cartasBosque.helecho;
   const badgeLabel = ESTADO_BADGE_LABEL[pago.estado] ?? pago.estado.toUpperCase();
   const isProcesando = procesando === pago.id;
+
+  const { user } = useAuth();
+
+  async function handleDescontarPrenda() {
+    if (!user?.uid) return;
+    Alert.alert(
+      'Descontar prenda en garantía',
+      '¿Confirmas descontar la prenda en garantía de este inquilino? Esta acción es irreversible.',
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Confirmar', style: 'destructive',
+          onPress: async () => {
+            try { await descontarPrenda(pago.id, user.uid); }
+            catch { Alert.alert('Error', 'No se pudo descontar la prenda.'); }
+          },
+        },
+      ],
+    );
+  }
+
+  async function handleSuspenderCuenta() {
+    if (!user?.uid) return;
+    Alert.alert(
+      'Suspender cuenta',
+      '¿Confirmas suspender la cuenta de este inquilino? No podrá iniciar sesión hasta que el admin la reactive.',
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Suspender', style: 'destructive',
+          onPress: async () => {
+            try { await suspenderCuenta(pago.inquilinoId, user.uid); }
+            catch { Alert.alert('Error', 'No se pudo suspender la cuenta.'); }
+          },
+        },
+      ],
+    );
+  }
 
   const historial = todos
     .filter(p => p.inquilinoId === pago.inquilinoId && p.id !== pago.id)
@@ -305,6 +344,43 @@ function PanelVerificacion({ pago, todos, procesando, onVerificar, onRechazar }:
               <Text style={pv.pagadoSub}>Verificado por admin</Text>
             </View>
           </View>
+        )}
+
+        {(() => {
+          const diasMora = pago.fechaVencimiento
+            ? Math.floor((Date.now() - pago.fechaVencimiento.toMillis()) / 86_400_000)
+            : 0;
+          return diasMora >= 8 && pago.estado !== 'pagado' ? (
+            <View style={{
+              flexDirection: 'row', alignItems: 'center', gap: 6,
+              backgroundColor: 'rgba(103,0,16,0.12)',
+              borderRadius: 6, padding: 10, marginTop: 8,
+              borderWidth: 1, borderColor: cartasBosque.alertaBorde,
+            }}>
+              <Ionicons name="warning-outline" size={14} color={cartasBosque.alertaBorde} />
+              <Text style={{ fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.alertaBorde }}>
+                Día {diasMora} sin pago — protocolo día 8 activo
+              </Text>
+            </View>
+          ) : null;
+        })()}
+
+        {pago.estado !== 'pagado' && (
+          <TouchableOpacity
+            style={[pv.accionBtn, { backgroundColor: cartasBosque.alertaFondo, marginTop: 6 }]}
+            onPress={handleDescontarPrenda}
+          >
+            <Text style={pv.accionBtnText}>Descontar prenda en garantía</Text>
+          </TouchableOpacity>
+        )}
+
+        {pago.estado !== 'pagado' && (
+          <TouchableOpacity
+            style={[pv.accionBtn, { backgroundColor: cartasBosque.alertaBorde, marginTop: 6 }]}
+            onPress={handleSuspenderCuenta}
+          >
+            <Text style={pv.accionBtnText}>Suspender cuenta</Text>
+          </TouchableOpacity>
         )}
       </View>
     </ScrollView>
@@ -693,7 +769,7 @@ export default function PagosAdminScreen() {
         style={styles.root}
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={cartasBosque.musgo} />}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={cartasBosque.helecho} />}
       >
         <View style={styles.header}>
           <Text style={styles.eyebrow}>{MESES[hoy.getMonth()]} {hoy.getFullYear()}</Text>
@@ -784,7 +860,7 @@ const styles = StyleSheet.create({
   center:  { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: cartasBosque.bruma },
 
   header:  { marginBottom: spacing[5] },
-  eyebrow: { fontFamily: 'SpaceMono_400Regular', fontSize: 11, color: cartasBosque.musgo, letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: spacing[1] },
+  eyebrow: { fontFamily: 'SpaceMono_400Regular', fontSize: 11, color: cartasBosque.helecho, letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: spacing[1] },
   title:   { fontFamily: 'Inter_700Bold', fontSize: 26, color: cartasBosque.bosque, letterSpacing: -0.3 },
 
   statsRow: { flexDirection: 'row', gap: spacing[3], marginBottom: spacing[5] },
@@ -859,11 +935,11 @@ const styles = StyleSheet.create({
   modalSheet:         { backgroundColor: cartasBosque.bruma, borderTopLeftRadius: borderRadius['2xl'], borderTopRightRadius: borderRadius['2xl'], padding: spacing[6], paddingBottom: spacing[8], gap: spacing[4] },
   modalHandle:        { width: 36, height: 4, borderRadius: 2, backgroundColor: cartasBosque.pergaminoOscuro, alignSelf: 'center', marginBottom: spacing[2] },
   modalTitle:         { fontFamily: 'Inter_700Bold', fontSize: 18, color: cartasBosque.tinta },
-  modalSubtitle:      { fontFamily: 'Inter_400Regular', fontSize: 13, color: cartasBosque.musgo, lineHeight: 18 },
+  modalSubtitle:      { fontFamily: 'Inter_400Regular', fontSize: 13, color: cartasBosque.helecho, lineHeight: 18 },
   modalInput:         { borderWidth: 1, borderColor: cartasBosque.pergaminoOscuro, borderRadius: borderRadius.md, padding: spacing[3], fontFamily: 'Inter_400Regular', fontSize: 14, color: cartasBosque.tinta, minHeight: 80, textAlignVertical: 'top', backgroundColor: cartasBosque.pergamino },
   modalBtns:          { flexDirection: 'row', gap: spacing[3] },
   modalBtnCancel:     { flex: 1, paddingVertical: spacing[3], alignItems: 'center', borderRadius: borderRadius.md, borderWidth: 1, borderColor: cartasBosque.pergaminoOscuro },
-  modalBtnCancelText: { fontFamily: 'Inter_500Medium', fontSize: 14, color: cartasBosque.musgo },
+  modalBtnCancelText: { fontFamily: 'Inter_500Medium', fontSize: 14, color: cartasBosque.helecho },
   modalBtnReject:     { flex: 1, paddingVertical: spacing[3], alignItems: 'center', borderRadius: borderRadius.md, backgroundColor: '#C0392B' },
   modalBtnRejectText: { fontFamily: 'Inter_600SemiBold', fontSize: 14, color: '#FFFFFF' },
 });
@@ -956,4 +1032,7 @@ const pv = StyleSheet.create({
   pagadoCard: { flexDirection: 'row', alignItems: 'center', gap: spacing[3], backgroundColor: 'rgba(74,155,111,0.1)', borderRadius: borderRadius.md, borderWidth: 1, borderColor: '#4A9B6F44', padding: spacing[3] },
   pagadoText: { fontFamily: 'Inter_500Medium', fontSize: 13, color: '#4A9B6F' },
   pagadoSub:  { fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.helecho, marginTop: 1 },
+
+  accionBtn:     { borderRadius: borderRadius.md, height: 44, alignItems: 'center', justifyContent: 'center' },
+  accionBtnText: { fontFamily: 'Inter_600SemiBold', fontSize: 13, color: cartasBosque.bruma },
 });

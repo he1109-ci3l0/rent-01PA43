@@ -132,7 +132,7 @@ export default function LoginScreen({ onRegister }: Props) {
                 <Ionicons
                   name={showPassword ? 'eye-off-outline' : 'eye-outline'}
                   size={20}
-                  color={cartasBosque.musgo}
+                  color={cartasBosque.helecho}
                 />
               </TouchableOpacity>
             </View>
@@ -141,7 +141,7 @@ export default function LoginScreen({ onRegister }: Props) {
           {/* Error */}
           {errorMsg && (
             <View style={styles.errorBox}>
-              <Ionicons name="alert-circle-outline" size={15} color={cartasBosque.corteza} />
+              <Ionicons name="alert-circle-outline" size={15} color={cartasBosque.alertaBorde} />
               <Text style={styles.errorText}>{errorMsg}</Text>
             </View>
           )}
@@ -149,7 +149,7 @@ export default function LoginScreen({ onRegister }: Props) {
           {/* Bloqueo */}
           {lockedMinutes !== null && (
             <View style={styles.lockBox}>
-              <Ionicons name="lock-closed-outline" size={15} color={cartasBosque.corteza} />
+              <Ionicons name="lock-closed-outline" size={15} color={cartasBosque.alertaBorde} />
               <Text style={styles.lockText}>
                 Cuenta bloqueada — intenta en {lockedMinutes} min.
               </Text>
@@ -227,7 +227,7 @@ const styles = StyleSheet.create({
   welcome: {
     fontFamily: 'Inter_400Regular',
     fontSize: 14,
-    color: cartasBosque.musgo,
+    color: cartasBosque.helecho,
     textAlign: 'center',
     lineHeight: 21,
   },
@@ -276,7 +276,7 @@ const styles = StyleSheet.create({
   errorText: {
     fontFamily: 'Inter_400Regular',
     fontSize: 13,
-    color: cartasBosque.corteza,
+    color: cartasBosque.alertaBorde,
     flex: 1,
   },
   lockBox: {
@@ -290,7 +290,7 @@ const styles = StyleSheet.create({
   lockText: {
     fontFamily: 'Inter_400Regular',
     fontSize: 13,
-    color: cartasBosque.corteza,
+    color: cartasBosque.alertaBorde,
     flex: 1,
   },
 
@@ -323,7 +323,7 @@ const styles = StyleSheet.create({
   registerText: {
     fontFamily: 'Inter_400Regular',
     fontSize: 14,
-    color: cartasBosque.musgo,
+    color: cartasBosque.helecho,
   },
   registerLink: {
     fontFamily: 'Inter_600SemiBold',

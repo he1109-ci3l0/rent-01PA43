@@ -10,7 +10,7 @@ import { spacing, borderRadius } from '@/constants/spacing';
 import TurnoCard from '@/components/common/TurnoCard';
 import {
   listenTodosTurnos, listenPermutasPendientes, listenIncumplimientos,
-  seedTurnos, moverTurno, marcarIncumplimiento,
+  seedTurnos, regenerarTurnos, moverTurno, marcarIncumplimiento,
   aprobarPermuta, bloquearPermuta,
   AREA_LABELS, AREA_ICONS, AREAS_COMUNES, formatFechaTurno,
   HORAS_LIMITE_FOTO,
@@ -200,6 +200,7 @@ export default function LimpiezaAdminScreen() {
   const [cargando, setCargando]       = useState(true);
   const [turnoMover, setTurnoMover]   = useState<TurnoLimpieza | null>(null);
   const [seeding, setSeeding]         = useState(false);
+  const [regenerando, setRegenerando] = useState(false);
   const [areaFiltro, setAreaFiltro]   = useState<AreaLimpieza | 'todas'>('todas');
   const [mesCalendario, setMesCalendario] = useState(() => {
     const d = new Date(); d.setDate(1); d.setHours(0, 0, 0, 0); return d;
@@ -258,6 +259,29 @@ export default function LimpiezaAdminScreen() {
     catch { Alert.alert('Error', 'No se pudo bloquear la permuta.'); }
   }
 
+  async function handleRegenerarTurnos() {
+    Alert.alert(
+      'Regenerar turnos',
+      'Esto generará 60 días de turnos para todos los inquilinos activos. ¿Continuar?',
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Regenerar', onPress: async () => {
+            setRegenerando(true);
+            try {
+              await regenerarTurnos(60);
+              Alert.alert('Listo', 'Turnos generados correctamente.');
+            } catch (e: any) {
+              Alert.alert('Error', e.message ?? 'No se pudieron generar los turnos.');
+            } finally {
+              setRegenerando(false);
+            }
+          },
+        },
+      ],
+    );
+  }
+
   // ── Datos calendario ────────────────────────────────────────
   const anioMes   = mesCalendario.getFullYear();
   const mesMes    = mesCalendario.getMonth();
@@ -298,6 +322,19 @@ export default function LimpiezaAdminScreen() {
             </Text>
           </TouchableOpacity>
         ))}
+        <TouchableOpacity
+          style={[styles.regenerarBtn, regenerando && { opacity: 0.6 }]}
+          onPress={handleRegenerarTurnos}
+          disabled={regenerando}
+        >
+          {regenerando
+            ? <ActivityIndicator size="small" color={cartasBosque.bruma} />
+            : <>
+                <Ionicons name="refresh-outline" size={14} color={cartasBosque.bruma} />
+                <Text style={styles.regenerarBtnText}>Regenerar turnos</Text>
+              </>
+          }
+        </TouchableOpacity>
       </View>
 
       {cargando ? (
@@ -552,6 +589,7 @@ const styles = StyleSheet.create({
   // ─── Nuevas pestañas de vista ─────────────────────────────
   vistaTabs: {
     flexDirection: 'row',
+    alignItems: 'center',
     borderBottomWidth: 1,
     borderBottomColor: cartasBosque.pergaminoOscuro,
   },
@@ -700,6 +738,16 @@ const styles = StyleSheet.create({
   },
   incumpNombre: { fontFamily: 'Inter_600SemiBold', fontSize: 13, color: cartasBosque.tinta },
   incumpSub:    { fontFamily: 'Inter_400Regular', fontSize: 11, color: cartasBosque.helecho, marginTop: 2 },
+  regenerarBtn: {
+    flexDirection: 'row', alignItems: 'center', gap: 4,
+    backgroundColor: cartasBosque.bosque,
+    borderRadius: borderRadius.sm,
+    paddingHorizontal: spacing[3], paddingVertical: spacing[1] + 2,
+    marginRight: spacing[2],
+  },
+  regenerarBtnText: {
+    fontFamily: 'Inter_600SemiBold', fontSize: 12, color: cartasBosque.bruma,
+  },
   // Modal
   overlay: { flex: 1, backgroundColor: 'rgba(18,42,31,0.35)' },
   sheet: {

@@ -396,7 +396,7 @@ const s = StyleSheet.create({
     marginBottom: spacing[2],
   },
   alertaCardNoVista: {
-    borderColor: cartasBosque.musgo + '55',
+    borderColor: cartasBosque.helecho + '55',
     backgroundColor: '#E8EBE0' + '22',
   },
   alertaIconBox: {
@@ -407,7 +407,7 @@ const s = StyleSheet.create({
   alertaHeaderRow: { flexDirection: 'row', alignItems: 'center', gap: spacing[2] },
   alertaTipo:   { fontFamily: 'Inter_600SemiBold', fontSize: 12, color: cartasBosque.tinta },
   dotNoVisto:   { width: 7, height: 7, borderRadius: 4, backgroundColor: cartasBosque.bosque },
-  alertaNombre: { fontFamily: 'SpaceMono_400Regular', fontSize: 11, color: cartasBosque.musgo, marginTop: 2 },
+  alertaNombre: { fontFamily: 'SpaceMono_400Regular', fontSize: 11, color: cartasBosque.helecho, marginTop: 2 },
   alertaMeta:   { fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.helecho, marginTop: 1 },
   alertaFecha:  { fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.helecho + 'AA', marginTop: 2 },
 });

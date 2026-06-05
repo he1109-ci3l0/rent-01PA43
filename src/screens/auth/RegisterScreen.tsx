@@ -170,7 +170,7 @@ export default function RegisterScreen({ onBack }: Props) {
                 <Ionicons
                   name={showCurp ? 'eye-off-outline' : 'eye-outline'}
                   size={20}
-                  color={cartasBosque.musgo}
+                  color={cartasBosque.helecho}
                 />
               </TouchableOpacity>
             </View>
@@ -227,7 +227,7 @@ export default function RegisterScreen({ onBack }: Props) {
           {/* Error */}
           {errorMsg && (
             <View style={styles.errorBox}>
-              <Ionicons name="alert-circle-outline" size={15} color={cartasBosque.corteza} />
+              <Ionicons name="alert-circle-outline" size={15} color={cartasBosque.alertaBorde} />
               <Text style={styles.errorText}>{errorMsg}</Text>
             </View>
           )}
@@ -280,7 +280,7 @@ const styles = StyleSheet.create({
   subtitle: {
     fontFamily: 'Inter_400Regular',
     fontSize: 14,
-    color: cartasBosque.musgo,
+    color: cartasBosque.helecho,
   },
 
   // Form
@@ -339,7 +339,7 @@ const styles = StyleSheet.create({
   keepSub: {
     fontFamily: 'Inter_400Regular',
     fontSize: 12,
-    color: cartasBosque.musgo,
+    color: cartasBosque.helecho,
     marginTop: spacing[0.5],
   },
 
@@ -355,7 +355,7 @@ const styles = StyleSheet.create({
   errorText: {
     fontFamily: 'Inter_400Regular',
     fontSize: 13,
-    color: cartasBosque.corteza,
+    color: cartasBosque.alertaBorde,
     flex: 1,
   },
 
@@ -385,7 +385,7 @@ const styles = StyleSheet.create({
   backText: {
     fontFamily: 'Inter_400Regular',
     fontSize: 14,
-    color: cartasBosque.musgo,
+    color: cartasBosque.helecho,
   },
   backLink: {
     fontFamily: 'Inter_600SemiBold',
@@ -421,7 +421,7 @@ const styles = StyleSheet.create({
   successBody: {
     fontFamily: 'Inter_400Regular',
     fontSize: 14,
-    color: cartasBosque.musgo,
+    color: cartasBosque.helecho,
     textAlign: 'center',
     lineHeight: 22,
   },
@@ -436,7 +436,7 @@ const styles = StyleSheet.create({
   usernameLabel: {
     fontFamily: 'Inter_500Medium',
     fontSize: 12,
-    color: cartasBosque.musgo,
+    color: cartasBosque.helecho,
     textTransform: 'uppercase',
     letterSpacing: 1,
   },
@@ -449,7 +449,7 @@ const styles = StyleSheet.create({
   passwordHint: {
     fontFamily: 'Inter_400Regular',
     fontSize: 12,
-    color: cartasBosque.musgo,
+    color: cartasBosque.helecho,
     marginTop: spacing[1],
   },
 });

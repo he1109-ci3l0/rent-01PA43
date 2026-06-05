@@ -1,40 +1,62 @@
-// Cartas Bosque — paleta definitiva
+// Cartas Bosque — paleta definitiva · Junio 2026
 export const cartasBosque = {
-  bosque:          '#2E3C2C',   // botones primarios
-  musgo:           '#4A5E48',   // elementos / labels importantes
-  helecho:         '#8A9E80',   // verde salvia / texto secundario
-  niebla:          '#8A9E80',   // alias helecho (compat. legado)
-  pergamino:       '#FFFFFF',   // blanco / superficies
-  pergaminoOscuro: '#E0DDD5',   // borde suave
-  corteza:         '#960018',   // alerta borde
-  tierra:          '#CDB29D',   // arena cálida / acento
-  arena:           '#CDB29D',   // alias tierra
-  tinta:           '#122A1F',   // texto principal
+  // Fondos
   bruma:           '#F5F2EC',   // fondo general
-  noche:           '#122A1F',   // alias tinta
-  terracota:       '#960018',   // alias corteza
+  pergamino:       '#F5F2EC',   // cards (alias de bruma)
+  pergaminoOscuro: '#E0DDD5',   // bordes suaves / separadores
+  crema:           '#E8EBE0',   // texto claro sobre fondos medios
+
+  // Verdes
+  bosque:   '#2E3C2C',   // botones primarios
+  helecho:  '#4A5E48',   // elementos secundarios / labels
+  salvia:   '#8A9E80',   // texto secundario sobre fondos oscuros
+
+  // Oscuros
+  tinta:   '#14352A',   // texto principal / casi negro
+  sidebar: '#122A1F',   // negro bosque / header / nav bar
+
+  // Cálidos
+  arena:  '#CDB29D',   // arena cálida / tipografía sobre alerta
+  niebla: '#CDB29D',   // alias de arena (compatibilidad)
+  acento: '#8A6A72',   // malva / acento secundario
+
+  // Alertas
+  alertaFondo: '#670010',   // fondo alertas críticas
+  alertaBorde: '#960018',   // borde alertas / corteza
+  corteza:     '#960018',   // alias de alertaBorde (compatibilidad)
+} as const;
+
+// Paleta secundaria — métricas y dashboards
+// INTENCIONAL: estos colores dan carácter visual a las estadísticas
+// NO reemplazar con tokens de cartasBosque
+export const metricColors = {
+  rojo:    '#C0392B',   // vencidos / pagos críticos
+  azul:    '#3B82F6',   // servicios / info neutral
+  verde:   '#4A9B6F',   // libre / disponible / OK
+  ambar:   '#E8A838',   // advertencia / pendiente
+  naranja: '#E05C2A',   // en proceso / en riesgo
 } as const;
 
 export const colors = {
   // Brand
   primary:      cartasBosque.bosque,
-  primaryLight: cartasBosque.niebla,
-  primaryDark:  '#122A1F',
-  primaryMid:   cartasBosque.musgo,
+  primaryLight: cartasBosque.salvia,
+  primaryDark:  cartasBosque.sidebar,
+  primaryMid:   cartasBosque.helecho,
 
   // Accent
-  accent:      cartasBosque.tierra,
+  accent:      cartasBosque.arena,
   accentLight: cartasBosque.pergaminoOscuro,
 
   // Status
-  success:      '#4A5E48',
-  successLight: '#E8EBE0',
-  warning:      '#8A6A72',
-  warningLight: '#E8EBE0',
-  error:        '#960018',
+  success:      cartasBosque.helecho,
+  successLight: cartasBosque.crema,
+  warning:      cartasBosque.acento,
+  warningLight: cartasBosque.crema,
+  error:        cartasBosque.alertaBorde,
   errorLight:   'rgba(150,0,24,0.15)',
-  info:         cartasBosque.musgo,
-  infoLight:    cartasBosque.niebla,
+  info:         cartasBosque.salvia,
+  infoLight:    cartasBosque.salvia,
 
   // Neutrals
   white: '#FFFFFF',
@@ -42,29 +64,29 @@ export const colors = {
   gray50:  cartasBosque.bruma,
   gray100: '#F5F2EC',
   gray200: cartasBosque.pergaminoOscuro,
-  gray300: '#E8EBE0',
-  gray400: '#C8B0B8',
-  gray500: '#4A5E48',
-  gray600: '#4A5E48',
-  gray700: '#2E3C2C',
-  gray800: '#122A1F',
+  gray300: cartasBosque.crema,
+  gray400: cartasBosque.acento,
+  gray500: cartasBosque.helecho,
+  gray600: cartasBosque.helecho,
+  gray700: cartasBosque.bosque,
+  gray800: cartasBosque.sidebar,
   gray900: cartasBosque.tinta,
 
   // Backgrounds
-  background:        cartasBosque.bruma,
-  surface:           cartasBosque.pergamino,
-  surfaceSecondary:  '#E8EBE0',
+  background:       cartasBosque.bruma,
+  surface:          cartasBosque.pergamino,
+  surfaceSecondary: cartasBosque.crema,
 
   // Text
-  textPrimary:  cartasBosque.tinta,
-  textSecondary: cartasBosque.musgo,
-  textDisabled: '#C8B0B8',
-  textInverse:  '#FFFFFF',
-  textAccent:   cartasBosque.bosque,
+  textPrimary:   cartasBosque.tinta,
+  textSecondary: cartasBosque.helecho,
+  textDisabled:  cartasBosque.salvia,
+  textInverse:   '#FFFFFF',
+  textAccent:    cartasBosque.bosque,
 
   // Borders
   border:      cartasBosque.pergaminoOscuro,
-  borderFocus: cartasBosque.musgo,
+  borderFocus: cartasBosque.helecho,
 
   // Transparent
   transparent: 'transparent',

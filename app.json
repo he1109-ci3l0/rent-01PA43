@@ -9,13 +9,15 @@
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#F5F2EC"
     },
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.ci3l0.rent01pa43",
       "infoPlist": {
-        "NSLocationWhenInUseUsageDescription": "Usamos tu ubicación para registrar la sesión de seguridad."
+        "NSLocationWhenInUseUsageDescription": "Usamos tu ubicación para registrar la sesión de seguridad.",
+        "NSCameraUsageDescription": "Necesitamos acceso a la cámara para tomar fotos de comprobantes y turnos de limpieza.",
+        "NSPhotoLibraryUsageDescription": "Necesitamos acceso a tu galería para subir comprobantes de pago."
       }
     },
     "plugins": [
@@ -26,11 +28,26 @@
           "locationWhenInUsePermission": "Usamos tu ubicación para registrar la sesión de seguridad."
         }
       ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Necesitamos acceso a tu galería para subir comprobantes de pago.",
+          "cameraPermission": "Necesitamos acceso a la cámara para tomar fotos de comprobantes y turnos de limpieza."
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/icon.png",
+          "color": "#2E3C2C"
+        }
+      ],
       "expo-asset"
     ],
     "android": {
+      "package": "com.ci3l0.rent01pa43",
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
+        "backgroundColor": "#F5F2EC",
         "foregroundImage": "./assets/android-icon-foreground.png",
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"

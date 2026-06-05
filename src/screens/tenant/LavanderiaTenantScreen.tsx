@@ -29,7 +29,7 @@ function estadoColor(estado: EstadoReserva): string {
   switch (estado) {
     case 'confirmada':    return cartasBosque.bosque;
     case 'pendiente':     return '#CDB29D';
-    case 'pendiente_auth': return cartasBosque.corteza;
+    case 'pendiente_auth': return cartasBosque.alertaBorde;
     case 'completada':    return cartasBosque.helecho;
     case 'cancelada':     return cartasBosque.niebla;
   }
@@ -244,7 +244,7 @@ const styles = StyleSheet.create({
   contadorDe: { fontFamily: 'Inter_400Regular', fontSize: 18, color: cartasBosque.helecho },
   contadorLabel: { fontFamily: 'Inter_400Regular', fontSize: 12, color: cartasBosque.helecho },
   extraBadge: {
-    backgroundColor: cartasBosque.corteza, borderRadius: borderRadius.sm,
+    backgroundColor: cartasBosque.alertaBorde, borderRadius: borderRadius.sm,
     paddingHorizontal: spacing[2], paddingVertical: 3,
   },
   extraBadgeText: { fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.bruma },
@@ -267,14 +267,14 @@ const styles = StyleSheet.create({
   reservaRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   reservaFecha: { fontFamily: 'Inter_400Regular', fontSize: 13, color: cartasBosque.tinta },
   reservaExtra: {
-    fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.corteza,
+    fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.alertaBorde,
     marginTop: 3,
   },
   estadoBadge: { borderRadius: borderRadius.sm, paddingHorizontal: spacing[2], paddingVertical: 2 },
   estadoLabel: { fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.bruma },
   btnCancelar: { marginTop: spacing[2], alignSelf: 'flex-start' },
   btnCancelarText: {
-    fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.corteza,
+    fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.alertaBorde,
     textDecorationLine: 'underline',
   },
 });

@@ -316,7 +316,7 @@ const styles = StyleSheet.create({
     color: cartasBosque.niebla,
   },
   requerido: {
-    color: cartasBosque.corteza,
+    color: cartasBosque.alertaBorde,
   },
   input: {
     backgroundColor: cartasBosque.pergamino,
@@ -357,7 +357,7 @@ const styles = StyleSheet.create({
   errorText: {
     fontFamily: 'Inter_400Regular',
     fontSize: 13,
-    color: cartasBosque.corteza,
+    color: cartasBosque.alertaBorde,
     marginTop: spacing[2],
   },
   btnPrimario: {

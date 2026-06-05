@@ -94,7 +94,7 @@ export default function CuponInput({
           </View>
         ) : (
           <View style={styles.errorBox}>
-            <Ionicons name="alert-circle-outline" size={16} color={cartasBosque.corteza} />
+            <Ionicons name="alert-circle-outline" size={16} color={cartasBosque.alertaBorde} />
             <Text style={styles.errorText}>{resultado.mensaje}</Text>
           </View>
         )
@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#EEF4EE',
   },
   btnAplicar: {
-    backgroundColor: cartasBosque.musgo,
+    backgroundColor: cartasBosque.helecho,
     borderRadius: borderRadius.sm,
     paddingHorizontal: spacing[3],
     paddingVertical: spacing[2] + 1,
@@ -176,6 +176,6 @@ const styles = StyleSheet.create({
   errorText: {
     fontFamily: 'Inter_400Regular',
     fontSize: 12,
-    color: cartasBosque.corteza,
+    color: cartasBosque.alertaBorde,
   },
 });

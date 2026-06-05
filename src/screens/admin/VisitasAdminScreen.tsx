@@ -13,6 +13,7 @@ import {
   HORAS_ESTACIONARIA, MONTO_CARGO_ESTACIONARIA,
   calcularHorasActiva, calcularEstadoEstacionaria,
   registrarSalida, marcarCargo72h, elegirRuta,
+  marcarPagoCargo, afectarDeposito,
 } from '@/services/firebase/visitas';
 import { collections } from '@/services/firebase/firestore';
 
@@ -287,6 +288,28 @@ function PanelDerecho({ visita, historialDoc, onCerrar }: {
     try { await elegirRuta(visita.id, ruta); } finally { setAccion(null); }
   }
 
+  async function handlePagoCargo() {
+    setAccion('pagoCargo');
+    try { await marcarPagoCargo(visita.id); } finally { setAccion(null); }
+  }
+
+  async function handleAfectarDeposito() {
+    Alert.alert(
+      'Afectar depósito',
+      '¿Confirmas que se descontará del depósito en garantía? Esta acción aplica Camino A automáticamente.',
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Confirmar', style: 'destructive',
+          onPress: async () => {
+            setAccion('deposito');
+            try { await afectarDeposito(visita.id); } finally { setAccion(null); }
+          },
+        },
+      ],
+    );
+  }
+
   const prevVisitas = historialDoc.filter(v => v.id !== visita.id);
 
   return (
@@ -408,6 +431,32 @@ function PanelDerecho({ visita, historialDoc, onCerrar }: {
 
           {visita.rutaElegida && (
             <Text style={pd.rutaElegida}>Camino {visita.rutaElegida} elegido</Text>
+          )}
+
+          {visita.cargoEstacionaria && !visita.cargoEstacionariaPagado && (
+            <TouchableOpacity
+              style={[pd.accionBtn, { backgroundColor: cartasBosque.bosque }]}
+              onPress={handlePagoCargo}
+              disabled={!!accion}
+            >
+              {accion === 'pagoCargo'
+                ? <ActivityIndicator color={cartasBosque.bruma} />
+                : <Text style={pd.accionBtnText}>Registrar pago cargo · ${visita.cargoEstacionaria}</Text>
+              }
+            </TouchableOpacity>
+          )}
+
+          {visita.cargoEstacionaria && !visita.cargoEstacionariaPagado && estado === 'deposito_102h' && (
+            <TouchableOpacity
+              style={[pd.accionBtn, { backgroundColor: cartasBosque.alertaFondo }]}
+              onPress={handleAfectarDeposito}
+              disabled={!!accion}
+            >
+              {accion === 'deposito'
+                ? <ActivityIndicator color={cartasBosque.bruma} />
+                : <Text style={pd.accionBtnText}>Afectar depósito en garantía</Text>
+              }
+            </TouchableOpacity>
           )}
         </View>
       )}

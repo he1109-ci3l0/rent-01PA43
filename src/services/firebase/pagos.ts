@@ -256,3 +256,21 @@ export async function seedDemoPagos(adminUid: string): Promise<void> {
     ultimaActualizacion: serverTimestamp(),
   });
 }
+
+export async function descontarPrenda(pagoId: string, adminId: string): Promise<void> {
+  await updateDoc(doc(db, 'pagos', pagoId), {
+    prendaDescontada: true,
+    prendaDescontadaEn: serverTimestamp(),
+    prendaDescontadaPor: adminId,
+    actualizadoEn: serverTimestamp(),
+  });
+}
+
+export async function suspenderCuenta(inquilinoId: string, adminId: string): Promise<void> {
+  await updateDoc(doc(db, 'inquilinos', inquilinoId), {
+    estado: 'suspendido',
+    suspendidoEn: serverTimestamp(),
+    suspendidoPor: adminId,
+    actualizadoEn: serverTimestamp(),
+  });
+}

@@ -20,7 +20,7 @@ const crypto = require('crypto');
 // ── Configuración ─────────────────────────────────────────────
 
 const SERVICE_ACCOUNT_PATH = path.join(__dirname, 'service-account.json');
-const STORAGE_BUCKET        = 'rent-01pa43.firebasestorage.app'; // ajusta si tu bucket tiene otro nombre
+const STORAGE_BUCKET        = 'rent-001pa43.firebasestorage.app'; // ajusta si tu bucket tiene otro nombre
 const ASSETS_DIR            = path.join(__dirname, '..', 'assets', 'documentos');
 
 const PLANTILLAS = [

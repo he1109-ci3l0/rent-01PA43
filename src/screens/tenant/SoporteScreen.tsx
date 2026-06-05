@@ -161,7 +161,7 @@ export default function SoporteScreen() {
       const folio = await crearTicket({
         inquilinoId:      user.uid,
         habitacionId:     inquilino?.habitacionId ?? '',
-        habitacionNumero: inquilino?.habitacionId ?? '',
+        habitacionNumero: (inquilino as any)?.habitacionNumero ?? inquilino?.habitacionId ?? '',
         inquilinoNombre:  inquilino ? `${inquilino.nombre} ${inquilino.apellido}`.trim() : user.uid,
         categoria:    categoriaActiva,
         subcategoria: subcategoriaActiva,
@@ -450,7 +450,7 @@ const styles = StyleSheet.create({
   listaSubtitulo: {
     fontFamily: 'Inter_400Regular',
     fontSize: 13,
-    color: cartasBosque.musgo,
+    color: cartasBosque.helecho,
     marginTop: spacing[0.5],
   },
   listaScroll: {
@@ -536,7 +536,7 @@ const styles = StyleSheet.create({
   formSubtitulo: {
     fontFamily: 'Inter_400Regular',
     fontSize: 13,
-    color: cartasBosque.musgo,
+    color: cartasBosque.helecho,
     marginTop: spacing[1],
   },
   formScroll: {
@@ -565,7 +565,7 @@ const styles = StyleSheet.create({
   chipText: {
     fontFamily: 'Inter_400Regular',
     fontSize: 13,
-    color: cartasBosque.musgo,
+    color: cartasBosque.helecho,
   },
   chipTextSelec: {
     fontFamily: 'Inter_600SemiBold',
@@ -588,7 +588,7 @@ const styles = StyleSheet.create({
     backgroundColor: cartasBosque.tinta,
     borderColor: cartasBosque.tinta,
   },
-  radioText:      { fontFamily: 'Inter_600SemiBold', fontSize: 14, color: cartasBosque.musgo },
+  radioText:      { fontFamily: 'Inter_600SemiBold', fontSize: 14, color: cartasBosque.helecho },
   radioTextSelec: { color: cartasBosque.bruma },
 
   textArea: {
@@ -778,7 +778,7 @@ const styles = StyleSheet.create({
   btnSecundarioText: {
     fontFamily: 'Inter_400Regular',
     fontSize: 14,
-    color: cartasBosque.musgo,
+    color: cartasBosque.helecho,
     textDecorationLine: 'underline',
   },
 });

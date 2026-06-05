@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
     borderWidth: 1, borderColor: cartasBosque.pergaminoOscuro,
   },
   cardActual: {
-    borderColor: cartasBosque.musgo + '80',
+    borderColor: cartasBosque.helecho + '80',
     backgroundColor: '#E8EBE0' + '33',
   },
   cardRobo: {

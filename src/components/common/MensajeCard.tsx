@@ -175,7 +175,7 @@ const styles = StyleSheet.create({
   bubbleColReverse: { alignItems: 'flex-end' },
 
   autorNombre: {
-    fontFamily: 'Inter_600SemiBold', fontSize: 11, color: cartasBosque.musgo,
+    fontFamily: 'Inter_600SemiBold', fontSize: 11, color: cartasBosque.helecho,
     marginBottom: 2, marginLeft: 2,
   },
 
@@ -190,7 +190,7 @@ const styles = StyleSheet.create({
   contenidoText: {
     fontFamily: 'Inter_400Regular', fontSize: 14, color: cartasBosque.tinta, lineHeight: 20,
   },
-  mencionText: { color: cartasBosque.musgo, fontFamily: 'Inter_600SemiBold' },
+  mencionText: { color: cartasBosque.helecho, fontFamily: 'Inter_600SemiBold' },
 
   hora:    { fontFamily: 'SpaceMono_400Regular', fontSize: 9, color: cartasBosque.helecho, marginTop: 2, marginLeft: 2 },
   horaOwn: { textAlign: 'right', marginRight: 2 },

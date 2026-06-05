@@ -72,7 +72,7 @@ const ESTADO_HAB_COLOR: Record<string, string> = {
   disponible:    '#4A5E48',
   ocupada:       cartasBosque.bosque,
   mantenimiento: '#8A6A72',
-  reservada:     cartasBosque.musgo,
+  reservada:     cartasBosque.helecho,
 };
 
 function MetricCard({

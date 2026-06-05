@@ -43,7 +43,7 @@ function estadoLabel(pago: Pago): { label: string; color: string; icon: string }
       if (diasMora > 3) return { label: 'Vencido',               color: '#670010', icon: 'alert-circle' };
       if (diasMora > 0) return { label: `${3-diasMora}d gracia`,  color: '#8A6A72', icon: 'warning' };
       return               { label: 'Por pagar',                  color: '#CDB29D', icon: 'ellipse-outline' };
-    default:            return { label: pago.estado,              color: cartasBosque.musgo, icon: 'ellipse-outline' };
+    default:            return { label: pago.estado,              color: cartasBosque.helecho, icon: 'ellipse-outline' };
   }
 }
 
@@ -152,7 +152,7 @@ export default function PagosScreen() {
         style={s.root}
         contentContainerStyle={s.content}
         showsVerticalScrollIndicator={false}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={cartasBosque.musgo} />}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={cartasBosque.helecho} />}
       >
         {/* ── Header ── */}
         <View style={s.header}>
@@ -336,7 +336,7 @@ const s = StyleSheet.create({
   content:     { padding: spacing[5], paddingBottom: spacing[10] },
 
   header:  { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: spacing[4] },
-  saludo:  { fontFamily: 'SpaceMono_400Regular', fontSize: 11, color: cartasBosque.musgo, letterSpacing: 1, textTransform: 'uppercase', marginBottom: 2 },
+  saludo:  { fontFamily: 'SpaceMono_400Regular', fontSize: 11, color: cartasBosque.helecho, letterSpacing: 1, textTransform: 'uppercase', marginBottom: 2 },
   title:   { fontFamily: 'Inter_700Bold', fontSize: 26, color: cartasBosque.tinta, letterSpacing: -0.3 },
 
   sectionTitle: { fontFamily: 'Inter_600SemiBold', fontSize: 15, color: cartasBosque.tinta, marginBottom: spacing[3], marginTop: spacing[5] },
@@ -356,7 +356,7 @@ const s = StyleSheet.create({
     gap: spacing[4],
   },
   pagoMontoRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' },
-  pagoLabel:    { fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.musgo, letterSpacing: 1, textTransform: 'uppercase', marginBottom: spacing[1] },
+  pagoLabel:    { fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.helecho, letterSpacing: 1, textTransform: 'uppercase', marginBottom: spacing[1] },
   pagoMonto:    { fontFamily: 'Inter_700Bold', fontSize: 30, color: cartasBosque.tinta, letterSpacing: -0.5 },
   pagoMXN:      { fontFamily: 'Inter_400Regular', fontSize: 14, color: cartasBosque.helecho },
   estadoBadge:  { flexDirection: 'row', alignItems: 'center', gap: spacing[1], paddingHorizontal: spacing[2.5], paddingVertical: spacing[1], borderRadius: borderRadius.full },

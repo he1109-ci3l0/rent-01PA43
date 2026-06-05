@@ -18,7 +18,7 @@ const ESTADO_COLORS: Record<EstadoEstacionaria, string> = {
   alerta_40h:    '#CDB29D',
   alerta_50h:    '#C87941',
   cargo_72h:     '#670010',
-  deposito_102h: cartasBosque.corteza,
+  deposito_102h: cartasBosque.alertaBorde,
 };
 
 const ESTADO_LABELS: Record<EstadoEstacionaria, string> = {
@@ -185,11 +185,11 @@ export default function VisitaCard({ visita, modo = 'tenant', onActualizar }: Vi
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={[styles.rutaBtn, { borderColor: cartasBosque.corteza }]}
+            style={[styles.rutaBtn, { borderColor: cartasBosque.alertaBorde }]}
             onPress={() => handleRuta('B')}
             disabled={cargando}
           >
-            <Text style={[styles.rutaBtnText, { color: cartasBosque.corteza }]}>
+            <Text style={[styles.rutaBtnText, { color: cartasBosque.alertaBorde }]}>
               Camino B — impugno
             </Text>
           </TouchableOpacity>
@@ -247,7 +247,7 @@ const styles = StyleSheet.create({
   recurrenteBadge: {
     fontFamily: 'SpaceMono_400Regular',
     fontSize: 10,
-    color: cartasBosque.corteza,
+    color: cartasBosque.alertaBorde,
     letterSpacing: 0.5,
   },
   estadoBadge: {
@@ -285,7 +285,7 @@ const styles = StyleSheet.create({
     backgroundColor: cartasBosque.bruma,
     borderRadius: borderRadius.sm,
     borderLeftWidth: 3,
-    borderLeftColor: cartasBosque.corteza,
+    borderLeftColor: cartasBosque.alertaBorde,
     gap: 4,
   },
   alertaText: {

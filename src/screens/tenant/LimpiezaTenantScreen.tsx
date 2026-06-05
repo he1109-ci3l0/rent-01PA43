@@ -4,7 +4,6 @@ import {
   StyleSheet, ActivityIndicator, Alert, FlatList,
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
-import * as Notifications from 'expo-notifications';
 import { Ionicons } from '@expo/vector-icons';
 import { cartasBosque } from '@/constants/colors';
 import { spacing, borderRadius } from '@/constants/spacing';
@@ -270,34 +269,6 @@ export default function LimpiezaTenantScreen() {
       setCargando(false);
     });
   }, [user?.uid]);
-
-  // ── Notificaciones locales ─────────────────────────────────
-  useEffect(() => {
-    Notifications.requestPermissionsAsync().catch(() => {});
-  }, []);
-
-  useEffect(() => {
-    if (turnos.length === 0) return;
-    const ahora = new Date();
-    for (const turno of turnos) {
-      const estado = calcEstadoTurno(turno);
-      const fecha = turno.fechaProgramada.toDate();
-      const unaHoraAntes = new Date(fecha.getTime() - 60 * 60 * 1000);
-
-      if (estado === 'pendiente' && unaHoraAntes > ahora) {
-        Notifications.scheduleNotificationAsync({
-          identifier: `turno-${turno.id}`,
-          content: {
-            title: 'Limpieza pendiente',
-            body: `Tu turno de ${AREA_LABELS[turno.area]} vence en 1 hora`,
-          },
-          trigger: { date: unaHoraAntes } as any,
-        }).catch(() => {});
-      } else {
-        Notifications.cancelScheduledNotificationAsync(`turno-${turno.id}`).catch(() => {});
-      }
-    }
-  }, [turnos]);
 
   // ── Reportar turnos ignorados ──────────────────────────────
   useEffect(() => {

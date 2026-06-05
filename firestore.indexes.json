@@ -1,10 +1,11 @@
 {
   "indexes": [
     {
-      "collectionGroup": "tickets",
+      "collectionGroup": "pagos",
       "queryScope": "COLLECTION",
       "fields": [
         { "fieldPath": "inquilinoId", "order": "ASCENDING"  },
+        { "fieldPath": "estado",      "order": "ASCENDING"  },
         { "fieldPath": "creadoEn",    "order": "DESCENDING" }
       ]
     },
@@ -14,6 +15,127 @@
       "fields": [
         { "fieldPath": "inquilinoId",      "order": "ASCENDING"  },
         { "fieldPath": "fechaVencimiento", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "pagos",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "habitacionId", "order": "ASCENDING" },
+        { "fieldPath": "estado",       "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "pagos",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "estado",           "order": "ASCENDING" },
+        { "fieldPath": "fechaVencimiento", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "visitas",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "inquilinoId",  "order": "ASCENDING"  },
+        { "fieldPath": "fechaEntrada", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "visitas",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "fechaSalida",  "order": "ASCENDING" },
+        { "fieldPath": "fechaEntrada", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "visitas",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "documentoNumero", "order": "ASCENDING" },
+        { "fieldPath": "inquilinoId",     "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "lavanderia",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "inquilinoId", "order": "ASCENDING" },
+        { "fieldPath": "mes",         "order": "ASCENDING" },
+        { "fieldPath": "anio",        "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "lavanderia",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "inquilinoId", "order": "ASCENDING"  },
+        { "fieldPath": "creadoEn",    "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "turnos_limpieza",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "inquilinoId",     "order": "ASCENDING" },
+        { "fieldPath": "fechaProgramada", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "turnos_limpieza",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "inquilinoId", "order": "ASCENDING" },
+        { "fieldPath": "estado",      "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "turnos_limpieza",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "area",   "order": "ASCENDING" },
+        { "fieldPath": "estado", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "tickets",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "inquilinoId", "order": "ASCENDING"  },
+        { "fieldPath": "creadoEn",    "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "tickets",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "habitacionId", "order": "ASCENDING" },
+        { "fieldPath": "estado",       "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "tickets",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "categoria", "order": "ASCENDING" },
+        { "fieldPath": "estado",    "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "solicitudes_factura",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "inquilinoId", "order": "ASCENDING"  },
+        { "fieldPath": "creadoEn",    "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "solicitudes_factura",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "estado",   "order": "ASCENDING"  },
+        { "fieldPath": "creadoEn", "order": "DESCENDING" }
       ]
     },
     {
@@ -28,17 +150,43 @@
       "collectionGroup": "sesiones",
       "queryScope": "COLLECTION",
       "fields": [
-        { "fieldPath": "usuarioId",   "order": "ASCENDING" },
-        { "fieldPath": "activa",      "order": "ASCENDING" },
-        { "fieldPath": "fechaInicio", "order": "ASCENDING" }
+        { "fieldPath": "usuarioId",   "order": "ASCENDING"  },
+        { "fieldPath": "activa",      "order": "ASCENDING"  },
+        { "fieldPath": "fechaInicio", "order": "DESCENDING" }
       ]
     },
     {
-      "collectionGroup": "sesiones",
+      "collectionGroup": "gastos",
       "queryScope": "COLLECTION",
       "fields": [
-        { "fieldPath": "usuarioId",   "order": "ASCENDING"  },
-        { "fieldPath": "fechaInicio", "order": "DESCENDING" }
+        { "fieldPath": "mes",  "order": "ASCENDING" },
+        { "fieldPath": "anio", "order": "ASCENDING" },
+        { "fieldPath": "tipo", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "gastos",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "mes",      "order": "ASCENDING"  },
+        { "fieldPath": "anio",     "order": "ASCENDING"  },
+        { "fieldPath": "creadoEn", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "reportes_limpieza",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "turnoId", "order": "ASCENDING" },
+        { "fieldPath": "estado",  "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "reportes_limpieza",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "inquilinoId", "order": "ASCENDING"  },
+        { "fieldPath": "reportadoEn", "order": "DESCENDING" }
       ]
     }
   ],

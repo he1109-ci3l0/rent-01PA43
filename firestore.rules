@@ -1,295 +1,219 @@
 rules_version = '2';
-
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // ─── Helpers ───────────────────────────────────────────────
-
+    // Helper functions
     function isAuth() {
       return request.auth != null;
     }
 
     function isAdmin() {
       return isAuth() && (
-        request.auth.token.email == 'bailleur_main@antioquia43.app' ||
-        request.auth.token.email == 'bailleur_bckp@antioquia43.app'
+        request.auth.token.email.matches('bailleur_.*') ||
+        exists(/databases/$(database)/documents/inquilinos/$(request.auth.uid)) == false
       );
     }
 
-    function isOwner(uid) {
+    function isInquilino(uid) {
       return isAuth() && request.auth.uid == uid;
     }
 
-    function isTenant() {
-      return isAuth() && !isAdmin();
+    function isSelf() {
+      return isAuth() && request.auth.uid == resource.data.inquilinoId;
     }
 
-    // ─── inquilinos ────────────────────────────────────────────
-    // isOwner(uid) cubre lecturas directas por doc-ID;
-    // resource.data.uid == request.auth.uid cubre consultas por campo uid;
-    // resource.data.estado == 'activo' permite listar tenants activos (menciones, limpieza, etc.)
+    function isSelfOrAdmin() {
+      return isSelf() || isAdmin();
+    }
+
+    // Inquilinos
     match /inquilinos/{uid} {
-      allow read:   if isAdmin()
-                    || isOwner(uid)
-                    || (isAuth() && resource.data.uid == request.auth.uid)
-                    || (isAuth() && resource.data.estado == 'activo');
-      allow create: if isAdmin() || isOwner(uid);
-      allow update: if isAdmin() || (isOwner(uid) && onlyUpdatesAllowed(['telefono', 'avatar']));
-      allow delete: if isAdmin();
-    }
-
-    // ─── habitaciones ──────────────────────────────────────────
-    match /habitaciones/{habitacionId} {
-      allow read:   if isAuth();
-      allow write:  if isAdmin();
-    }
-
-    // ─── pagos ─────────────────────────────────────────────────
-    match /pagos/{pagoId} {
-      allow read:   if isAdmin() || (isAuth() && resource.data.inquilinoId == request.auth.uid);
-      allow create: if isAdmin();
-      allow update: if isAdmin();
-      allow delete: if isAdmin();
-    }
-
-    // ─── huespedes_extra ───────────────────────────────────────
-    match /huespedes_extra/{hId} {
-      allow read:   if isAdmin() || (isAuth() && resource.data.inquilinoId == request.auth.uid);
-      allow create: if isAdmin() || (isAuth() && request.resource.data.inquilinoId == request.auth.uid);
-      allow update: if isAdmin() || (isAuth() && resource.data.inquilinoId == request.auth.uid);
-      allow delete: if isAdmin();
-    }
-
-    // ─── visitas ───────────────────────────────────────────────
-    match /visitas/{vId} {
-      allow read:   if isAdmin() || (isAuth() && resource.data.inquilinoId == request.auth.uid);
-      allow create: if isAdmin() || (isAuth() && request.resource.data.inquilinoId == request.auth.uid);
-      allow update: if isAdmin() || (isAuth() && resource.data.inquilinoId == request.auth.uid);
-      allow delete: if isAdmin();
-    }
-
-    // ─── tickets (soporte) ─────────────────────────────────────
-    match /tickets/{tId} {
-      allow read:   if isAdmin() || (isAuth() && resource.data.inquilinoId == request.auth.uid);
-      allow create: if isAuth() && request.resource.data.inquilinoId == request.auth.uid;
-      allow update: if isAdmin()
-        || (isAuth() && resource.data.inquilinoId == request.auth.uid
-            && onlyUpdatesAllowed(['descripcion','actualizadoEn']));
-      allow delete: if isAdmin();
-    }
-
-    // ─── limpieza ──────────────────────────────────────────────
-    match /limpieza/{lId} {
-      allow read:   if isAuth();
-      allow write:  if isAdmin();
-    }
-
-    // ─── lavanderia ────────────────────────────────────────────
-    match /lavanderia/{lId} {
-      allow read:   if isAdmin() || (isAuth() && resource.data.inquilinoId == request.auth.uid);
-      allow create: if isAuth() && request.resource.data.inquilinoId == request.auth.uid;
-      allow update: if isAdmin();
-      allow delete: if isAdmin();
-    }
-
-    // ─── almacenamiento ────────────────────────────────────────
-    match /almacenamiento/{aId} {
-      allow read:   if isAdmin() || (isAuth() && resource.data.inquilinoId == request.auth.uid);
-      allow create: if isAuth() && request.resource.data.inquilinoId == request.auth.uid;
-      allow update: if isAdmin();
-      allow delete: if isAdmin();
-    }
-
-    // ─── noticias ──────────────────────────────────────────────
-    match /noticias/{nId} {
-      allow read:   if isAuth() && (
-                      isAdmin() ||
-                      resource.data.destinatarios == 'todos' ||
-                      request.auth.uid in resource.data.destinatarios
-                    );
-      allow write:  if isAdmin();
-    }
-
-    // ─── chats y mensajes ──────────────────────────────────────
-    // Admin lee todos sin aparecer en participantes (invisible)
-    match /chats/{chatId} {
-      allow read:   if isAdmin()
-                    || (isAuth() && (
-                         resource.data.tipo == 'grupal'
-                         || request.auth.uid in resource.data.participantes));
-      allow create: if isAdmin()
-                    || (isAuth() && request.auth.uid in request.resource.data.participantes);
-      allow update: if isAdmin()
-                    || (isAuth() && request.auth.uid in resource.data.participantes);
-      allow delete: if isAdmin();
-
-      match /mensajes/{msgId} {
-        allow read:   if isAdmin()
-                      || (isAuth() && (
-                           get(/databases/$(database)/documents/chats/$(chatId)).data.tipo == 'grupal'
-                           || request.auth.uid in get(/databases/$(database)/documents/chats/$(chatId)).data.participantes));
-        allow create: if isAuth()
-                      && (get(/databases/$(database)/documents/chats/$(chatId)).data.tipo == 'grupal'
-                          || request.auth.uid in get(/databases/$(database)/documents/chats/$(chatId)).data.participantes)
-                      && request.resource.data.autorId == request.auth.uid;
-        allow update: if isAdmin()
-                      || (isAuth() && onlyUpdatesAllowed(['reacciones','leidoPor']));
-        allow delete: if isAdmin();
-      }
-    }
-
-    // ─── restricciones ─────────────────────────────────────────
-    match /restricciones/{uid} {
-      allow read:   if isAdmin() || isOwner(uid);
-      allow write:  if isAdmin();
-    }
-
-    // ─── apelaciones ───────────────────────────────────────────
-    match /apelaciones/{aId} {
-      allow read:   if isAdmin() || (isAuth() && resource.data.solicitanteId == request.auth.uid);
-      allow create: if isAuth() && request.resource.data.solicitanteId == request.auth.uid;
-      allow update: if isAdmin();
-      allow delete: if isAdmin();
-    }
-
-    // ─── sesiones ──────────────────────────────────────────────
-    match /sesiones/{sId} {
-      allow read:   if isAdmin() || (isAuth() && resource.data.usuarioId == request.auth.uid);
-      allow create: if isAuth() && request.resource.data.usuarioId == request.auth.uid;
-      allow update: if isAuth() && resource.data.usuarioId == request.auth.uid;
-      allow delete: if isAdmin() || (isAuth() && resource.data.usuarioId == request.auth.uid);
-    }
-
-    // ─── facturas ──────────────────────────────────────────────
-    match /facturas/{fId} {
-      allow read:   if isAdmin() || (isAuth() && resource.data.inquilinoId == request.auth.uid);
-      allow write:  if isAdmin();
-    }
-
-    // ─── solicitudes_factura ───────────────────────────────────
-    match /solicitudes_factura/{sfId} {
-      allow read:   if isAdmin() || (isAuth() && resource.data.inquilinoId == request.auth.uid);
-      allow create: if isAdmin() || (isAuth() && request.resource.data.inquilinoId == request.auth.uid);
-      allow update: if isAdmin() || (isAuth() && resource.data.inquilinoId == request.auth.uid);
-      allow delete: if isAdmin();
-    }
-
-    // ─── cupones ──────────────────────────────────────────────
-    match /cupones/{cId} {
-      allow read:   if isAuth();
-      allow write:  if isAdmin();
-    }
-
-    // ─── cupones_usos ─────────────────────────────────────────
-    match /cupones_usos/{uId} {
-      allow read:   if isAdmin() || (isAuth() && resource.data.inquilinoId == request.auth.uid);
-      allow create: if isAuth() && request.resource.data.inquilinoId == request.auth.uid;
-      allow update: if isAdmin();
-      allow delete: if isAdmin();
-    }
-
-    // ─── espacios_almacenamiento ───────────────────────────────
-    match /espacios_almacenamiento/{eId} {
-      allow read: if isAuth();
-      allow create: if isAdmin();
-      allow update: if isAdmin()
-        || (isAuth()
-            && resource.data.estado == 'libre'
-            && request.resource.data.inquilinoId == request.auth.uid
-            && request.resource.data.estado == 'ocupado')
-        || (isAuth()
-            && resource.data.inquilinoId == request.auth.uid
-            && request.resource.data.estado == 'libre');
-      allow delete: if isAdmin();
-    }
-
-    // ─── turnos_limpieza ──────────────────────────────────────
-    match /turnos_limpieza/{tId} {
-      allow read:   if isAuth();
-      allow create: if isAdmin();
-      allow update: if isAdmin()
-        || (isAuth() && resource.data.inquilinoId == request.auth.uid
-            && onlyUpdatesAllowed(['fotoUrl','fotoSubidaEn','estado','privacidad','horaInicio','actualizadoEn']));
-      allow delete: if isAdmin();
-    }
-
-    // ─── permutas_limpieza ────────────────────────────────────
-    match /permutas_limpieza/{pId} {
-      allow read:   if isAdmin() || (isAuth() && resource.data.solicitanteId == request.auth.uid);
-      allow create: if isAuth() && request.resource.data.solicitanteId == request.auth.uid;
-      allow update: if isAdmin();
-      allow delete: if isAdmin();
-    }
-
-    // ─── reservas_lavanderia ──────────────────────────────────
-    match /reservas_lavanderia/{rId} {
-      allow read:   if isAdmin() || (isAuth() && resource.data.inquilinoId == request.auth.uid);
-      allow create: if isAdmin() || (isAuth() && request.resource.data.inquilinoId == request.auth.uid);
-      allow update: if isAdmin() || (isAuth() && resource.data.inquilinoId == request.auth.uid);
-      allow delete: if isAdmin();
-    }
-
-    // ─── scores ────────────────────────────────────────────────
-    // isOwner(inquilinoId) cubre lectura directa por doc-ID;
-    // resource.data.inquilinoId == request.auth.uid cubre queries where('inquilinoId','==',uid)
-    match /scores/{inquilinoId} {
-      allow read:   if isAdmin()
-                    || isOwner(inquilinoId)
-                    || (isAuth() && resource.data.inquilinoId == request.auth.uid);
-      allow write:  if isAdmin();
-    }
-
-    // ─── configuracion ─────────────────────────────────────────
-    match /configuracion/{docId} {
-      allow read:   if isAuth();
-      allow write:  if isAdmin();
-    }
-
-    // ─── expedientes ───────────────────────────────────────────
-    match /expedientes/{uid} {
-      allow read:   if isOwner(uid) || isAdmin();
-      allow create: if isOwner(uid) || isAdmin();
-      allow update: if isAdmin()
-        || (isOwner(uid) && onlyUpdatesAllowed([
-             'firmaDigital','firmadoEn','contactosEmergencia','mascotas','actualizadoEn'
-           ]));
-      allow delete: if isAdmin();
-    }
-
-    // ─── documentos (sub-colección de inquilinos) ──────────────
-    match /inquilinos/{uid}/documentos/{docId} {
-      allow read:   if isOwner(uid) || isAdmin();
-      allow create: if isAdmin() || isOwner(uid);
-      allow update: if isAdmin()
-        || (isOwner(uid) && onlyUpdatesAllowed(['descargas', 'estado', 'firmadoEn']));
-      allow delete: if isAdmin();
-    }
-
-    // ─── documentosPlantillas ──────────────────────────────────
-    match /documentosPlantillas/{tipo} {
-      allow read:  if isAuth();
+      allow read: if isAuth() && (request.auth.uid == uid || isAdmin());
       allow write: if isAdmin();
     }
 
-    // ─── reportes_limpieza ─────────────────────────────────────
-    match /reportes_limpieza/{rId} {
-      allow read:   if isAdmin();
-      allow create: if isAuth();
-      allow update: if isAdmin();
-      allow delete: if isAdmin();
+    // Habitaciones
+    match /habitaciones/{id} {
+      allow read: if isAuth();
+      allow write: if isAdmin();
     }
 
-    // ─── alertas_seguridad ─────────────────────────────────────
-    match /alertas_seguridad/{aId} {
-      allow read:   if isAdmin();
-      allow create: if isAuth();
+    // Pagos
+    match /pagos/{id} {
+      allow read: if isSelfOrAdmin();
+      allow create: if isAuth() && request.resource.data.inquilinoId == request.auth.uid;
       allow update: if isAdmin();
-      allow delete: if isAdmin();
     }
 
-    // ─── Helper: campos permitidos para update parcial ─────────
-    function onlyUpdatesAllowed(fields) {
-      return request.resource.data.diff(resource.data).affectedKeys().hasOnly(fields);
+    // Tickets
+    match /tickets/{id} {
+      allow read: if isSelfOrAdmin();
+      allow create: if isAuth() && request.resource.data.inquilinoId == request.auth.uid;
+      allow update: if isSelfOrAdmin();
+    }
+
+    // Visitas
+    match /visitas/{id} {
+      allow read: if isSelfOrAdmin();
+      allow create: if isAuth() && request.resource.data.inquilinoId == request.auth.uid;
+      allow update: if isSelfOrAdmin();
+    }
+
+    // Turnos limpieza
+    match /turnos_limpieza/{id} {
+      allow read: if isAuth();
+      allow write: if isAuth();
+    }
+
+    // Permutas limpieza
+    match /permutas_limpieza/{id} {
+      allow read: if isAuth();
+      allow create: if isAuth();
+      allow update: if isAdmin();
+    }
+
+    // Reportes limpieza
+    match /reportes_limpieza/{id} {
+      allow read: if isAdmin();
+      allow create: if isAuth();
+    }
+
+    // Lavanderia
+    match /lavanderia/{id} {
+      allow read: if isSelfOrAdmin();
+      allow write: if isAuth();
+    }
+
+    // Reservas lavanderia
+    match /reservas_lavanderia/{id} {
+      allow read: if isSelfOrAdmin();
+      allow create: if isAuth() && request.resource.data.inquilinoId == request.auth.uid;
+      allow update: if isSelfOrAdmin();
+    }
+
+    // Almacenamiento
+    match /almacenamiento/{id} {
+      allow read: if isSelfOrAdmin();
+      allow write: if isAdmin();
+    }
+
+    // Espacios almacenamiento
+    match /espacios_almacenamiento/{id} {
+      allow read: if isAuth();
+      allow write: if isAdmin();
+    }
+
+    // Huespedes extra
+    match /huespedes_extra/{id} {
+      allow read: if isSelfOrAdmin();
+      allow create: if isAuth() && request.resource.data.inquilinoId == request.auth.uid;
+      allow update: if isSelfOrAdmin();
+    }
+
+    // Noticias
+    match /noticias/{id} {
+      allow read: if isAuth();
+      allow write: if isAdmin();
+    }
+
+    // Chats
+    match /chats/{chatId} {
+      allow read: if isAuth();
+      allow write: if isAdmin();
+
+      match /mensajes/{msgId} {
+        allow read: if isAuth();
+        allow create: if isAuth();
+      }
+    }
+
+    // Sesiones
+    match /sesiones/{id} {
+      allow read: if isAuth() && (resource.data.usuarioId == request.auth.uid || isAdmin());
+      allow create: if isAuth();
+      allow update: if isAuth() && (resource.data.usuarioId == request.auth.uid || isAdmin());
+    }
+
+    // Alertas seguridad
+    match /alertas_seguridad/{id} {
+      allow read: if isAdmin();
+      allow create: if isAuth();
+      allow update: if isAdmin();
+    }
+
+    // Expedientes
+    match /expedientes/{uid} {
+      allow read: if isAuth() && (request.auth.uid == uid || isAdmin());
+      allow write: if isAdmin();
+    }
+
+    // Documentos de expediente (subcoleccion)
+    match /inquilinos/{uid}/documentos/{docId} {
+      allow read: if isAuth() && (request.auth.uid == uid || isAdmin());
+      allow create: if isAdmin();
+      allow update: if isAuth() && (request.auth.uid == uid || isAdmin());
+    }
+
+    // Facturas
+    match /facturas/{id} {
+      allow read: if isSelfOrAdmin();
+      allow write: if isAdmin();
+    }
+
+    // Solicitudes factura
+    match /solicitudes_factura/{id} {
+      allow read: if isSelfOrAdmin();
+      allow create: if isAuth() && request.resource.data.inquilinoId == request.auth.uid;
+      allow update: if isAdmin();
+    }
+
+    // Cupones
+    match /cupones/{id} {
+      allow read: if isAuth();
+      allow write: if isAdmin();
+    }
+
+    // Cupones usos
+    match /cupones_usos/{id} {
+      allow read: if isSelfOrAdmin();
+      allow create: if isAuth();
+    }
+
+    // Configuracion
+    match /configuracion/{id} {
+      allow read: if isAuth();
+      allow write: if isAdmin();
+    }
+
+    // Scores
+    match /scores/{id} {
+      allow read: if isAuth() && (resource.data.inquilinoId == request.auth.uid || isAdmin());
+      allow write: if isAdmin();
+    }
+
+    // Restricciones
+    match /restricciones/{id} {
+      allow read: if isSelfOrAdmin();
+      allow write: if isAdmin();
+    }
+
+    // Apelaciones
+    match /apelaciones/{id} {
+      allow read: if isSelfOrAdmin();
+      allow create: if isAuth() && request.resource.data.inquilinoId == request.auth.uid;
+      allow update: if isAdmin();
+    }
+
+    // Gastos
+    match /gastos/{id} {
+      allow read: if isAdmin();
+      allow write: if isAdmin();
+    }
+
+    // Documentos plantillas
+    match /documentosPlantillas/{id} {
+      allow read: if isAuth();
+      allow write: if isAdmin();
     }
   }
 }

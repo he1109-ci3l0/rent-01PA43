@@ -70,7 +70,7 @@ export default function CatalogoScreen({ rooms, onClose }: Props) {
       <View style={styles.header}>
         {onClose && (
           <TouchableOpacity onPress={onClose} style={styles.closeBtn} hitSlop={8}>
-            <Ionicons name="close" size={22} color={cartasBosque.musgo} />
+            <Ionicons name="close" size={22} color={cartasBosque.helecho} />
           </TouchableOpacity>
         )}
         <View style={styles.headerText}>
@@ -274,7 +274,7 @@ const styles = StyleSheet.create({
   eyebrow: {
     fontFamily: 'SpaceMono_400Regular',
     fontSize: 10,
-    color: cartasBosque.musgo,
+    color: cartasBosque.helecho,
     letterSpacing: 1.5,
     textTransform: 'uppercase',
   },
@@ -305,7 +305,7 @@ const styles = StyleSheet.create({
   pisoLabel: {
     fontFamily: 'Inter_600SemiBold',
     fontSize: 13,
-    color: cartasBosque.musgo,
+    color: cartasBosque.helecho,
     letterSpacing: 0.3,
   },
   lista: { gap: spacing[2] },
@@ -408,14 +408,14 @@ const styles = StyleSheet.create({
   modalInfoLabel: { fontFamily: 'SpaceMono_400Regular', fontSize: 11, color: cartasBosque.helecho },
   modalInfoValue: { fontFamily: 'Inter_500Medium', fontSize: 13, color: cartasBosque.tinta },
 
-  inputLabel: { fontFamily: 'SpaceMono_400Regular', fontSize: 11, color: cartasBosque.musgo, letterSpacing: 0.5 },
+  inputLabel: { fontFamily: 'SpaceMono_400Regular', fontSize: 11, color: cartasBosque.helecho, letterSpacing: 0.5 },
   inputRow: {
     flexDirection: 'row', alignItems: 'center', gap: spacing[2],
     borderWidth: 1, borderColor: cartasBosque.pergaminoOscuro,
     borderRadius: borderRadius.md, paddingHorizontal: spacing[3],
     backgroundColor: cartasBosque.pergamino,
   },
-  inputPrefix: { fontFamily: 'Inter_600SemiBold', fontSize: 16, color: cartasBosque.musgo },
+  inputPrefix: { fontFamily: 'Inter_600SemiBold', fontSize: 16, color: cartasBosque.helecho },
   input: {
     flex: 1, paddingVertical: spacing[3],
     fontFamily: 'Inter_600SemiBold', fontSize: 20, color: cartasBosque.tinta,
@@ -427,7 +427,7 @@ const styles = StyleSheet.create({
     flex: 1, paddingVertical: spacing[3], alignItems: 'center',
     borderRadius: borderRadius.md, borderWidth: 1, borderColor: cartasBosque.pergaminoOscuro,
   },
-  modalBtnCancelText: { fontFamily: 'Inter_500Medium', fontSize: 14, color: cartasBosque.musgo },
+  modalBtnCancelText: { fontFamily: 'Inter_500Medium', fontSize: 14, color: cartasBosque.helecho },
   modalBtnSave: {
     flex: 1, paddingVertical: spacing[3], alignItems: 'center',
     borderRadius: borderRadius.md, backgroundColor: cartasBosque.bosque,

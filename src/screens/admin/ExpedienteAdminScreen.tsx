@@ -35,7 +35,7 @@ function formatHora(ts: any): string {
 
 const NIVEL_COLOR: Record<string, string> = {
   pesimo: '#960018', moroso: '#8A6A72', regular: '#8A9E80',
-  bueno: cartasBosque.musgo, excelente: cartasBosque.bosque,
+  bueno: cartasBosque.helecho, excelente: cartasBosque.bosque,
 };
 const NIVEL_LABEL: Record<string, string> = {
   pesimo: 'Pésimo', moroso: 'Moroso', regular: 'Regular',
@@ -784,7 +784,7 @@ function DetalleExpediente({
             <View key={h.id}>
               <View style={d.divider} />
               <View style={d.ocupanteRow}>
-                <Ionicons name="person-outline" size={12} color={cartasBosque.musgo} />
+                <Ionicons name="person-outline" size={12} color={cartasBosque.helecho} />
                 <Text style={d.ocupanteNombre}>{h.nombre} {h.apellido}</Text>
                 <Text style={d.ocupanteTipo}>
                   {h.modalidad === 'mensual' ? 'Permanente' : 'Temporal'} · ${h.montoMensual.toLocaleString('es-MX')}/mes
@@ -815,7 +815,7 @@ function DetalleExpediente({
             <Seccion label="Mascotas" />
             {expediente!.mascotas.map(m => (
               <View key={m.id} style={d.mascotaRow}>
-                <Ionicons name="paw-outline" size={13} color={cartasBosque.musgo} />
+                <Ionicons name="paw-outline" size={13} color={cartasBosque.helecho} />
                 <Text style={d.mascotaText}>{m.descripcion}</Text>
               </View>
             ))}

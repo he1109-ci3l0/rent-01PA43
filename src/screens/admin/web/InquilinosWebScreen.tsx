@@ -6,7 +6,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { createUserWithEmailAndPassword, getAuth } from 'firebase/auth';
 import {
-  setDoc, doc, getDocs, getDoc, onSnapshot,
+  setDoc, addDoc, doc, getDocs, getDoc, onSnapshot,
   updateDoc, query, where, Timestamp,
 } from 'firebase/firestore';
 import { cartasBosque } from '@/constants/colors';
@@ -149,6 +149,7 @@ function NuevoInquilinoForm({ onDone }: { onDone: () => void }) {
       const [y, m, d] = form.fechaIngreso.split('-').map(Number);
       const fechaIngreso = Timestamp.fromDate(new Date(y, m - 1, d));
 
+      // PASO 1 — Crear documento inquilino
       await setDoc(doc(db, 'inquilinos', user.uid), {
         id:              user.uid,
         uid:             user.uid,
@@ -156,23 +157,57 @@ function NuevoInquilinoForm({ onDone }: { onDone: () => void }) {
         apellido:        form.apellido.trim(),
         email:           creds.email,
         telefono:        form.telefono.trim(),
-        documentoTipo:   'CC',
+        documentoTipo:   'CURP',
         documentoNumero: form.curp.trim().toUpperCase(),
         habitacionId:    hab.id,
+        habitacionNumero: hab.numero,
         fechaIngreso,
         fechaSalida:     null,
         estado:          'activo',
         rol:             'inquilino',
         requiresAdminAuth: false,
-        rentaMensual:    form.rentaMensual ? Number(form.rentaMensual) : undefined,
+        rentaMensual:    form.rentaMensual ? Number(form.rentaMensual) : 0,
         creadoEn:        ahora,
         actualizadoEn:   ahora,
       });
 
+      // PASO 2 — Marcar habitación como ocupada
+      await updateDoc(doc(db, 'habitaciones', hab.id), {
+        estado:           'ocupada',
+        inquilinoId:      user.uid,
+        inquilinoNombre:  `${form.nombre.trim()} ${form.apellido.trim()}`,
+        actualizadoEn:    ahora,
+      });
+
+      // PASO 3 — Inicializar expediente
       await inicializarExpediente(user.uid, {
         habitacionId:     hab.id,
         habitacionNumero: hab.numero,
       }).catch(() => {});
+
+      // PASO 4 — Crear primer pago
+      const rentaMensual = form.rentaMensual ? Number(form.rentaMensual) : 0;
+      if (rentaMensual > 0) {
+        const vencimiento = new Date(fechaIngreso.toDate());
+        vencimiento.setDate(vencimiento.getDate() + 30);
+        await addDoc(collections.pagos, {
+          inquilinoId:      user.uid,
+          habitacionId:     hab.id,
+          habitacionNumero: hab.numero,
+          inquilinoNombre:  `${form.nombre.trim()} ${form.apellido.trim()}`,
+          facturaId:        null,
+          monto:            rentaMensual,
+          montoPagado:      0,
+          concepto:         'arriendo',
+          modalidad:        'mensual',
+          fechaVencimiento: Timestamp.fromDate(vencimiento),
+          fechaPago:        null,
+          estado:           'pendiente',
+          metodoPago:       null,
+          creadoEn:         ahora,
+          actualizadoEn:    ahora,
+        });
+      }
 
       Alert.alert(
         '¡Inquilino registrado!',
@@ -1159,13 +1194,13 @@ const p = StyleSheet.create({
   scroll:   { flex: 1, backgroundColor: cartasBosque.bruma },
   content:  { maxWidth: 620, padding: spacing[6], paddingBottom: spacing[12] },
   heading:  { fontFamily: 'Inter_700Bold', fontSize: 22, color: cartasBosque.tinta, marginBottom: spacing[1] },
-  sub:      { fontFamily: 'Inter_400Regular', fontSize: 13, color: cartasBosque.musgo, marginBottom: spacing[6], lineHeight: 20 },
+  sub:      { fontFamily: 'Inter_400Regular', fontSize: 13, color: cartasBosque.helecho, marginBottom: spacing[6], lineHeight: 20 },
   mono:     { fontFamily: 'SpaceMono_400Regular', fontSize: 12, color: cartasBosque.bosque },
   card:       { backgroundColor: cartasBosque.pergamino, borderRadius: borderRadius.md, borderWidth: 1, borderColor: cartasBosque.pergaminoOscuro, padding: spacing[4], marginBottom: spacing[3] },
   cardHeader: { flexDirection: 'row', alignItems: 'flex-start', gap: spacing[3] },
   cardNombre: { fontFamily: 'Inter_600SemiBold', fontSize: 14, color: cartasBosque.tinta, marginBottom: 2 },
   cardMeta:   { fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.helecho },
-  cardVer:    { color: cartasBosque.musgo },
+  cardVer:    { color: cartasBosque.helecho },
   cardFirma:  { color: '#960018' },
   cardUrl:    { fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.bosque, marginTop: 4 },
   cardUrlEmpty:{ fontFamily: 'Inter_400Regular', fontSize: 11, color: '#960018', fontStyle: 'italic', marginTop: 4 },
@@ -1173,7 +1208,7 @@ const p = StyleSheet.create({
   overlay:    { flex: 1, backgroundColor: 'rgba(18,42,31,0.5)', alignItems: 'center', justifyContent: 'center', padding: spacing[6] },
   sheet:      { backgroundColor: cartasBosque.bruma, borderRadius: borderRadius.xl, padding: spacing[6], width: '100%', maxWidth: 480 },
   sheetTitulo:{ fontFamily: 'Inter_700Bold', fontSize: 18, color: cartasBosque.tinta, marginBottom: 2 },
-  sheetSub:   { fontFamily: 'Inter_400Regular', fontSize: 13, color: cartasBosque.musgo, marginBottom: spacing[4] },
+  sheetSub:   { fontFamily: 'Inter_400Regular', fontSize: 13, color: cartasBosque.helecho, marginBottom: spacing[4] },
   sheetLabel: { fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.helecho, letterSpacing: 0.5, textTransform: 'uppercase', marginBottom: spacing[1], marginTop: spacing[3] },
   sheetInput: { backgroundColor: cartasBosque.pergamino, borderRadius: borderRadius.md, borderWidth: 1, borderColor: cartasBosque.pergaminoOscuro, paddingHorizontal: spacing[3], paddingVertical: spacing[2] + 2, fontFamily: 'Inter_400Regular', fontSize: 13, color: cartasBosque.tinta },
   sheetBtns:  { flexDirection: 'row', gap: spacing[3], marginTop: spacing[5] },
@@ -1187,9 +1222,9 @@ const f = StyleSheet.create({
   scroll:  { flex: 1, backgroundColor: cartasBosque.bruma },
   content: { maxWidth: 620, padding: spacing[6], paddingBottom: spacing[12] },
   heading: { fontFamily: 'Inter_700Bold', fontSize: 22, color: cartasBosque.tinta, marginBottom: spacing[1] },
-  sub:     { fontFamily: 'Inter_400Regular', fontSize: 13, color: cartasBosque.musgo, marginBottom: spacing[6], lineHeight: 20 },
+  sub:     { fontFamily: 'Inter_400Regular', fontSize: 13, color: cartasBosque.helecho, marginBottom: spacing[6], lineHeight: 20 },
   row:       { marginBottom: spacing[4] },
-  rowLabel:  { fontFamily: 'SpaceMono_400Regular', fontSize: 11, color: cartasBosque.musgo, letterSpacing: 0.5, textTransform: 'uppercase', marginBottom: spacing[1.5] },
+  rowLabel:  { fontFamily: 'SpaceMono_400Regular', fontSize: 11, color: cartasBosque.helecho, letterSpacing: 0.5, textTransform: 'uppercase', marginBottom: spacing[1.5] },
   input: {
     backgroundColor: cartasBosque.pergamino, borderRadius: borderRadius.md,
     borderWidth: 1, borderColor: cartasBosque.pergaminoOscuro,
@@ -1199,11 +1234,11 @@ const f = StyleSheet.create({
   habsGrid:         { flexDirection: 'row', flexWrap: 'wrap', gap: spacing[2] },
   habChip:          { paddingHorizontal: spacing[3], paddingVertical: spacing[1.5], borderRadius: borderRadius.sm, borderWidth: 1, borderColor: cartasBosque.pergaminoOscuro, backgroundColor: cartasBosque.pergamino },
   habChipActivo:    { backgroundColor: cartasBosque.bosque, borderColor: cartasBosque.bosque },
-  habChipText:      { fontFamily: 'SpaceMono_400Regular', fontSize: 12, color: cartasBosque.musgo },
+  habChipText:      { fontFamily: 'SpaceMono_400Regular', fontSize: 12, color: cartasBosque.helecho },
   habChipTextActivo:{ color: '#FFFFFF' },
   previewBox:   { backgroundColor: cartasBosque.pergamino, borderRadius: borderRadius.md, borderWidth: 1, borderColor: cartasBosque.pergaminoOscuro, padding: spacing[4], marginBottom: spacing[4] },
   previewTitle: { fontFamily: 'Inter_600SemiBold', fontSize: 14, color: cartasBosque.tinta, marginBottom: spacing[2] },
-  previewRow:   { fontFamily: 'Inter_400Regular', fontSize: 13, color: cartasBosque.musgo, marginBottom: spacing[1] },
+  previewRow:   { fontFamily: 'Inter_400Regular', fontSize: 13, color: cartasBosque.helecho, marginBottom: spacing[1] },
   previewVal:   { fontFamily: 'SpaceMono_400Regular', color: cartasBosque.bosque },
   previewNote:  { fontFamily: 'Inter_400Regular', fontSize: 11, color: cartasBosque.helecho, marginTop: spacing[2], lineHeight: 16 },
   btnRow:           { flexDirection: 'row', gap: spacing[3], marginTop: spacing[4] },

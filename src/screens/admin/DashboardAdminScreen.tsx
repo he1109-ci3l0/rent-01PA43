@@ -29,7 +29,7 @@ interface Stats {
 
 const NIVEL_COLOR: Record<string, string> = {
   pesimo: '#960018', moroso: '#8A6A72', regular: cartasBosque.helecho,
-  bueno:  cartasBosque.musgo, excelente: cartasBosque.bosque,
+  bueno:  cartasBosque.helecho, excelente: cartasBosque.bosque,
 };
 
 export default function DashboardAdminScreen() {
@@ -123,7 +123,7 @@ export default function DashboardAdminScreen() {
             label="Pagos pend."
             value={String(stats.pagosPendientes)}
             sub={stats.pagosVencidos > 0 ? `${stats.pagosVencidos} vencidos` : undefined}
-            color={stats.pagosVencidos > 0 ? cartasBosque.corteza : '#CDB29D'}
+            color={stats.pagosVencidos > 0 ? cartasBosque.alertaBorde : '#CDB29D'}
             icon="card"
           />
           <MetricCard
@@ -135,7 +135,7 @@ export default function DashboardAdminScreen() {
           <MetricCard
             label="Visitas activas"
             value={String(stats.visitasActivas)}
-            color={cartasBosque.musgo}
+            color={cartasBosque.helecho}
             icon="people"
           />
         </View>
@@ -190,7 +190,7 @@ export default function DashboardAdminScreen() {
 
 const ACCESOS = [
   { id: 'pagos',     label: 'Pagos',      icon: 'card',     color: cartasBosque.bosque,  route: 'Pagos' },
-  { id: 'inq',       label: 'Inquilinos', icon: 'people',   color: cartasBosque.musgo,   route: 'Inquilinos' },
+  { id: 'inq',       label: 'Inquilinos', icon: 'people',   color: cartasBosque.helecho,   route: 'Inquilinos' },
   { id: 'tickets',   label: 'Tickets',    icon: 'headset',  color: '#4A5E48',            route: 'Tickets' },
   { id: 'config',    label: 'Config',     icon: 'settings', color: cartasBosque.helecho, route: 'Config' },
 ];
@@ -216,12 +216,12 @@ const s = StyleSheet.create({
   content:  { padding: spacing[5], paddingBottom: spacing[10] },
 
   header:  { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: spacing[4] },
-  eyebrow: { fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.musgo, letterSpacing: 1, textTransform: 'uppercase', marginBottom: 2 },
+  eyebrow: { fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.helecho, letterSpacing: 1, textTransform: 'uppercase', marginBottom: 2 },
   title:   { fontFamily: 'Inter_700Bold', fontSize: 26, color: cartasBosque.tinta, letterSpacing: -0.3 },
 
   alertaBanner: {
     flexDirection: 'row', alignItems: 'center', gap: spacing[2],
-    backgroundColor: cartasBosque.corteza, borderRadius: borderRadius.md,
+    backgroundColor: cartasBosque.alertaBorde, borderRadius: borderRadius.md,
     padding: spacing[3], marginBottom: spacing[4],
   },
   alertaBannerText: { fontFamily: 'Inter_500Medium', fontSize: 13, color: '#FFFFFF', flex: 1 },
@@ -236,7 +236,7 @@ const s = StyleSheet.create({
   },
   metricIcon:  { width: 36, height: 36, borderRadius: borderRadius.sm, alignItems: 'center', justifyContent: 'center', marginBottom: spacing[2] },
   metricValue: { fontFamily: 'Inter_700Bold', fontSize: 24, letterSpacing: -0.5 },
-  metricLabel: { fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.musgo, letterSpacing: 0.5, marginTop: 2 },
+  metricLabel: { fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.helecho, letterSpacing: 0.5, marginTop: 2 },
   metricSub:   { fontFamily: 'SpaceMono_400Regular', fontSize: 9, color: cartasBosque.helecho, marginTop: 2 },
 
   sectionTitle: { fontFamily: 'Inter_600SemiBold', fontSize: 15, color: cartasBosque.tinta, marginTop: spacing[5], marginBottom: spacing[3] },
