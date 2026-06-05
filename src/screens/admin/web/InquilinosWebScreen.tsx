@@ -25,7 +25,7 @@ import type {
   ReservaLavanderia, DocumentoPlantilla, EstadoPago, DocumentoExpediente,
 } from '@/types/firestore';
 
-type Tab = 'lista' | 'nuevo' | 'plantillas';
+type Tab = 'lista' | 'pendientes' | 'nuevo' | 'plantillas';
 
 // ─── Módulos ──────────────────────────────────────────────────
 
@@ -984,24 +984,248 @@ const prof = StyleSheet.create({
   tabBtnTextActive:{ color: cartasBosque.bosque, fontFamily: 'Inter_600SemiBold' },
 });
 
+// ─── PendientesPanel ──────────────────────────────────────────
+
+function PendientesPanel({
+  inquilinos, habitaciones, onAprobado,
+}: {
+  inquilinos: Inquilino[];
+  habitaciones: Habitacion[];
+  onAprobado: () => void;
+}) {
+  const [selec, setSelec] = useState<Inquilino | null>(null);
+  const [habitacionId, setHabitacionId] = useState('');
+  const [renta, setRenta] = useState('');
+  const [guardando, setGuardando] = useState(false);
+  const [error, setError] = useState('');
+
+  const habsLibres = habitaciones.filter(h => h.estado === 'disponible' && h.habilitada);
+
+  async function handleAprobar() {
+    if (!selec || !habitacionId || !renta) {
+      setError('Selecciona habitación y renta.');
+      return;
+    }
+    setGuardando(true);
+    setError('');
+    try {
+      const hab = habitaciones.find(h => h.id === habitacionId)!;
+      const ahora = Timestamp.now();
+      await updateDoc(doc(db, 'inquilinos', selec.id), {
+        estado:           'activo',
+        requiresAdminAuth: false,
+        habitacionId:     hab.id,
+        habitacionNumero: hab.numero,
+        rentaMensual:     Number(renta),
+        actualizadoEn:    ahora,
+      });
+      await updateDoc(doc(db, 'habitaciones', hab.id), {
+        estado:          'ocupada',
+        inquilinoId:     selec.id,
+        inquilinoNombre: `${selec.nombre} ${selec.apellido}`,
+        actualizadoEn:   ahora,
+      });
+      await inicializarExpediente(selec.id, {
+        habitacionId:     hab.id,
+        habitacionNumero: hab.numero,
+      }).catch(() => {});
+      const vencimiento = new Date();
+      vencimiento.setDate(vencimiento.getDate() + 30);
+      await addDoc(collections.pagos, {
+        inquilinoId:      selec.id,
+        habitacionId:     hab.id,
+        habitacionNumero: hab.numero,
+        inquilinoNombre:  `${selec.nombre} ${selec.apellido}`,
+        facturaId:        null,
+        monto:            Number(renta),
+        montoPagado:      0,
+        concepto:         'arriendo',
+        modalidad:        'mensual',
+        fechaVencimiento: Timestamp.fromDate(vencimiento),
+        fechaPago:        null,
+        estado:           'pendiente',
+        metodoPago:       null,
+        creadoEn:         ahora,
+        actualizadoEn:    ahora,
+      });
+      setSelec(null);
+      setHabitacionId('');
+      setRenta('');
+      onAprobado();
+    } catch (e: any) {
+      setError('Error: ' + (e.message ?? 'intenta de nuevo'));
+    } finally {
+      setGuardando(false);
+    }
+  }
+
+  async function handleRechazar(inq: Inquilino) {
+    Alert.alert(
+      'Rechazar solicitud',
+      `¿Rechazar la solicitud de ${inq.nombre} ${inq.apellido}? La cuenta quedará inactiva.`,
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Rechazar', style: 'destructive',
+          onPress: async () => {
+            await updateDoc(doc(db, 'inquilinos', inq.id), {
+              estado: 'inactivo',
+              actualizadoEn: Timestamp.now(),
+            });
+          },
+        },
+      ],
+    );
+  }
+
+  if (inquilinos.length === 0) {
+    return (
+      <View style={pp.empty}>
+        <Ionicons name="checkmark-circle-outline" size={36} color={cartasBosque.helecho} />
+        <Text style={pp.emptyText}>Sin solicitudes pendientes</Text>
+      </View>
+    );
+  }
+
+  return (
+    <View style={{ flex: 1 }}>
+      <ScrollView contentContainerStyle={pp.scroll}>
+        <Text style={pp.seccion}>Solicitudes de registro</Text>
+        {inquilinos.map(inq => (
+          <View key={inq.id} style={pp.card}>
+            <View style={pp.cardHeader}>
+              <View style={{ flex: 1 }}>
+                <Text style={pp.nombre}>{inq.nombre} {inq.apellido}</Text>
+                <Text style={pp.meta}>{inq.email} · {inq.telefono}</Text>
+                <Text style={pp.meta}>CURP: {inq.documentoNumero}</Text>
+                <Text style={pp.meta}>
+                  Registrado: {inq.creadoEn
+                    ? (inq.creadoEn as any).toDate().toLocaleDateString('es-MX')
+                    : '—'}
+                </Text>
+              </View>
+              <View style={pp.actions}>
+                <TouchableOpacity
+                  style={pp.btnAprobar}
+                  onPress={() => setSelec(selec?.id === inq.id ? null : inq)}
+                >
+                  <Text style={pp.btnAprobarText}>
+                    {selec?.id === inq.id ? 'Cancelar' : 'Aprobar'}
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={pp.btnRechazar}
+                  onPress={() => handleRechazar(inq)}
+                >
+                  <Text style={pp.btnRechazarText}>Rechazar</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            {selec?.id === inq.id && (
+              <View style={pp.form}>
+                <Text style={pp.formLabel}>Habitación</Text>
+                <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: spacing[2] }}>
+                  <View style={{ flexDirection: 'row', gap: spacing[1] }}>
+                    {habsLibres.map(h => (
+                      <TouchableOpacity
+                        key={h.id}
+                        style={[pp.habChip, habitacionId === h.id && pp.habChipActivo]}
+                        onPress={() => {
+                          setHabitacionId(h.id);
+                          setRenta(String(h.precioMensual));
+                        }}
+                      >
+                        <Text style={[pp.habChipText, habitacionId === h.id && pp.habChipTextActivo]}>
+                          {h.numero} · ${h.precioMensual.toLocaleString('es-MX')}
+                        </Text>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                </ScrollView>
+
+                <Text style={pp.formLabel}>Renta mensual (MXN)</Text>
+                <TextInput
+                  style={pp.input}
+                  value={renta}
+                  onChangeText={setRenta}
+                  keyboardType="numeric"
+                  placeholder="0"
+                  placeholderTextColor={cartasBosque.niebla}
+                />
+
+                {error ? <Text style={pp.error}>{error}</Text> : null}
+
+                <TouchableOpacity
+                  style={[pp.btnConfirmar, guardando && { opacity: 0.6 }]}
+                  onPress={handleAprobar}
+                  disabled={guardando}
+                >
+                  {guardando
+                    ? <ActivityIndicator color={cartasBosque.bruma} />
+                    : <Text style={pp.btnConfirmarText}>Confirmar aprobación</Text>
+                  }
+                </TouchableOpacity>
+              </View>
+            )}
+          </View>
+        ))}
+      </ScrollView>
+    </View>
+  );
+}
+
+const pp = StyleSheet.create({
+  empty:    { flex: 1, alignItems: 'center', justifyContent: 'center', gap: spacing[3] },
+  emptyText:{ fontFamily: 'Inter_400Regular', fontSize: 14, color: cartasBosque.helecho },
+  scroll:   { padding: spacing[4], paddingBottom: spacing[8] },
+  seccion:  { fontFamily: 'Inter_600SemiBold', fontSize: 14, color: cartasBosque.tinta, marginBottom: spacing[3] },
+  card:     { backgroundColor: cartasBosque.pergamino, borderRadius: borderRadius.md, borderWidth: 1, borderColor: cartasBosque.pergaminoOscuro, padding: spacing[4], marginBottom: spacing[3] },
+  cardHeader: { flexDirection: 'row', alignItems: 'flex-start', gap: spacing[3] },
+  nombre:   { fontFamily: 'Inter_600SemiBold', fontSize: 14, color: cartasBosque.tinta, marginBottom: 2 },
+  meta:     { fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.helecho, marginBottom: 1 },
+  actions:  { gap: spacing[2] },
+  btnAprobar:  { backgroundColor: cartasBosque.bosque, borderRadius: borderRadius.sm, paddingHorizontal: spacing[3], paddingVertical: spacing[1] + 2, alignItems: 'center' },
+  btnAprobarText: { fontFamily: 'Inter_600SemiBold', fontSize: 12, color: cartasBosque.bruma },
+  btnRechazar: { borderWidth: 1, borderColor: cartasBosque.alertaBorde, borderRadius: borderRadius.sm, paddingHorizontal: spacing[3], paddingVertical: spacing[1] + 2, alignItems: 'center' },
+  btnRechazarText: { fontFamily: 'Inter_400Regular', fontSize: 12, color: cartasBosque.alertaBorde },
+  form:     { marginTop: spacing[3], paddingTop: spacing[3], borderTopWidth: 1, borderTopColor: cartasBosque.pergaminoOscuro, gap: spacing[2] },
+  formLabel:{ fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.helecho, letterSpacing: 0.5 },
+  input:    { backgroundColor: cartasBosque.bruma, borderRadius: borderRadius.sm, borderWidth: 1, borderColor: cartasBosque.pergaminoOscuro, paddingHorizontal: spacing[3], paddingVertical: spacing[2], fontFamily: 'Inter_400Regular', fontSize: 14, color: cartasBosque.tinta },
+  habChip:  { borderRadius: borderRadius.sm, borderWidth: 1, borderColor: cartasBosque.pergaminoOscuro, paddingHorizontal: spacing[2], paddingVertical: spacing[1], backgroundColor: cartasBosque.bruma },
+  habChipActivo: { backgroundColor: cartasBosque.bosque, borderColor: cartasBosque.bosque },
+  habChipText: { fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.tinta },
+  habChipTextActivo: { color: cartasBosque.bruma },
+  error:    { fontFamily: 'Inter_400Regular', fontSize: 12, color: cartasBosque.alertaBorde },
+  btnConfirmar: { backgroundColor: cartasBosque.bosque, borderRadius: borderRadius.sm, paddingVertical: spacing[3], alignItems: 'center', marginTop: spacing[1] },
+  btnConfirmarText: { fontFamily: 'Inter_600SemiBold', fontSize: 14, color: cartasBosque.bruma },
+});
+
 // ─── InquilinosWebScreen ──────────────────────────────────────
 
 export default function InquilinosWebScreen() {
   const [tab, setTab]                     = useState<Tab>('lista');
   const [inquilinos, setInquilinos]       = useState<Inquilino[]>([]);
+  const [habs, setHabs]                   = useState<Habitacion[]>([]);
   const [pagosMorosos, setPagosMorosos]   = useState<Record<string, 'vencido' | 'por_verificar'>>({});
   const [seleccionado, setSeleccionado]   = useState<Inquilino | null>(null);
   const [busqueda, setBusqueda]           = useState('');
 
-  // Real-time inquilinos
+  // Real-time inquilinos (all, including pendientes)
   useEffect(() => {
     return onSnapshot(collections.inquilinos, snap => {
       const list = snap.docs
         .map(d => ({ ...d.data(), id: d.id } as Inquilino))
-        .filter(i => i.estado !== 'inactivo')
         .sort((a, b) => `${a.nombre} ${a.apellido}`.localeCompare(`${b.nombre} ${b.apellido}`));
       setInquilinos(list);
     }, () => {});
+  }, []);
+
+  // Habitaciones para el panel de pendientes
+  useEffect(() => {
+    getDocs(collections.habitaciones).then(snap => {
+      setHabs(snap.docs.map(d => ({ ...d.data(), id: d.id } as Habitacion)));
+    }).catch(() => {});
   }, []);
 
   // Morosos badge (one-time load)
@@ -1018,7 +1242,9 @@ export default function InquilinosWebScreen() {
     }).catch(() => {});
   }, []);
 
-  const filtrados = inquilinos.filter(i => {
+  const activos = inquilinos.filter(i => i.estado !== 'inactivo' && i.estado !== 'pendiente');
+
+  const filtrados = activos.filter(i => {
     if (!busqueda.trim()) return true;
     const q = busqueda.toLowerCase();
     return (
@@ -1033,6 +1259,14 @@ export default function InquilinosWebScreen() {
       <View style={s.tabBar}>
         <TouchableOpacity style={[s.tab, tab === 'lista' && s.tabActivo]} onPress={() => setTab('lista')}>
           <Text style={[s.tabText, tab === 'lista' && s.tabTextActivo]}>Expedientes y servicios</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={[s.tab, tab === 'pendientes' && s.tabActivo]} onPress={() => setTab('pendientes')}>
+          <Ionicons name="time-outline" size={14} color={tab === 'pendientes' ? cartasBosque.bosque : cartasBosque.helecho} />
+          <Text style={[s.tabText, tab === 'pendientes' && s.tabTextActivo]}>
+            Solicitudes{inquilinos.filter(i => i.estado === 'pendiente').length > 0
+              ? ` (${inquilinos.filter(i => i.estado === 'pendiente').length})`
+              : ''}
+          </Text>
         </TouchableOpacity>
         <TouchableOpacity style={[s.tab, tab === 'nuevo' && s.tabActivo]} onPress={() => setTab('nuevo')}>
           <Ionicons name="person-add-outline" size={14} color={tab === 'nuevo' ? cartasBosque.bosque : cartasBosque.helecho} />
@@ -1117,6 +1351,13 @@ export default function InquilinosWebScreen() {
         </View>
       )}
 
+      {tab === 'pendientes' && (
+        <PendientesPanel
+          inquilinos={inquilinos.filter(i => i.estado === 'pendiente')}
+          habitaciones={habs}
+          onAprobado={() => setTab('lista')}
+        />
+      )}
       {tab === 'nuevo'      && <NuevoInquilinoForm onDone={() => setTab('lista')} />}
       {tab === 'plantillas' && <PlantillasPanel />}
     </View>
