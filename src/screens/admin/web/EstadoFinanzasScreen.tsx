@@ -40,6 +40,7 @@ function formatPesos(n: number): string {
 }
 
 function exportarCSV(pagos: Pago[]): void {
+  if (Platform.OS !== 'web') return;
   const header = 'Inquilino,Habitacion,Concepto,Monto,FechaPago,Estado';
   const rows = pagos.map(p =>
     [
@@ -62,6 +63,7 @@ function exportarCSV(pagos: Pago[]): void {
 }
 
 function exportarCSVCompleto(pagos: Pago[], gastos: Gasto[]): void {
+  if (Platform.OS !== 'web') return;
   const header = 'Tipo,Descripcion,Categoria,Monto,Fecha';
   const filasIngresos = pagos.map(p =>
     [
