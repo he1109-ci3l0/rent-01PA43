@@ -1044,84 +1044,76 @@ export default function InquilinosWebScreen() {
         </TouchableOpacity>
       </View>
 
-      {/* ── Lista (dos columnas) ── */}
-      {tab === 'lista' && (
-        <View style={cr.root}>
-          {/* Columna izquierda */}
-          <View style={cr.leftCol}>
-            {/* Buscador */}
-            <View style={lil.searchWrap}>
-              <Ionicons name="search-outline" size={14} color={cartasBosque.helecho} />
-              <TextInput
-                style={lil.searchInput}
-                value={busqueda}
-                onChangeText={setBusqueda}
-                placeholder="Buscar inquilino…"
-                placeholderTextColor={cartasBosque.niebla}
-              />
-              {busqueda.length > 0 && (
-                <TouchableOpacity onPress={() => setBusqueda('')} hitSlop={8}>
-                  <Ionicons name="close-circle" size={14} color={cartasBosque.helecho} />
-                </TouchableOpacity>
-              )}
-            </View>
-
-            {/* Lista */}
-            <ScrollView showsVerticalScrollIndicator={false}>
-              {filtrados.length === 0 ? (
-                <Text style={lil.vacio}>
-                  {inquilinos.length === 0 ? 'Cargando…' : 'Sin resultados'}
-                </Text>
-              ) : filtrados.map(inq => {
-                const uid = inq.uid ?? inq.id;
-                const moroso = pagosMorosos[uid];
-                const activo = seleccionado?.id === inq.id;
-                return (
-                  <TouchableOpacity
-                    key={inq.id}
-                    style={[lil.row, activo && lil.rowActivo]}
-                    onPress={() => setSeleccionado(inq)}
-                    activeOpacity={0.7}
-                  >
-                    {/* Avatar */}
-                    <View style={[lil.avatar, { backgroundColor: avatarBg(inq.estado) }]}>
-                      <Text style={lil.avatarText}>{inq.nombre.charAt(0).toUpperCase()}</Text>
-                    </View>
-                    {/* Info */}
-                    <View style={{ flex: 1 }}>
-                      <View style={lil.nameRow}>
-                        <Text style={lil.nombre} numberOfLines={1}>{inq.nombre} {inq.apellido}</Text>
-                        {moroso === 'vencido' && (
-                          <View style={lil.moroBadge}>
-                            <Text style={lil.moroBadgeText}>VENCIDO</Text>
-                          </View>
-                        )}
-                        {moroso === 'por_verificar' && (
-                          <View style={[lil.moroBadge, { backgroundColor: '#E8A83822', borderColor: '#E8A83866' }]}>
-                            <Text style={[lil.moroBadgeText, { color: '#E8A838' }]}>POR VERIFICAR</Text>
-                          </View>
-                        )}
-                      </View>
-                      <Text style={lil.hab}>Hab. {inq.habitacionId ?? '—'}</Text>
-                    </View>
-                    <Ionicons name="chevron-forward" size={14} color={cartasBosque.niebla} />
-                  </TouchableOpacity>
-                );
-              })}
-            </ScrollView>
-          </View>
-
-          {/* Columna derecha */}
-          <View style={cr.rightCol}>
-            {seleccionado ? (
-              <PerfilInquilino key={seleccionado.id} inquilino={seleccionado} />
-            ) : (
-              <View style={cr.empty}>
-                <Ionicons name="person-outline" size={48} color={cartasBosque.niebla} />
-                <Text style={cr.emptyText}>Selecciona un inquilino</Text>
-              </View>
+      {/* ── Lista ── */}
+      {tab === 'lista' && !seleccionado && (
+        <View style={cr.leftCol}>
+          <View style={lil.searchWrap}>
+            <Ionicons name="search-outline" size={14} color={cartasBosque.helecho} />
+            <TextInput
+              style={lil.searchInput}
+              value={busqueda}
+              onChangeText={setBusqueda}
+              placeholder="Buscar inquilino…"
+              placeholderTextColor={cartasBosque.niebla}
+            />
+            {busqueda.length > 0 && (
+              <TouchableOpacity onPress={() => setBusqueda('')} hitSlop={8}>
+                <Ionicons name="close-circle" size={14} color={cartasBosque.helecho} />
+              </TouchableOpacity>
             )}
           </View>
+          <ScrollView showsVerticalScrollIndicator={false}>
+            {filtrados.length === 0 ? (
+              <Text style={lil.vacio}>
+                {inquilinos.length === 0 ? 'Cargando…' : 'Sin resultados'}
+              </Text>
+            ) : filtrados.map(inq => {
+              const uid = inq.uid ?? inq.id;
+              const moroso = pagosMorosos[uid];
+              return (
+                <TouchableOpacity
+                  key={inq.id}
+                  style={lil.row}
+                  onPress={() => setSeleccionado(inq)}
+                  activeOpacity={0.7}
+                >
+                  <View style={[lil.avatar, { backgroundColor: avatarBg(inq.estado) }]}>
+                    <Text style={lil.avatarText}>{inq.nombre.charAt(0).toUpperCase()}</Text>
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <View style={lil.nameRow}>
+                      <Text style={lil.nombre} numberOfLines={1}>{inq.nombre} {inq.apellido}</Text>
+                      {moroso === 'vencido' && (
+                        <View style={lil.moroBadge}>
+                          <Text style={lil.moroBadgeText}>VENCIDO</Text>
+                        </View>
+                      )}
+                      {moroso === 'por_verificar' && (
+                        <View style={[lil.moroBadge, { backgroundColor: '#E8A83822', borderColor: '#E8A83866' }]}>
+                          <Text style={[lil.moroBadgeText, { color: '#E8A838' }]}>POR VERIFICAR</Text>
+                        </View>
+                      )}
+                    </View>
+                    <Text style={lil.hab}>Hab. {inq.habitacionId ?? '—'}</Text>
+                  </View>
+                  <Ionicons name="chevron-forward" size={14} color={cartasBosque.niebla} />
+                </TouchableOpacity>
+              );
+            })}
+          </ScrollView>
+        </View>
+      )}
+
+      {tab === 'lista' && seleccionado && (
+        <View style={cr.rightCol}>
+          <TouchableOpacity
+            style={lil.backBtn}
+            onPress={() => setSeleccionado(null)}
+          >
+            <Ionicons name="arrow-back" size={16} color={cartasBosque.bosque} />
+            <Text style={lil.backBtnText}>Inquilinos</Text>
+          </TouchableOpacity>
+          <PerfilInquilino key={seleccionado.id} inquilino={seleccionado} />
         </View>
       )}
 
@@ -1151,8 +1143,8 @@ const s = StyleSheet.create({
 });
 
 const cr = StyleSheet.create({
-  root:     { flex: 1, flexDirection: 'row' },
-  leftCol:  { width: 280, borderRightWidth: 1, borderRightColor: cartasBosque.pergaminoOscuro, backgroundColor: cartasBosque.pergamino },
+  root:     { flex: 1 },
+  leftCol:  { flex: 1, backgroundColor: cartasBosque.pergamino },
   rightCol: { flex: 1 },
   empty:    { flex: 1, alignItems: 'center', justifyContent: 'center', gap: spacing[3] },
   emptyText:{ fontFamily: 'Inter_400Regular', fontSize: 14, color: cartasBosque.niebla },
@@ -1188,6 +1180,15 @@ const lil = StyleSheet.create({
     backgroundColor: '#C0392B22', borderWidth: 1, borderColor: '#C0392B55',
   },
   moroBadgeText: { fontFamily: 'SpaceMono_400Regular', fontSize: 8, color: '#C0392B', letterSpacing: 0.5 },
+  backBtn: {
+    flexDirection: 'row', alignItems: 'center', gap: spacing[1],
+    paddingHorizontal: spacing[4], paddingVertical: spacing[3],
+    borderBottomWidth: 1, borderBottomColor: cartasBosque.pergaminoOscuro,
+    backgroundColor: cartasBosque.pergamino,
+  },
+  backBtnText: {
+    fontFamily: 'Inter_400Regular', fontSize: 13, color: cartasBosque.bosque,
+  },
 });
 
 const p = StyleSheet.create({
