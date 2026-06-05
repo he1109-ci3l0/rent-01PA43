@@ -1,337 +1,577 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import {
-  View, Text, ScrollView, TouchableOpacity,
-  StyleSheet, ActivityIndicator,
+  View, Text, ScrollView, TouchableOpacity, StyleSheet,
+  ActivityIndicator, Platform,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { getDocs } from 'firebase/firestore';
-import { cartasBosque } from '@/constants/colors';
-import { spacing, borderRadius } from '@/constants/spacing';
+import { getDocs, query, where, onSnapshot } from 'firebase/firestore';
 import { collections } from '@/services/firebase/firestore';
 import { listenAlertasSeguridad } from '@/services/firebase/sesiones';
-import type { Pago, Ticket, Visita, AlertaSeguridad, ScoreReputacion, Inquilino } from '@/types/firestore';
+import { listenTodasVisitasActivas } from '@/services/firebase/visitas';
+import { cartasBosque } from '@/constants/colors';
+import { spacing, borderRadius } from '@/constants/spacing';
+import type {
+  Habitacion, Pago, Ticket, ScoreReputacion,
+  Inquilino, AlertaSeguridad, Visita,
+} from '@/types/firestore';
 
-interface Stats {
-  pagosPendientes: number;
-  pagosVencidos:   number;
-  ticketsAbiertos: number;
-  visitasActivas:  number;
-  ocupadas:        number;
-  totalHabs:       number;
-  proximosSalir:   number;
+const MES_LABELS = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+
+function inicioMesActual(): Date {
+  const d = new Date(); d.setDate(1); d.setHours(0,0,0,0); return d;
 }
 
-const NIVEL_COLOR: Record<string, string> = {
-  pesimo:    '#960018',
-  moroso:    '#8A6A72',
-  regular:   cartasBosque.helecho,
-  bueno:     cartasBosque.bosque,
-  excelente: '#4A9B6F',
+function agruparPorMes(pagos: Pago[]): { mes: string; total: number }[] {
+  const ahora = new Date();
+  return Array.from({ length: 6 }, (_, i) => {
+    const d = new Date(ahora.getFullYear(), ahora.getMonth() - (5 - i), 1);
+    const total = pagos
+      .filter(p => {
+        if (p.estado !== 'pagado' || !p.fechaPago) return false;
+        const fp = (p.fechaPago as any).toDate();
+        return fp.getFullYear() === d.getFullYear() && fp.getMonth() === d.getMonth();
+      })
+      .reduce((s, p) => s + p.montoPagado, 0);
+    return { mes: MES_LABELS[d.getMonth()], total };
+  });
+}
+
+function calcularMesAnterior(pagos: Pago[]): number {
+  const ahora = new Date();
+  const inicioMesAnt = new Date(ahora.getFullYear(), ahora.getMonth() - 1, 1);
+  const finMesAnt    = new Date(ahora.getFullYear(), ahora.getMonth(), 0);
+  return pagos
+    .filter(p => {
+      if (p.estado !== 'pagado' || !p.fechaPago) return false;
+      const fp = (p.fechaPago as any).toDate();
+      return fp >= inicioMesAnt && fp <= finMesAnt;
+    })
+    .reduce((s, p) => s + p.montoPagado, 0);
+}
+
+const ESTADO_HAB_COLOR: Record<string, string> = {
+  disponible:    '#4A5E48',
+  ocupada:       cartasBosque.bosque,
+  mantenimiento: '#8A6A72',
+  reservada:     '#4A5E48',
 };
 
-export default function AdminHomeScreen() {
-  const [stats, setStats]     = useState<Stats | null>(null);
-  const [scores, setScores]   = useState<ScoreReputacion[]>([]);
-  const [alertas, setAlertas] = useState<AlertaSeguridad[]>([]);
-  const [visitas, setVisitas] = useState<Visita[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function cargar() {
-      try {
-        const [pagosSnap, tickSnap, visitasSnap, habSnap, scoresSnap, inqSnap] =
-          await Promise.all([
-            getDocs(collections.pagos),
-            getDocs(collections.tickets),
-            getDocs(collections.visitas),
-            getDocs(collections.habitaciones),
-            getDocs(collections.scores),
-            getDocs(collections.inquilinos),
-          ]);
-
-        const pagos   = pagosSnap.docs.map(d => d.data() as Pago);
-        const ticks   = tickSnap.docs.map(d => d.data() as Ticket);
-        const vis     = visitasSnap.docs.map(d => ({ ...d.data(), id: d.id } as Visita));
-        const habs    = habSnap.docs.map(d => d.data() as any);
-        const inqs    = inqSnap.docs.map(d => d.data() as Inquilino);
-
-        setScores(scoresSnap.docs.map(d => ({ ...d.data(), id: d.id } as ScoreReputacion)));
-        setVisitas(vis.filter(v => !v.fechaSalida).slice(0, 5));
-
-        const ahora = Date.now();
-        const en7dias = ahora + 7 * 24 * 60 * 60 * 1000;
-
-        setStats({
-          pagosPendientes: pagos.filter(p => p.estado === 'pendiente' || p.estado === 'en_revision').length,
-          pagosVencidos:   pagos.filter(p => p.estado === 'vencido').length,
-          ticketsAbiertos: ticks.filter(t => t.estado !== 'resuelto').length,
-          visitasActivas:  vis.filter(v => !v.fechaSalida).length,
-          ocupadas:        habs.filter((h: any) => h.estado === 'ocupada').length,
-          totalHabs:       habs.filter((h: any) => h.habilitada).length,
-          proximosSalir:   inqs.filter(i =>
-            i.fechaSalida && i.fechaSalida.toMillis() <= en7dias
-          ).length,
-        });
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    cargar();
-    return listenAlertasSeguridad(list =>
-      setAlertas(list.filter(a => !a.adminVio))
-    );
-  }, []);
-
-  if (loading || !stats) {
-    return (
-      <SafeAreaView style={s.safe} edges={['top']}>
-        <ActivityIndicator color={cartasBosque.bosque} style={{ flex: 1 }} />
-      </SafeAreaView>
-    );
-  }
-
-  const ocupPct = stats.totalHabs > 0
-    ? Math.round((stats.ocupadas / stats.totalHabs) * 100) : 0;
-
-  const scoreNiveles: Record<string, number> = {};
-  scores.forEach(sc => {
-    scoreNiveles[sc.nivel] = (scoreNiveles[sc.nivel] ?? 0) + 1;
-  });
-
-  return (
-    <SafeAreaView style={s.safe} edges={['top']}>
-      <ScrollView
-        style={s.scroll}
-        contentContainerStyle={s.content}
-        showsVerticalScrollIndicator={false}
-      >
-        {/* Header */}
-        <View style={s.header}>
-          <View>
-            <Text style={s.eyebrow}>
-              {new Date().toLocaleDateString('es-MX', {
-                weekday: 'long', day: 'numeric', month: 'long',
-              })}
-            </Text>
-            <Text style={s.title}>Antioquia 43</Text>
-          </View>
-          <Ionicons name="home" size={22} color={cartasBosque.bosque} />
-        </View>
-
-        {/* Alerta seguridad */}
-        {alertas.length > 0 && (
-          <View style={s.alertaBanner}>
-            <Ionicons name="shield-outline" size={14} color={cartasBosque.bruma} />
-            <Text style={s.alertaText}>
-              {alertas.length} alerta{alertas.length > 1 ? 's' : ''} de seguridad sin revisar
-            </Text>
-          </View>
-        )}
-
-        {/* Métricas 2x2 */}
-        <View style={s.grid}>
-          <MetricCard
-            label="Ocupación"
-            value={`${ocupPct}%`}
-            sub={`${stats.ocupadas}/${stats.totalHabs} habs`}
-            color={cartasBosque.bosque}
-            icon="home"
-          />
-          <MetricCard
-            label="Pagos pend."
-            value={String(stats.pagosPendientes)}
-            sub={stats.pagosVencidos > 0 ? `${stats.pagosVencidos} vencidos` : undefined}
-            color={stats.pagosVencidos > 0 ? '#C0392B' : '#CDB29D'}
-            icon="card"
-          />
-          <MetricCard
-            label="Tickets"
-            value={String(stats.ticketsAbiertos)}
-            color={cartasBosque.helecho}
-            icon="headset"
-          />
-          <MetricCard
-            label="Visitas activas"
-            value={String(stats.visitasActivas)}
-            color={cartasBosque.bosque}
-            icon="people"
-          />
-        </View>
-
-        {/* Próximos a salir */}
-        {stats.proximosSalir > 0 && (
-          <View style={s.proximosBanner}>
-            <Ionicons name="exit-outline" size={14} color="#E8A838" />
-            <Text style={s.proximosText}>
-              {stats.proximosSalir} inquilino{stats.proximosSalir > 1 ? 's' : ''} próximo{stats.proximosSalir > 1 ? 's' : ''} a salir en 7 días
-            </Text>
-          </View>
-        )}
-
-        {/* Score inquilinos */}
-        {scores.length > 0 && (
-          <>
-            <Text style={s.seccionTitulo}>Reputación</Text>
-            <View style={s.scoresRow}>
-              {(['excelente', 'bueno', 'regular', 'moroso', 'pesimo'] as const).map(nivel => {
-                const count = scoreNiveles[nivel] ?? 0;
-                if (count === 0) return null;
-                return (
-                  <View key={nivel} style={[s.scoreChip, {
-                    backgroundColor: NIVEL_COLOR[nivel] + '18',
-                    borderColor: NIVEL_COLOR[nivel] + '55',
-                  }]}>
-                    <Text style={[s.scoreNum, { color: NIVEL_COLOR[nivel] }]}>{count}</Text>
-                    <Text style={[s.scoreLbl, { color: NIVEL_COLOR[nivel] }]}>{nivel}</Text>
-                  </View>
-                );
-              })}
-            </View>
-          </>
-        )}
-
-        {/* Visitas activas recientes */}
-        {visitas.length > 0 && (
-          <>
-            <Text style={s.seccionTitulo}>Visitas activas</Text>
-            {visitas.map(v => (
-              <View key={v.id} style={s.visitaRow}>
-                <Ionicons name="walk-outline" size={14} color={cartasBosque.helecho} />
-                <Text style={s.visitaNombre} numberOfLines={1}>
-                  {v.nombreVisitante ?? v.documentoNumero}
-                </Text>
-                <Text style={s.visitaHab}>Hab. {v.habitacionNumero ?? '—'}</Text>
-              </View>
-            ))}
-          </>
-        )}
-
-      </ScrollView>
-    </SafeAreaView>
-  );
-}
-
-// ─── MetricCard ───────────────────────────────────────────────
-
-function MetricCard({ label, value, sub, color, icon }: {
-  label: string; value: string; sub?: string; color: string; icon: string;
+function MetricCard({ title, value, sub, color, icon }: {
+  title: string; value: string; sub?: string; color: string; icon: string;
 }) {
   return (
-    <View style={s.metricCard}>
-      <View style={[s.metricIcon, { backgroundColor: color + '18' }]}>
-        <Ionicons name={icon as any} size={16} color={color} />
+    <View style={mc.card}>
+      <View style={[mc.iconBox, { backgroundColor: color + '20' }]}>
+        <Ionicons name={icon as any} size={20} color={color} />
       </View>
-      <Text style={[s.metricValue, { color }]}>{value}</Text>
-      <Text style={s.metricLabel}>{label}</Text>
-      {sub ? <Text style={s.metricSub}>{sub}</Text> : null}
+      <Text style={[mc.value, { color }]}>{value}</Text>
+      <Text style={mc.title}>{title}</Text>
+      {sub ? <Text style={mc.sub}>{sub}</Text> : null}
     </View>
   );
 }
 
-// ─── Estilos ──────────────────────────────────────────────────
+function BarChart({ data }: { data: { mes: string; total: number }[] }) {
+  const max = Math.max(...data.map(d => d.total), 1);
+  return (
+    <View style={bc.root}>
+      {data.map(({ mes, total }) => (
+        <View key={mes} style={bc.col}>
+          <Text style={bc.valLabel}>
+            {total > 0 ? `$${Math.round(total / 1000)}k` : ''}
+          </Text>
+          <View style={bc.barBg}>
+            <View style={[
+              bc.bar,
+              {
+                height: Math.max((total / max) * 80, 3),
+                backgroundColor: total > 0 ? cartasBosque.bosque : cartasBosque.pergaminoOscuro,
+              },
+            ]} />
+          </View>
+          <Text style={bc.mesLabel}>{mes}</Text>
+        </View>
+      ))}
+    </View>
+  );
+}
+
+function RoomGrid({ habitaciones }: { habitaciones: Habitacion[] }) {
+  const activas = habitaciones
+    .filter(h => h.habilitada)
+    .sort((a, b) => a.numero.localeCompare(b.numero, undefined, { numeric: true }));
+  return (
+    <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 4 }}>
+      {activas.map(h => (
+        <View
+          key={h.id}
+          style={[rg.cell, { backgroundColor: ESTADO_HAB_COLOR[h.estado] ?? cartasBosque.helecho }]}
+        >
+          <Text style={rg.num}>{h.numero}</Text>
+          <Text style={rg.piso}>{h.pisoNombre}</Text>
+        </View>
+      ))}
+    </View>
+  );
+}
+
+interface DashData {
+  habitaciones: Habitacion[];
+  pagos:        Pago[];
+  inquilinos:   Inquilino[];
+  tickets:      Ticket[];
+  scores:       ScoreReputacion[];
+}
+
+export default function AdminHomeScreen() {
+  const [data, setData]             = useState<DashData | null>(null);
+  const [alertas, setAlertas]       = useState<AlertaSeguridad[]>([]);
+  const [visitasHoy, setVisitasHoy] = useState<Visita[]>([]);
+  const [cargando, setCargando]     = useState(true);
+
+  useEffect(() => {
+    async function cargar() {
+      try {
+        const [habSnap, pagosSnap, inqSnap, tickSnap, scoresSnap] = await Promise.all([
+          getDocs(collections.habitaciones),
+          getDocs(collections.pagos),
+          getDocs(collections.inquilinos),
+          getDocs(collections.tickets),
+          getDocs(collections.scores),
+        ]);
+        setData({
+          habitaciones: habSnap.docs.map(d => ({ ...d.data(), id: d.id } as Habitacion)),
+          pagos:        pagosSnap.docs.map(d => ({ ...d.data(), id: d.id } as Pago)),
+          inquilinos:   inqSnap.docs.map(d => ({ ...d.data(), id: d.id } as Inquilino)),
+          tickets:      tickSnap.docs.map(d => ({ ...d.data(), id: d.id } as Ticket)),
+          scores:       scoresSnap.docs.map(d => ({ ...d.data(), id: d.id } as ScoreReputacion)),
+        });
+      } finally {
+        setCargando(false);
+      }
+    }
+    cargar();
+    const unsubAl = listenAlertasSeguridad(list => setAlertas(list.slice(0, 8)));
+    const unsubVisitas = listenTodasVisitasActivas(visitas => {
+      const hoy = new Date();
+      setVisitasHoy(visitas.filter(v => {
+        const fe = v.fechaEntrada.toDate();
+        return fe.getDate() === hoy.getDate() &&
+               fe.getMonth() === hoy.getMonth() &&
+               fe.getFullYear() === hoy.getFullYear();
+      }));
+    });
+    return () => { unsubAl(); unsubVisitas(); };
+  }, []);
+
+  if (cargando || !data) {
+    return (
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+        <ActivityIndicator color={cartasBosque.bosque} size="large" />
+      </View>
+    );
+  }
+
+  const { habitaciones, pagos, inquilinos, tickets } = data;
+  const inicio = inicioMesActual();
+
+  const habsActivas  = habitaciones.filter(h => h.habilitada);
+  const ocupadas     = habsActivas.filter(h => h.estado === 'ocupada').length;
+  const ocupacionPct = habsActivas.length > 0
+    ? Math.round((ocupadas / habsActivas.length) * 100) : 0;
+
+  const pagosDelMes     = pagos.filter(p => p.fechaPago && (p.fechaPago as any).toDate() >= inicio);
+  const recaudadoMes    = pagosDelMes.filter(p => p.estado === 'pagado').reduce((s, p) => s + p.montoPagado, 0);
+  const recaudadoMesAnt = calcularMesAnterior(pagos);
+  const diffRecaudado   = recaudadoMesAnt > 0
+    ? Math.round(((recaudadoMes - recaudadoMesAnt) / recaudadoMesAnt) * 100)
+    : null;
+  const vencidos        = pagos.filter(p => p.estado === 'vencido').length;
+  const ticketsAbiertos = tickets.filter(t => t.estado !== 'resuelto').length;
+
+  const pagosPorVerificar = pagos.filter(p => p.estado === 'en_revision').length;
+  const ticketsSinResp    = tickets.filter(t => {
+    if (t.estado === 'resuelto') return false;
+    const hrs = (Date.now() - (t.creadoEn as any).toDate().getTime()) / 36e5;
+    return hrs > 24;
+  }).length;
+  const totalPendientes = pagosPorVerificar + ticketsSinResp + visitasHoy.length;
+
+  const barData = agruparPorMes(pagos);
+
+  const hoy7dias = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+  const proximosVencimientos = pagos
+    .filter(p => {
+      if (p.estado !== 'pendiente' || !p.fechaVencimiento) return false;
+      const fv = (p.fechaVencimiento as any).toDate() as Date;
+      return fv >= new Date() && fv <= hoy7dias;
+    })
+    .sort((a, b) =>
+      (a.fechaVencimiento as any).toDate().getTime() -
+      (b.fechaVencimiento as any).toDate().getTime()
+    );
+
+  const alertasSinVer = alertas.filter(a => !a.adminVio);
+
+  const hoy = new Date();
+  const proximosDesocupar = inquilinos
+    .filter(i => i.fechaSalida !== null && i.fechaSalida !== undefined)
+    .map(i => {
+      const fechaSalida = (i.fechaSalida as any).toDate();
+      const diasRestantes = Math.ceil((fechaSalida.getTime() - hoy.getTime()) / 864e5);
+      return { ...i, fechaSalida, diasRestantes };
+    })
+    .sort((a, b) => a.diasRestantes - b.diasRestantes);
+
+  return (
+    <ScrollView style={s.root} contentContainerStyle={s.scroll} showsVerticalScrollIndicator={false}>
+
+      {/* Header */}
+      <View style={s.header}>
+        <View>
+          <Text style={s.headerTitulo}>Dashboard</Text>
+          <Text style={s.headerSub}>
+            {new Date().toLocaleDateString('es-MX', {
+              weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
+            })}
+          </Text>
+        </View>
+        <Ionicons name="grid" size={22} color={cartasBosque.bosque} />
+      </View>
+
+      {/* Pendientes hoy */}
+      {totalPendientes > 0 && (
+        <View style={s.pendientesBar}>
+          <Ionicons name="alert-circle" size={16} color="#E8A838" />
+          <Text style={s.pendientesTitulo}>PENDIENTES HOY</Text>
+          <View style={s.pendientesItems}>
+            {pagosPorVerificar > 0 && (
+              <View style={s.pendienteChip}>
+                <Text style={s.pendienteChipText}>
+                  {pagosPorVerificar} pago{pagosPorVerificar !== 1 ? 's' : ''} por verificar
+                </Text>
+              </View>
+            )}
+            {ticketsSinResp > 0 && (
+              <View style={[s.pendienteChip, { backgroundColor: '#E05C2A22' }]}>
+                <Text style={[s.pendienteChipText, { color: '#E05C2A' }]}>
+                  {ticketsSinResp} ticket{ticketsSinResp !== 1 ? 's' : ''} sin respuesta +24h
+                </Text>
+              </View>
+            )}
+            {visitasHoy.length > 0 && (
+              <View style={[s.pendienteChip, { backgroundColor: '#3B82F622' }]}>
+                <Text style={[s.pendienteChipText, { color: '#3B82F6' }]}>
+                  {visitasHoy.length} visita{visitasHoy.length !== 1 ? 's' : ''} activas hoy
+                </Text>
+              </View>
+            )}
+          </View>
+        </View>
+      )}
+
+      {/* Métricas */}
+      <View style={s.metricsRow}>
+        <MetricCard
+          title="Ocupación"
+          value={`${ocupacionPct}%`}
+          sub={`${ocupadas} / ${habsActivas.length} cuartos`}
+          color="#3B82F6"
+          icon="home"
+        />
+        <MetricCard
+          title="Recaudado mes"
+          value={`$${recaudadoMes.toLocaleString('es-MX')}`}
+          sub={diffRecaudado !== null
+            ? `${diffRecaudado >= 0 ? '↑' : '↓'} ${Math.abs(diffRecaudado)}% vs mes ant.`
+            : undefined}
+          color="#4A9B6F"
+          icon="card"
+        />
+        <MetricCard
+          title="Pagos vencidos"
+          value={String(vencidos)}
+          sub={vencidos > 0 ? 'Requieren atención' : 'Al corriente'}
+          color={vencidos > 0 ? '#C0392B' : '#4A9B6F'}
+          icon={vencidos > 0 ? 'warning' : 'checkmark-circle'}
+        />
+        <MetricCard
+          title="Tickets abiertos"
+          value={String(ticketsAbiertos)}
+          color={ticketsAbiertos > 0 ? '#E8A838' : '#4A9B6F'}
+          icon="headset"
+        />
+        <MetricCard
+          title="Visitas hoy"
+          value={String(visitasHoy.length)}
+          color="#3B82F6"
+          icon="walk"
+        />
+        {proximosDesocupar.length > 0 && (
+          <MetricCard
+            title="Desocupan pronto"
+            value={String(proximosDesocupar.length)}
+            sub={proximosDesocupar[0]
+              ? `Hab ${proximosDesocupar[0].habitacionId} en ${
+                  proximosDesocupar[0].diasRestantes <= 0 ? 'hoy'
+                  : proximosDesocupar[0].diasRestantes + 'd'
+                }`
+              : ''}
+            color="#E05C2A"
+            icon="exit-outline"
+          />
+        )}
+      </View>
+
+      {/* Gráfica ingresos */}
+      <View style={s.card}>
+        <Text style={s.cardTitulo}>Ingresos últimos 6 meses</Text>
+        <BarChart data={barData} />
+        <Text style={s.cardNote}>
+          Total: ${barData.reduce((acc, d) => acc + d.total, 0).toLocaleString('es-MX')}
+        </Text>
+      </View>
+
+      {/* Habitaciones */}
+      <View style={s.card}>
+        <Text style={s.cardTitulo}>Habitaciones ({habsActivas.length})</Text>
+        <View style={s.leyenda}>
+          {Object.entries(ESTADO_HAB_COLOR).map(([est, col]) => (
+            <View key={est} style={s.leyendaItem}>
+              <View style={[s.leyendaDot, { backgroundColor: col }]} />
+              <Text style={s.leyendaLabel}>{est}</Text>
+            </View>
+          ))}
+        </View>
+        <RoomGrid habitaciones={habsActivas} />
+      </View>
+
+      {/* Vencimientos próximos */}
+      <View style={s.card}>
+        <View style={s.cardHeaderRow}>
+          <Text style={s.cardTitulo}>Vencimientos próximos</Text>
+          <Text style={s.cardHeaderSub}>7 días</Text>
+        </View>
+        {proximosVencimientos.length === 0 ? (
+          <View style={s.emptyRow}>
+            <Ionicons name="checkmark-circle-outline" size={22} color="#4A9B6F" />
+            <Text style={s.emptyText}>Sin vencimientos esta semana</Text>
+          </View>
+        ) : (
+          proximosVencimientos.slice(0, 6).map(p => {
+            const fv = (p.fechaVencimiento as any).toDate() as Date;
+            const dias = Math.ceil((fv.getTime() - new Date().getTime()) / 864e5);
+            const color = dias <= 1 ? '#C0392B' : dias <= 3 ? '#E05C2A' : '#E8A838';
+            return (
+              <View key={p.id} style={s.scoreRow}>
+                <Text style={s.scoreNombre} numberOfLines={1}>
+                  {p.inquilinoNombre ?? '—'}
+                </Text>
+                <Text style={s.scoreHab}>Hab {p.habitacionNumero ?? '—'}</Text>
+                <View style={[s.scoreBadge, { backgroundColor: color + '22' }]}>
+                  <Text style={[s.scorePts, { color }]}>
+                    {dias === 0 ? 'hoy' : `${dias}d`}
+                  </Text>
+                </View>
+              </View>
+            );
+          })
+        )}
+      </View>
+
+      {/* Próximos a desocupar */}
+      {proximosDesocupar.length > 0 && (
+        <View style={s.card}>
+          <View style={s.cardHeaderRow}>
+            <Text style={s.cardTitulo}>Próximos a desocupar</Text>
+            <Text style={s.cardHeaderSub}>depósito en curso</Text>
+          </View>
+          {proximosDesocupar.map(inq => {
+            const color = inq.diasRestantes <= 3  ? '#C0392B'
+                        : inq.diasRestantes <= 7  ? '#E05C2A'
+                        : inq.diasRestantes <= 15 ? '#E8A838'
+                        : '#3B82F6';
+            return (
+              <View key={inq.id} style={s.scoreRow}>
+                <View style={{ flex: 1 }}>
+                  <Text style={s.scoreNombre} numberOfLines={1}>
+                    {inq.nombre} {inq.apellido}
+                  </Text>
+                  <Text style={[s.scoreHab, { marginTop: 2 }]}>
+                    Hab. {inq.habitacionId ?? '—'} ·{' '}
+                    {inq.fechaSalida.toLocaleDateString('es-MX', {
+                      day: '2-digit', month: 'short',
+                    })}
+                  </Text>
+                </View>
+                <View style={[s.scoreBadge, { backgroundColor: color + '22' }]}>
+                  <Text style={[s.scorePts, { color }]}>
+                    {inq.diasRestantes <= 0 ? 'HOY'
+                      : inq.diasRestantes === 1 ? 'mañana'
+                      : `${inq.diasRestantes}d`}
+                  </Text>
+                </View>
+              </View>
+            );
+          })}
+        </View>
+      )}
+
+      {/* Alertas de seguridad */}
+      <View style={s.card}>
+        <View style={s.cardHeaderRow}>
+          <Text style={s.cardTitulo}>Alertas de seguridad</Text>
+          {alertasSinVer.length > 0 && (
+            <View style={s.alertaBadge}>
+              <Text style={s.alertaBadgeText}>
+                {alertasSinVer.length} nueva{alertasSinVer.length !== 1 ? 's' : ''}
+              </Text>
+            </View>
+          )}
+        </View>
+        {alertas.length === 0 ? (
+          <View style={s.emptyRow}>
+            <Ionicons name="shield-checkmark-outline" size={22} color="#4A9B6F" />
+            <Text style={s.emptyText}>Sin alertas</Text>
+          </View>
+        ) : (
+          alertas.map(al => (
+            <View key={al.id} style={[s.alertaRow, !al.adminVio && s.alertaRowNoVista]}>
+              <Ionicons
+                name={al.tipo === 'reporte_robo' ? 'warning-outline' : 'phone-portrait-outline'}
+                size={14}
+                color={al.tipo === 'reporte_robo' ? '#960018' : cartasBosque.bosque}
+              />
+              <View style={{ flex: 1 }}>
+                <Text style={s.alertaNombre} numberOfLines={1}>{al.inquilinoNombre}</Text>
+                <Text style={s.alertaMeta}>
+                  {al.tipo === 'reporte_robo' ? 'Robo / extravío' : 'Dispositivo nuevo'} · {al.ubicacion}
+                </Text>
+              </View>
+              {!al.adminVio && <View style={s.dotNueva} />}
+            </View>
+          ))
+        )}
+      </View>
+
+      <View style={{ height: spacing[8] }} />
+    </ScrollView>
+  );
+}
 
 const s = StyleSheet.create({
-  safe:    { flex: 1, backgroundColor: cartasBosque.bruma },
-  scroll:  { flex: 1 },
-  content: { padding: spacing[4], paddingBottom: spacing[8] },
+  root:   { flex: 1, backgroundColor: cartasBosque.bruma },
+  scroll: { padding: spacing[4], paddingBottom: spacing[10] },
 
   header: {
-    flexDirection: 'row', justifyContent: 'space-between',
-    alignItems: 'flex-end', marginBottom: spacing[4],
+    flexDirection: 'row', alignItems: 'flex-end',
+    justifyContent: 'space-between', marginBottom: spacing[4],
   },
-  eyebrow: {
-    fontFamily: 'SpaceMono_400Regular', fontSize: 10,
-    color: cartasBosque.helecho, letterSpacing: 1,
-    textTransform: 'uppercase', marginBottom: 2,
-  },
-  title: {
-    fontFamily: 'Inter_700Bold', fontSize: 24,
-    color: cartasBosque.tinta, letterSpacing: -0.3,
-  },
+  headerTitulo: { fontFamily: 'Inter_700Bold', fontSize: 24, color: cartasBosque.tinta },
+  headerSub:    { fontFamily: 'SpaceMono_400Regular', fontSize: 11, color: cartasBosque.helecho, marginTop: 2 },
 
-  alertaBanner: {
-    flexDirection: 'row', alignItems: 'center', gap: spacing[2],
-    backgroundColor: cartasBosque.alertaFondo,
-    borderRadius: borderRadius.md, padding: spacing[3],
+  pendientesBar: {
+    flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap',
+    gap: spacing[2], backgroundColor: '#E8A83811',
+    borderRadius: borderRadius.md, borderWidth: 1, borderColor: '#E8A83844',
+    padding: spacing[3], marginBottom: spacing[3],
+  },
+  pendientesTitulo: {
+    fontFamily: 'SpaceMono_400Regular', fontSize: 9, color: '#E8A838', letterSpacing: 0.8,
+  },
+  pendientesItems: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing[1], flex: 1 },
+  pendienteChip: {
+    paddingHorizontal: spacing[2], paddingVertical: 3,
+    borderRadius: borderRadius.sm, backgroundColor: '#E8A83822',
+  },
+  pendienteChipText: { fontFamily: 'Inter_400Regular', fontSize: 11, color: '#E8A838' },
+
+  metricsRow: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing[3], marginBottom: spacing[3] },
+
+  card: {
+    backgroundColor: cartasBosque.pergamino, borderRadius: borderRadius.lg,
+    padding: spacing[4], borderWidth: 1, borderColor: cartasBosque.pergaminoOscuro,
     marginBottom: spacing[3],
   },
-  alertaText: {
-    fontFamily: 'Inter_500Medium', fontSize: 12,
-    color: cartasBosque.bruma, flex: 1,
-  },
-
-  proximosBanner: {
-    flexDirection: 'row', alignItems: 'center', gap: spacing[2],
-    backgroundColor: 'rgba(232,168,56,0.12)',
-    borderRadius: borderRadius.md, padding: spacing[3],
+  cardTitulo: {
+    fontFamily: 'Inter_600SemiBold', fontSize: 14, color: cartasBosque.tinta,
     marginBottom: spacing[3],
-    borderWidth: 1, borderColor: 'rgba(232,168,56,0.3)',
   },
-  proximosText: {
-    fontFamily: 'Inter_400Regular', fontSize: 12,
-    color: '#E8A838', flex: 1,
+  cardNote: {
+    fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.helecho,
+    marginTop: spacing[2], textAlign: 'right',
   },
+  cardHeaderRow: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+    marginBottom: spacing[3],
+  },
+  cardHeaderSub: { fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.helecho },
 
-  grid: {
-    flexDirection: 'row', flexWrap: 'wrap',
-    gap: spacing[3], marginBottom: spacing[3],
+  leyenda:     { flexDirection: 'row', flexWrap: 'wrap', gap: spacing[2], marginBottom: spacing[3] },
+  leyendaItem: { flexDirection: 'row', alignItems: 'center', gap: 4 },
+  leyendaDot:  { width: 8, height: 8, borderRadius: 4 },
+  leyendaLabel:{ fontFamily: 'SpaceMono_400Regular', fontSize: 9, color: cartasBosque.helecho },
+
+  scoreRow: {
+    flexDirection: 'row', alignItems: 'center', gap: spacing[2],
+    paddingVertical: spacing[2],
+    borderBottomWidth: 1, borderBottomColor: cartasBosque.pergaminoOscuro,
   },
-  metricCard: {
+  scoreNombre: { flex: 1, fontFamily: 'Inter_400Regular', fontSize: 12, color: cartasBosque.tinta },
+  scoreHab:    { fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.helecho, width: 56 },
+  scoreBadge:  { paddingHorizontal: 8, paddingVertical: 2, borderRadius: 20 },
+  scorePts:    { fontFamily: 'SpaceMono_400Regular', fontSize: 11 },
+
+  alertaBadge: {
+    paddingHorizontal: spacing[2], paddingVertical: 2,
+    backgroundColor: '#96001822', borderRadius: borderRadius.full,
+  },
+  alertaBadgeText: { fontFamily: 'SpaceMono_400Regular', fontSize: 9, color: '#960018' },
+  alertaRow: {
+    flexDirection: 'row', alignItems: 'center', gap: spacing[2],
+    paddingVertical: spacing[2],
+    borderBottomWidth: 1, borderBottomColor: cartasBosque.pergaminoOscuro,
+  },
+  alertaRowNoVista: { backgroundColor: cartasBosque.crema + '33' },
+  alertaNombre:     { fontFamily: 'Inter_400Regular', fontSize: 12, color: cartasBosque.tinta },
+  alertaMeta:       { fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.helecho },
+  dotNueva:         { width: 7, height: 7, borderRadius: 4, backgroundColor: cartasBosque.bosque },
+
+  emptyRow:  { alignItems: 'center', paddingVertical: spacing[4], gap: spacing[2] },
+  emptyText: { fontFamily: 'Inter_400Regular', fontSize: 12, color: cartasBosque.helecho },
+});
+
+const mc = StyleSheet.create({
+  card: {
     width: '47%', backgroundColor: cartasBosque.pergamino,
     borderRadius: borderRadius.lg, padding: spacing[3],
     borderWidth: 1, borderColor: cartasBosque.pergaminoOscuro,
   },
-  metricIcon: {
-    width: 32, height: 32, borderRadius: borderRadius.sm,
+  iconBox: {
+    width: 36, height: 36, borderRadius: 18,
     alignItems: 'center', justifyContent: 'center', marginBottom: spacing[2],
   },
-  metricValue: {
-    fontFamily: 'Inter_700Bold', fontSize: 22, letterSpacing: -0.5,
-  },
-  metricLabel: {
-    fontFamily: 'SpaceMono_400Regular', fontSize: 9,
-    color: cartasBosque.helecho, letterSpacing: 0.5, marginTop: 2,
-  },
-  metricSub: {
-    fontFamily: 'SpaceMono_400Regular', fontSize: 9,
-    color: cartasBosque.acento, marginTop: 2,
-  },
+  value: { fontFamily: 'Inter_700Bold', fontSize: 22, lineHeight: 26 },
+  title: { fontFamily: 'Inter_600SemiBold', fontSize: 11, color: cartasBosque.tinta, marginTop: spacing[1] },
+  sub:   { fontFamily: 'SpaceMono_400Regular', fontSize: 9, color: cartasBosque.helecho, marginTop: 2 },
+});
 
-  seccionTitulo: {
-    fontFamily: 'Inter_600SemiBold', fontSize: 13,
-    color: cartasBosque.tinta, marginBottom: spacing[2], marginTop: spacing[3],
+const bc = StyleSheet.create({
+  root:  { flexDirection: 'row', alignItems: 'flex-end', height: 120, gap: 6, paddingTop: spacing[2] },
+  col:   { flex: 1, alignItems: 'center' },
+  barBg: {
+    width: '80%', height: 80,
+    justifyContent: 'flex-end',
+    backgroundColor: cartasBosque.pergaminoOscuro + '55',
+    borderRadius: 4, overflow: 'hidden',
   },
+  bar:      { width: '100%', borderRadius: 4 },
+  valLabel: { fontFamily: 'SpaceMono_400Regular', fontSize: 8, color: cartasBosque.helecho, marginBottom: 2, height: 12 },
+  mesLabel: { fontFamily: 'SpaceMono_400Regular', fontSize: 9, color: cartasBosque.helecho, marginTop: 4, textTransform: 'uppercase' },
+});
 
-  scoresRow: {
-    flexDirection: 'row', flexWrap: 'wrap', gap: spacing[2],
-    marginBottom: spacing[2],
-  },
-  scoreChip: {
-    flexDirection: 'row', alignItems: 'center', gap: spacing[1],
-    paddingHorizontal: spacing[2], paddingVertical: spacing[1],
-    borderRadius: borderRadius.full, borderWidth: 1,
-  },
-  scoreNum: { fontFamily: 'Inter_700Bold', fontSize: 13 },
-  scoreLbl: {
-    fontFamily: 'SpaceMono_400Regular', fontSize: 9,
-    textTransform: 'capitalize',
-  },
-
-  visitaRow: {
-    flexDirection: 'row', alignItems: 'center', gap: spacing[2],
-    backgroundColor: cartasBosque.pergamino,
-    borderRadius: borderRadius.sm, padding: spacing[2] + 2,
-    marginBottom: spacing[1],
-    borderWidth: 1, borderColor: cartasBosque.pergaminoOscuro,
-  },
-  visitaNombre: {
-    fontFamily: 'Inter_400Regular', fontSize: 12,
-    color: cartasBosque.tinta, flex: 1,
-  },
-  visitaHab: {
-    fontFamily: 'SpaceMono_400Regular', fontSize: 10,
-    color: cartasBosque.helecho,
-  },
+const rg = StyleSheet.create({
+  cell: { width: 44, height: 38, borderRadius: 6, alignItems: 'center', justifyContent: 'center' },
+  num:  { fontFamily: 'Inter_600SemiBold', fontSize: 11, color: '#FFFFFF' },
+  piso: { fontFamily: 'SpaceMono_400Regular', fontSize: 7, color: '#FFFFFFAA' },
 });
