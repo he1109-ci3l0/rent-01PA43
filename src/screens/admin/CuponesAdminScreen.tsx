@@ -244,7 +244,7 @@ function FInput({ value, onChange, placeholder, keyboard, caps, mono }: {
 }) {
   return (
     <TextInput
-      style={[styles.fInput, mono && { fontFamily: 'SpaceMono_400Regular', letterSpacing: 1 }]}
+      style={[styles.fInput, mono && { fontFamily: 'MonaSans_400Regular', letterSpacing: 1 }]}
       value={value}
       onChangeText={onChange}
       placeholder={placeholder}
@@ -268,16 +268,16 @@ function InfoChip({ label }: { label: string }) {
 const styles = StyleSheet.create({
   scrollContent: { padding: spacing[4], paddingBottom: spacing[8] },
   formHeader: { flexDirection: 'row', alignItems: 'center', gap: spacing[3], marginBottom: spacing[4] },
-  formTitulo: { fontFamily: 'Inter_600SemiBold', fontSize: 16, color: cartasBosque.tinta },
+  formTitulo: { fontFamily: 'BricolageGrotesque_600SemiBold', fontSize: 16, color: cartasBosque.tinta },
   fLabel: {
-    fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.helecho,
+    fontFamily: 'MonaSans_400Regular', fontSize: 10, color: cartasBosque.helecho,
     letterSpacing: 0.5, marginTop: spacing[3], marginBottom: spacing[1],
   },
   fInput: {
     backgroundColor: cartasBosque.pergamino, borderRadius: borderRadius.sm,
     borderWidth: 1, borderColor: cartasBosque.pergaminoOscuro,
     paddingHorizontal: spacing[3], paddingVertical: spacing[2],
-    fontFamily: 'Inter_400Regular', fontSize: 13, color: cartasBosque.tinta,
+    fontFamily: 'BricolageGrotesque_400Regular', fontSize: 13, color: cartasBosque.tinta,
   },
   chipRow: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing[2] },
   chip: {
@@ -285,33 +285,33 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing[3], paddingVertical: spacing[1] + 2, backgroundColor: cartasBosque.pergamino,
   },
   chipActivo: { backgroundColor: cartasBosque.bosque, borderColor: cartasBosque.bosque },
-  chipText: { fontFamily: 'Inter_400Regular', fontSize: 12, color: cartasBosque.tinta },
+  chipText: { fontFamily: 'BricolageGrotesque_400Regular', fontSize: 12, color: cartasBosque.tinta },
   chipTextActivo: { color: cartasBosque.bruma },
   switchRow: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     paddingVertical: spacing[2], borderBottomWidth: 1, borderBottomColor: cartasBosque.pergaminoOscuro,
   },
-  switchLabel: { fontFamily: 'Inter_400Regular', fontSize: 13, color: cartasBosque.tinta },
-  errorText: { fontFamily: 'Inter_400Regular', fontSize: 12, color: cartasBosque.alertaBorde, marginTop: spacing[2] },
+  switchLabel: { fontFamily: 'BricolageGrotesque_400Regular', fontSize: 13, color: cartasBosque.tinta },
+  errorText: { fontFamily: 'BricolageGrotesque_400Regular', fontSize: 12, color: cartasBosque.alertaBorde, marginTop: spacing[2] },
   btnPrimario: {
     marginTop: spacing[4], backgroundColor: cartasBosque.bosque,
     borderRadius: borderRadius.sm, paddingVertical: spacing[3], alignItems: 'center',
   },
-  btnPrimarioText: { fontFamily: 'Inter_600SemiBold', fontSize: 14, color: cartasBosque.bruma },
+  btnPrimarioText: { fontFamily: 'BricolageGrotesque_600SemiBold', fontSize: 14, color: cartasBosque.bruma },
   listaHeader: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     paddingHorizontal: spacing[4], paddingVertical: spacing[3],
     borderBottomWidth: 1, borderBottomColor: cartasBosque.pergaminoOscuro,
   },
-  listaCount: { fontFamily: 'SpaceMono_400Regular', fontSize: 12, color: cartasBosque.helecho },
+  listaCount: { fontFamily: 'MonaSans_400Regular', fontSize: 12, color: cartasBosque.helecho },
   btnNuevo: {
     flexDirection: 'row', alignItems: 'center', gap: 4,
     backgroundColor: cartasBosque.bosque, borderRadius: borderRadius.sm,
     paddingHorizontal: spacing[3], paddingVertical: spacing[1] + 2,
   },
-  btnNuevoText: { fontFamily: 'Inter_600SemiBold', fontSize: 12, color: cartasBosque.bruma },
+  btnNuevoText: { fontFamily: 'BricolageGrotesque_600SemiBold', fontSize: 12, color: cartasBosque.bruma },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: spacing[2] },
-  vacioText: { fontFamily: 'Inter_400Regular', fontSize: 14, color: cartasBosque.helecho },
+  vacioText: { fontFamily: 'BricolageGrotesque_400Regular', fontSize: 14, color: cartasBosque.helecho },
   cuponCard: {
     backgroundColor: cartasBosque.pergamino, borderRadius: borderRadius.md,
     padding: spacing[3], marginBottom: spacing[3],
@@ -319,17 +319,17 @@ const styles = StyleSheet.create({
   },
   cuponHeader: { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: spacing[1] },
   cuponHeaderLeft: { flex: 1 },
-  cuponCodigo: { fontFamily: 'SpaceMono_400Regular', fontSize: 14, color: cartasBosque.tinta, letterSpacing: 1 },
-  cuponNombre: { fontFamily: 'Inter_400Regular', fontSize: 12, color: cartasBosque.helecho },
+  cuponCodigo: { fontFamily: 'MonaSans_400Regular', fontSize: 14, color: cartasBosque.tinta, letterSpacing: 1 },
+  cuponNombre: { fontFamily: 'BricolageGrotesque_400Regular', fontSize: 12, color: cartasBosque.helecho },
   estadoBadge: { borderRadius: borderRadius.sm, paddingHorizontal: spacing[2], paddingVertical: 2 },
-  estadoLabel: { fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.bruma },
+  estadoLabel: { fontFamily: 'MonaSans_400Regular', fontSize: 10, color: cartasBosque.bruma },
   cuponRow: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing[1], marginBottom: spacing[1] },
   infoChip: {
     borderRadius: borderRadius.sm, paddingHorizontal: spacing[2], paddingVertical: 2,
     backgroundColor: cartasBosque.niebla,
   },
-  infoChipText: { fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.tinta },
-  cuponVig: { fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.helecho, marginBottom: spacing[1] },
+  infoChipText: { fontFamily: 'MonaSans_400Regular', fontSize: 10, color: cartasBosque.tinta },
+  cuponVig: { fontFamily: 'MonaSans_400Regular', fontSize: 10, color: cartasBosque.helecho, marginBottom: spacing[1] },
   toggleRow: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     marginTop: spacing[1],

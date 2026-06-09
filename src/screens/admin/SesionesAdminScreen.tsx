@@ -302,14 +302,14 @@ const s = StyleSheet.create({
     paddingHorizontal: spacing[4], paddingVertical: spacing[3],
     borderBottomWidth: 1, borderBottomColor: cartasBosque.pergaminoOscuro,
   },
-  headerTitulo: { fontFamily: 'Inter_600SemiBold', fontSize: 18, color: cartasBosque.tinta },
+  headerTitulo: { fontFamily: 'BricolageGrotesque_600SemiBold', fontSize: 18, color: cartasBosque.tinta },
   badge: {
     minWidth: 20, height: 20, borderRadius: 10,
     backgroundColor: '#960018',
     alignItems: 'center', justifyContent: 'center',
     paddingHorizontal: 5,
   },
-  badgeText: { fontFamily: 'SpaceMono_400Regular', fontSize: 11, color: '#FFFFFF' },
+  badgeText: { fontFamily: 'MonaSans_400Regular', fontSize: 11, color: '#FFFFFF' },
 
   tabRow: {
     flexDirection: 'row',
@@ -321,8 +321,8 @@ const s = StyleSheet.create({
     borderBottomWidth: 2, borderBottomColor: 'transparent',
   },
   tabBtnActive: { borderBottomColor: cartasBosque.bosque },
-  tabLabel:     { fontFamily: 'SpaceMono_400Regular', fontSize: 11, color: cartasBosque.helecho },
-  tabLabelActive: { color: cartasBosque.bosque, fontFamily: 'Inter_600SemiBold', fontSize: 11 },
+  tabLabel:     { fontFamily: 'MonaSans_400Regular', fontSize: 11, color: cartasBosque.helecho },
+  tabLabelActive: { color: cartasBosque.bosque, fontFamily: 'BricolageGrotesque_600SemiBold', fontSize: 11 },
 
   scroll: { padding: spacing[4] },
 
@@ -332,7 +332,7 @@ const s = StyleSheet.create({
     alignItems: 'center', marginTop: spacing[4],
     borderWidth: 1, borderColor: cartasBosque.pergaminoOscuro,
   },
-  emptyText: { fontFamily: 'Inter_400Regular', fontSize: 13, color: cartasBosque.helecho },
+  emptyText: { fontFamily: 'BricolageGrotesque_400Regular', fontSize: 13, color: cartasBosque.helecho },
 
   // Grupos de sesiones
   grupoCard: {
@@ -346,14 +346,14 @@ const s = StyleSheet.create({
     flexDirection: 'row', alignItems: 'center',
     marginBottom: spacing[3],
   },
-  grupoNombre: { fontFamily: 'Inter_600SemiBold', fontSize: 14, color: cartasBosque.tinta },
-  grupoMeta:   { fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.helecho, marginTop: 1 },
+  grupoNombre: { fontFamily: 'BricolageGrotesque_600SemiBold', fontSize: 14, color: cartasBosque.tinta },
+  grupoMeta:   { fontFamily: 'MonaSans_400Regular', fontSize: 10, color: cartasBosque.helecho, marginTop: 1 },
   cerrarTodasBtn: {
     paddingHorizontal: spacing[3], paddingVertical: spacing[1] + 2,
     borderRadius: borderRadius.full,
     borderWidth: 1, borderColor: '#960018' + '80',
   },
-  cerrarTodasText: { fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: '#960018' },
+  cerrarTodasText: { fontFamily: 'MonaSans_400Regular', fontSize: 10, color: '#960018' },
 
   liberarBtn: {
     flexDirection: 'row', alignItems: 'center', gap: spacing[1] + 2,
@@ -361,11 +361,11 @@ const s = StyleSheet.create({
     borderRadius: borderRadius.sm, padding: spacing[2],
     marginBottom: spacing[2],
   },
-  liberarText: { flex: 1, fontFamily: 'Inter_400Regular', fontSize: 12, color: '#960018' },
+  liberarText: { flex: 1, fontFamily: 'BricolageGrotesque_400Regular', fontSize: 12, color: '#960018' },
 
   // Roles
   seccionHeader: {
-    fontFamily: 'SpaceMono_400Regular',
+    fontFamily: 'MonaSans_400Regular',
     fontSize: 9,
     color: cartasBosque.helecho,
     letterSpacing: 1,
@@ -382,7 +382,7 @@ const s = StyleSheet.create({
     marginLeft: spacing[2],
   },
   rolBadgeText: {
-    fontFamily: 'SpaceMono_400Regular',
+    fontFamily: 'MonaSans_400Regular',
     fontSize: 9,
     letterSpacing: 0.5,
   },
@@ -405,9 +405,9 @@ const s = StyleSheet.create({
     flexShrink: 0,
   },
   alertaHeaderRow: { flexDirection: 'row', alignItems: 'center', gap: spacing[2] },
-  alertaTipo:   { fontFamily: 'Inter_600SemiBold', fontSize: 12, color: cartasBosque.tinta },
+  alertaTipo:   { fontFamily: 'BricolageGrotesque_600SemiBold', fontSize: 12, color: cartasBosque.tinta },
   dotNoVisto:   { width: 7, height: 7, borderRadius: 4, backgroundColor: cartasBosque.bosque },
-  alertaNombre: { fontFamily: 'SpaceMono_400Regular', fontSize: 11, color: cartasBosque.helecho, marginTop: 2 },
-  alertaMeta:   { fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.helecho, marginTop: 1 },
-  alertaFecha:  { fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.helecho + 'AA', marginTop: 2 },
+  alertaNombre: { fontFamily: 'MonaSans_400Regular', fontSize: 11, color: cartasBosque.helecho, marginTop: 2 },
+  alertaMeta:   { fontFamily: 'MonaSans_400Regular', fontSize: 10, color: cartasBosque.helecho, marginTop: 1 },
+  alertaFecha:  { fontFamily: 'MonaSans_400Regular', fontSize: 10, color: cartasBosque.helecho + 'AA', marginTop: 2 },
 });

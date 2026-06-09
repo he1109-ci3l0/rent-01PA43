@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
     marginTop: spacing[3],
   },
   label: {
-    fontFamily: 'SpaceMono_400Regular',
+    fontFamily: 'MonaSans_400Regular',
     fontSize: 11,
     color: cartasBosque.helecho,
     letterSpacing: 0.5,
@@ -127,7 +127,7 @@ const styles = StyleSheet.create({
     borderColor: cartasBosque.pergaminoOscuro,
     paddingHorizontal: spacing[3],
     paddingVertical: spacing[2],
-    fontFamily: 'SpaceMono_400Regular',
+    fontFamily: 'MonaSans_400Regular',
     fontSize: 14,
     color: cartasBosque.tinta,
     letterSpacing: 1,
@@ -145,7 +145,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   btnAplicarText: {
-    fontFamily: 'Inter_600SemiBold',
+    fontFamily: 'BricolageGrotesque_600SemiBold',
     fontSize: 13,
     color: cartasBosque.bruma,
   },
@@ -159,13 +159,13 @@ const styles = StyleSheet.create({
     marginTop: spacing[1],
   },
   exitoText: {
-    fontFamily: 'Inter_400Regular',
+    fontFamily: 'BricolageGrotesque_400Regular',
     fontSize: 12,
     color: cartasBosque.bosque,
     flex: 1,
   },
   exitoMonto: {
-    fontFamily: 'Inter_600SemiBold',
+    fontFamily: 'BricolageGrotesque_600SemiBold',
   },
   errorBox: {
     flexDirection: 'row',
@@ -174,7 +174,7 @@ const styles = StyleSheet.create({
     marginTop: spacing[1],
   },
   errorText: {
-    fontFamily: 'Inter_400Regular',
+    fontFamily: 'BricolageGrotesque_400Regular',
     fontSize: 12,
     color: cartasBosque.alertaBorde,
   },

@@ -625,14 +625,14 @@ const styles = StyleSheet.create({
     borderBottomWidth: 2, borderBottomColor: 'transparent',
   },
   tabBtnActivo:  { borderBottomColor: cartasBosque.bosque },
-  tabText:       { fontFamily: 'SpaceMono_400Regular', fontSize: 11, color: cartasBosque.helecho },
+  tabText:       { fontFamily: 'MonaSans_400Regular', fontSize: 11, color: cartasBosque.helecho },
   tabTextActivo: { color: cartasBosque.bosque },
 
   scrollContent: { padding: spacing[4], paddingBottom: spacing[10] },
 
   // Empty state
   emptyContain: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: spacing[2], paddingTop: spacing[20] },
-  emptyText:    { fontFamily: 'Inter_400Regular', fontSize: 14, color: cartasBosque.helecho },
+  emptyText:    { fontFamily: 'BricolageGrotesque_400Regular', fontSize: 14, color: cartasBosque.helecho },
 
   // Card HOY
   card: {
@@ -642,14 +642,14 @@ const styles = StyleSheet.create({
     padding: spacing[4], marginBottom: spacing[3],
   },
   cardArea: {
-    fontFamily: 'SpaceMono_400Regular', fontSize: 9,
+    fontFamily: 'MonaSans_400Regular', fontSize: 9,
     color: cartasBosque.helecho, textTransform: 'uppercase', letterSpacing: 1,
     marginBottom: spacing[1],
   },
   cardRow:  { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  cardHora: { fontFamily: 'Inter_600SemiBold', fontSize: 15, color: cartasBosque.tinta },
+  cardHora: { fontFamily: 'BricolageGrotesque_600SemiBold', fontSize: 15, color: cartasBosque.tinta },
   vencePronto: {
-    fontFamily: 'Inter_400Regular', fontSize: 11, color: '#8A6A72',
+    fontFamily: 'BricolageGrotesque_400Regular', fontSize: 11, color: '#8A6A72',
     marginTop: spacing[1],
   },
 
@@ -658,11 +658,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing[2], paddingVertical: 2,
     borderRadius: borderRadius.sm, alignSelf: 'flex-start',
   },
-  badgeText: { fontFamily: 'SpaceMono_400Regular', fontSize: 9, textTransform: 'uppercase' },
+  badgeText: { fontFamily: 'MonaSans_400Regular', fontSize: 9, textTransform: 'uppercase' },
 
   // Semana
   diaHeader: {
-    fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.helecho,
+    fontFamily: 'MonaSans_400Regular', fontSize: 10, color: cartasBosque.helecho,
     marginBottom: spacing[2], marginTop: spacing[1],
   },
   separador: {
@@ -675,7 +675,7 @@ const styles = StyleSheet.create({
   },
   dot: { width: 8, height: 8, borderRadius: 4 },
   semanaArea: {
-    fontFamily: 'Inter_400Regular', fontSize: 13, color: cartasBosque.tinta, flex: 1,
+    fontFamily: 'BricolageGrotesque_400Regular', fontSize: 13, color: cartasBosque.tinta, flex: 1,
   },
 
   // Calendario
@@ -684,14 +684,14 @@ const styles = StyleSheet.create({
     marginBottom: spacing[4],
   },
   calNavTitulo: {
-    fontFamily: 'Inter_600SemiBold', fontSize: 15, color: cartasBosque.tinta,
+    fontFamily: 'BricolageGrotesque_600SemiBold', fontSize: 15, color: cartasBosque.tinta,
   },
   calGridRow: {
     flexDirection: 'row', marginBottom: spacing[2],
   },
   calDiaNombre: {
     flex: 1, textAlign: 'center',
-    fontFamily: 'SpaceMono_400Regular', fontSize: 9, color: cartasBosque.helecho,
+    fontFamily: 'MonaSans_400Regular', fontSize: 9, color: cartasBosque.helecho,
   },
   calGrid: { flexDirection: 'row', flexWrap: 'wrap' },
   calCelda: {
@@ -703,7 +703,7 @@ const styles = StyleSheet.create({
     alignItems: 'center', justifyContent: 'center',
   },
   calNumHoy: { backgroundColor: cartasBosque.bosque },
-  calNum:       { fontFamily: 'Inter_400Regular', fontSize: 13, color: cartasBosque.tinta },
+  calNum:       { fontFamily: 'BricolageGrotesque_400Regular', fontSize: 13, color: cartasBosque.tinta },
   calNumHoyText:{ color: cartasBosque.bruma },
   calDot: { width: 5, height: 5, borderRadius: 3, marginTop: 2 },
 
@@ -713,8 +713,8 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1, borderBottomColor: cartasBosque.pergaminoOscuro,
   },
   modalTurnoInfo: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: spacing[1] },
-  modalTurnoArea: { fontFamily: 'Inter_600SemiBold', fontSize: 13, color: cartasBosque.tinta },
-  modalTurnoHora: { fontFamily: 'SpaceMono_400Regular', fontSize: 11, color: cartasBosque.helecho },
+  modalTurnoArea: { fontFamily: 'BricolageGrotesque_600SemiBold', fontSize: 13, color: cartasBosque.tinta },
+  modalTurnoHora: { fontFamily: 'MonaSans_400Regular', fontSize: 11, color: cartasBosque.helecho },
 
   // Modales compartidos
   overlay: { flex: 1, backgroundColor: 'rgba(18,42,31,0.35)' },
@@ -724,15 +724,15 @@ const styles = StyleSheet.create({
     padding: spacing[5], paddingBottom: spacing[8],
   },
   sheetTitulo: {
-    fontFamily: 'Inter_600SemiBold', fontSize: 18, color: cartasBosque.tinta,
+    fontFamily: 'BricolageGrotesque_600SemiBold', fontSize: 18, color: cartasBosque.tinta,
     marginBottom: spacing[1],
   },
   sheetSub: {
-    fontFamily: 'Inter_400Regular', fontSize: 13, color: cartasBosque.helecho,
+    fontFamily: 'BricolageGrotesque_400Regular', fontSize: 13, color: cartasBosque.helecho,
     marginBottom: spacing[3],
   },
   sheetLabel: {
-    fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.helecho,
+    fontFamily: 'MonaSans_400Regular', fontSize: 10, color: cartasBosque.helecho,
     letterSpacing: 0.5, marginBottom: spacing[1], marginTop: spacing[2],
   },
   horaItem: {
@@ -740,13 +740,13 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.sm, marginBottom: 2,
   },
   horaItemSel: { backgroundColor: cartasBosque.bosque },
-  horaText:    { fontFamily: 'SpaceMono_400Regular', fontSize: 13, color: cartasBosque.tinta },
+  horaText:    { fontFamily: 'MonaSans_400Regular', fontSize: 13, color: cartasBosque.tinta },
   horaTextSel: { color: cartasBosque.bruma },
   btnPrimario: {
     backgroundColor: cartasBosque.bosque, borderRadius: borderRadius.sm,
     paddingVertical: spacing[3], alignItems: 'center', marginTop: spacing[3], marginBottom: spacing[2],
   },
-  btnPrimarioText:  { fontFamily: 'Inter_600SemiBold', fontSize: 14, color: cartasBosque.bruma },
+  btnPrimarioText:  { fontFamily: 'BricolageGrotesque_600SemiBold', fontSize: 14, color: cartasBosque.bruma },
   btnSecundario:    { paddingVertical: spacing[2], alignItems: 'center' },
-  btnSecundarioText:{ fontFamily: 'Inter_400Regular', fontSize: 13, color: cartasBosque.helecho },
+  btnSecundarioText:{ fontFamily: 'BricolageGrotesque_400Regular', fontSize: 13, color: cartasBosque.helecho },
 });

@@ -213,19 +213,19 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   logoChar: {
-    fontFamily: 'Inter_700Bold',
+    fontFamily: 'BricolageGrotesque_700Bold',
     fontSize: 34,
     color: cartasBosque.pergamino,
   },
   title: {
-    fontFamily: 'Inter_700Bold',
+    fontFamily: 'BricolageGrotesque_700Bold',
     fontSize: 30,
     color: cartasBosque.bosque,
     letterSpacing: -0.4,
     marginBottom: spacing[3],
   },
   welcome: {
-    fontFamily: 'Inter_400Regular',
+    fontFamily: 'BricolageGrotesque_400Regular',
     fontSize: 14,
     color: cartasBosque.helecho,
     textAlign: 'center',
@@ -236,7 +236,7 @@ const styles = StyleSheet.create({
   form: { gap: spacing[4] },
   field: { gap: spacing[1.5] },
   label: {
-    fontFamily: 'Inter_500Medium',
+    fontFamily: 'BricolageGrotesque_400Regular',
     fontSize: 13,
     color: cartasBosque.tinta,
   },
@@ -247,7 +247,7 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.md,
     paddingHorizontal: spacing[4],
     paddingVertical: spacing[3],
-    fontFamily: 'Inter_400Regular',
+    fontFamily: 'BricolageGrotesque_400Regular',
     fontSize: 15,
     color: cartasBosque.tinta,
   },
@@ -274,7 +274,7 @@ const styles = StyleSheet.create({
     padding: spacing[3],
   },
   errorText: {
-    fontFamily: 'Inter_400Regular',
+    fontFamily: 'BricolageGrotesque_400Regular',
     fontSize: 13,
     color: cartasBosque.alertaBorde,
     flex: 1,
@@ -288,7 +288,7 @@ const styles = StyleSheet.create({
     padding: spacing[3],
   },
   lockText: {
-    fontFamily: 'Inter_400Regular',
+    fontFamily: 'BricolageGrotesque_400Regular',
     fontSize: 13,
     color: cartasBosque.alertaBorde,
     flex: 1,
@@ -309,7 +309,7 @@ const styles = StyleSheet.create({
   },
   buttonDisabled: { opacity: 0.45 },
   buttonText: {
-    fontFamily: 'Inter_600SemiBold',
+    fontFamily: 'BricolageGrotesque_600SemiBold',
     fontSize: 16,
     color: cartasBosque.bruma,
     letterSpacing: 0.3,
@@ -321,19 +321,19 @@ const styles = StyleSheet.create({
     paddingTop: spacing[2],
   },
   registerText: {
-    fontFamily: 'Inter_400Regular',
+    fontFamily: 'BricolageGrotesque_400Regular',
     fontSize: 14,
     color: cartasBosque.helecho,
   },
   registerLink: {
-    fontFamily: 'Inter_600SemiBold',
+    fontFamily: 'BricolageGrotesque_600SemiBold',
     color: cartasBosque.bosque,
     textDecorationLine: 'underline',
   },
 
   // Footer
   footer: {
-    fontFamily: 'SpaceMono_400Regular',
+    fontFamily: 'MonaSans_400Regular',
     fontSize: 10,
     color: cartasBosque.helecho,
     textAlign: 'center',

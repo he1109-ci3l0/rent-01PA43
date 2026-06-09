@@ -63,6 +63,6 @@ const styles = StyleSheet.create({
     borderBottomWidth: 2, borderBottomColor: 'transparent',
   },
   tabBtnActivo: { borderBottomColor: cartasBosque.bosque },
-  tabText: { fontFamily: 'SpaceMono_400Regular', fontSize: 11, color: cartasBosque.helecho },
+  tabText: { fontFamily: 'MonaSans_400Regular', fontSize: 11, color: cartasBosque.helecho },
   tabTextActivo: { color: cartasBosque.bosque },
 });

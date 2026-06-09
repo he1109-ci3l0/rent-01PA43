@@ -116,8 +116,8 @@ const mc = StyleSheet.create({
     padding: spacing[4],
     gap: spacing[1],
   },
-  value: { fontFamily: 'SpaceMono_400Regular', fontSize: 22, marginTop: spacing[1] },
-  label: { fontFamily: 'Inter_400Regular', fontSize: 12, color: '#4A5E48' },
+  value: { fontFamily: 'MonaSans_400Regular', fontSize: 22, marginTop: spacing[1] },
+  label: { fontFamily: 'BricolageGrotesque_400Regular', fontSize: 12, color: '#4A5E48' },
 });
 
 // ─── Constants ────────────────────────────────────────────────
@@ -613,15 +613,15 @@ export default function EstadoFinanzasScreen() {
 // ─── Estilos — Screen ─────────────────────────────────────────
 
 const s = StyleSheet.create({
-  scroll:    { flex: 1, backgroundColor: '#F5F2EC' },
+  scroll:    { flex: 1, backgroundColor: '#F7F7F5' },
   container: { padding: spacing[5], gap: spacing[5] },
 
   headerRow: {
     flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between',
   },
-  titulo: { fontFamily: 'Inter_700Bold', fontSize: 22, color: '#122A1F' },
+  titulo: { fontFamily: 'BricolageGrotesque_700Bold', fontSize: 22, color: '#122A1F' },
   subtitulo: {
-    fontFamily: 'SpaceMono_400Regular', fontSize: 11, color: '#8A9E80',
+    fontFamily: 'MonaSans_400Regular', fontSize: 11, color: '#8A9E80',
     textTransform: 'capitalize', marginTop: spacing[1],
   },
 
@@ -631,7 +631,7 @@ const s = StyleSheet.create({
     paddingHorizontal: spacing[3], paddingVertical: spacing[2],
     borderRadius: borderRadius.md,
   },
-  exportBtnText: { fontFamily: 'Inter_600SemiBold', fontSize: 12, color: '#FFFFFF' },
+  exportBtnText: { fontFamily: 'BricolageGrotesque_600SemiBold', fontSize: 12, color: '#FFFFFF' },
 
   cardsRow: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing[3] },
 
@@ -640,38 +640,38 @@ const s = StyleSheet.create({
     padding: spacing[4], gap: spacing[3],
   },
   seccionTitulo: {
-    fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: '#8A9E80', letterSpacing: 1,
+    fontFamily: 'MonaSans_400Regular', fontSize: 10, color: '#8A9E80', letterSpacing: 1,
   },
-  vacioText: { fontFamily: 'Inter_400Regular', fontSize: 13, color: '#8A9E80' },
+  vacioText: { fontFamily: 'BricolageGrotesque_400Regular', fontSize: 13, color: '#8A9E80' },
 
   pagoRow: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     paddingVertical: spacing[2],
-    borderBottomWidth: 1, borderBottomColor: '#F5F2EC',
+    borderBottomWidth: 1, borderBottomColor: '#F7F7F5',
   },
   pagoLeft:   { gap: 2 },
-  pagoNombre: { fontFamily: 'Inter_600SemiBold', fontSize: 13, color: '#122A1F' },
-  pagoSub:    { fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: '#8A9E80' },
-  pagoMonto:  { fontFamily: 'SpaceMono_400Regular', fontSize: 14, color: '#4A9B6F' },
+  pagoNombre: { fontFamily: 'BricolageGrotesque_600SemiBold', fontSize: 13, color: '#122A1F' },
+  pagoSub:    { fontFamily: 'MonaSans_400Regular', fontSize: 10, color: '#8A9E80' },
+  pagoMonto:  { fontFamily: 'MonaSans_400Regular', fontSize: 14, color: '#4A9B6F' },
 
   metricaGrid: { flexDirection: 'row', gap: spacing[3] },
   metricaCard: {
-    flex: 1, backgroundColor: '#F5F2EC',
+    flex: 1, backgroundColor: '#F7F7F5',
     borderRadius: borderRadius.md, padding: spacing[3], alignItems: 'center', gap: 4,
   },
-  metricaVal:   { fontFamily: 'SpaceMono_400Regular', fontSize: 20 },
+  metricaVal:   { fontFamily: 'MonaSans_400Regular', fontSize: 20 },
   metricaLabel: {
-    fontFamily: 'Inter_400Regular', fontSize: 11, color: '#4A5E48', textAlign: 'center',
+    fontFamily: 'BricolageGrotesque_400Regular', fontSize: 11, color: '#4A5E48', textAlign: 'center',
   },
 
   catGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing[2] },
   catCard: {
-    backgroundColor: '#F5F2EC', borderRadius: borderRadius.md,
+    backgroundColor: '#F7F7F5', borderRadius: borderRadius.md,
     padding: spacing[3], alignItems: 'center', minWidth: 100, gap: 4,
   },
-  catVal:   { fontFamily: 'SpaceMono_400Regular', fontSize: 18 },
+  catVal:   { fontFamily: 'MonaSans_400Regular', fontSize: 18 },
   catLabel: {
-    fontFamily: 'Inter_400Regular', fontSize: 11, color: '#4A5E48', textAlign: 'center',
+    fontFamily: 'BricolageGrotesque_400Regular', fontSize: 11, color: '#4A5E48', textAlign: 'center',
   },
 
   // ── Egresos
@@ -684,7 +684,7 @@ const s = StyleSheet.create({
     paddingHorizontal: spacing[3], paddingVertical: spacing[1] + 2,
     borderRadius: borderRadius.sm,
   },
-  addBtnText: { fontFamily: 'Inter_600SemiBold', fontSize: 12, color: '#FFFFFF' },
+  addBtnText: { fontFamily: 'BricolageGrotesque_600SemiBold', fontSize: 12, color: '#FFFFFF' },
   tipoResumenRow: {
     flexDirection: 'row', gap: spacing[2], flexWrap: 'wrap',
   },
@@ -693,17 +693,17 @@ const s = StyleSheet.create({
     borderRadius: borderRadius.md, borderWidth: 1,
     padding: spacing[3], gap: 4,
   },
-  tipoChipVal:   { fontFamily: 'SpaceMono_400Regular', fontSize: 16 },
-  tipoChipLabel: { fontFamily: 'Inter_400Regular', fontSize: 11, color: '#4A5E48' },
+  tipoChipVal:   { fontFamily: 'MonaSans_400Regular', fontSize: 16 },
+  tipoChipLabel: { fontFamily: 'BricolageGrotesque_400Regular', fontSize: 11, color: '#4A5E48' },
   gastoRow: {
     flexDirection: 'row', alignItems: 'center', gap: spacing[3],
     paddingVertical: spacing[2],
-    borderBottomWidth: 1, borderBottomColor: '#F5F2EC',
+    borderBottomWidth: 1, borderBottomColor: '#F7F7F5',
   },
   gastoDot:   { width: 8, height: 8, borderRadius: 4 },
-  gastoDesc:  { fontFamily: 'Inter_600SemiBold', fontSize: 13, color: '#122A1F' },
-  gastoSub:   { fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: '#8A9E80' },
-  gastoMonto: { fontFamily: 'SpaceMono_400Regular', fontSize: 13 },
+  gastoDesc:  { fontFamily: 'BricolageGrotesque_600SemiBold', fontSize: 13, color: '#122A1F' },
+  gastoSub:   { fontFamily: 'MonaSans_400Regular', fontSize: 10, color: '#8A9E80' },
+  gastoMonto: { fontFamily: 'MonaSans_400Regular', fontSize: 13 },
 
   // ── Balance
   balanceRow: {
@@ -713,13 +713,13 @@ const s = StyleSheet.create({
   },
   balanceItem:  { alignItems: 'center', gap: 4 },
   balanceLabel: {
-    fontFamily: 'SpaceMono_400Regular', fontSize: 9, color: '#8A9E80', letterSpacing: 1,
+    fontFamily: 'MonaSans_400Regular', fontSize: 9, color: '#8A9E80', letterSpacing: 1,
   },
-  balanceVal: { fontFamily: 'SpaceMono_400Regular', fontSize: 22 },
-  balanceSep: { fontFamily: 'Inter_700Bold', fontSize: 24, color: '#8A9E80' },
+  balanceVal: { fontFamily: 'MonaSans_400Regular', fontSize: 22 },
+  balanceSep: { fontFamily: 'BricolageGrotesque_700Bold', fontSize: 24, color: '#8A9E80' },
   desglosRow: { marginTop: spacing[1] },
   desglose: {
-    fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: '#8A9E80', textAlign: 'center',
+    fontFamily: 'MonaSans_400Regular', fontSize: 10, color: '#8A9E80', textAlign: 'center',
   },
 });
 
@@ -733,7 +733,7 @@ const fg = StyleSheet.create({
     alignItems: 'center',
   },
   panel: {
-    backgroundColor: '#F5F2EC',
+    backgroundColor: '#F7F7F5',
     borderRadius: borderRadius.xl,
     width: 480,
     maxHeight: '85%' as any,
@@ -743,9 +743,9 @@ const fg = StyleSheet.create({
     flexDirection: 'row', justifyContent: 'space-between',
     alignItems: 'center', marginBottom: spacing[3],
   },
-  titulo: { fontFamily: 'Inter_700Bold', fontSize: 18, color: '#122A1F' },
+  titulo: { fontFamily: 'BricolageGrotesque_700Bold', fontSize: 18, color: '#122A1F' },
   label: {
-    fontFamily: 'SpaceMono_400Regular', fontSize: 9, color: '#8A9E80',
+    fontFamily: 'MonaSans_400Regular', fontSize: 9, color: '#8A9E80',
     letterSpacing: 0.8,
     marginTop: spacing[3], marginBottom: spacing[1],
   },
@@ -756,21 +756,21 @@ const fg = StyleSheet.create({
     borderColor: '#CDB29D', backgroundColor: '#FFFFFF',
   },
   chipActivo:     { backgroundColor: '#2E3C2C', borderColor: '#2E3C2C' },
-  chipText:       { fontFamily: 'Inter_400Regular', fontSize: 12, color: '#122A1F' },
+  chipText:       { fontFamily: 'BricolageGrotesque_400Regular', fontSize: 12, color: '#122A1F' },
   chipTextActivo: { color: '#FFFFFF' },
   input: {
     backgroundColor: '#FFFFFF', borderRadius: borderRadius.sm,
     borderWidth: 1, borderColor: '#CDB29D',
     paddingHorizontal: spacing[3], paddingVertical: spacing[2],
-    fontFamily: 'Inter_400Regular', fontSize: 13, color: '#122A1F',
+    fontFamily: 'BricolageGrotesque_400Regular', fontSize: 13, color: '#122A1F',
   },
   error: {
-    fontFamily: 'Inter_400Regular', fontSize: 12, color: '#C0392B', marginTop: spacing[2],
+    fontFamily: 'BricolageGrotesque_400Regular', fontSize: 12, color: '#C0392B', marginTop: spacing[2],
   },
   btnGuardar: {
     backgroundColor: '#2E3C2C', borderRadius: borderRadius.sm,
     paddingVertical: spacing[3], alignItems: 'center',
     marginTop: spacing[4],
   },
-  btnGuardarText: { fontFamily: 'Inter_600SemiBold', fontSize: 14, color: '#FFFFFF' },
+  btnGuardarText: { fontFamily: 'BricolageGrotesque_600SemiBold', fontSize: 14, color: '#FFFFFF' },
 });

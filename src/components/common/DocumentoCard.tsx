@@ -152,14 +152,14 @@ const styles = StyleSheet.create({
     backgroundColor: cartasBosque.niebla + '44',
     alignItems: 'center', justifyContent: 'center',
   },
-  nombre:  { fontFamily: 'Inter_600SemiBold', fontSize: 13, color: cartasBosque.tinta, marginBottom: 3 },
+  nombre:  { fontFamily: 'BricolageGrotesque_600SemiBold', fontSize: 13, color: cartasBosque.tinta, marginBottom: 3 },
   metaRow: { flexDirection: 'row', alignItems: 'center', gap: spacing[2] },
   chip: {
     paddingHorizontal: spacing[2], paddingVertical: 2,
     borderRadius: borderRadius.full,
   },
-  chipText: { fontFamily: 'SpaceMono_400Regular', fontSize: 9, letterSpacing: 0.4 },
-  restante: { fontFamily: 'SpaceMono_400Regular', fontSize: 9, color: cartasBosque.helecho },
+  chipText: { fontFamily: 'MonaSans_400Regular', fontSize: 9, letterSpacing: 0.4 },
+  restante: { fontFamily: 'MonaSans_400Regular', fontSize: 9, color: cartasBosque.helecho },
   accionBtn: {
     width: 34, height: 34, borderRadius: 17,
     backgroundColor: cartasBosque.niebla + '44',
@@ -174,14 +174,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing[3], paddingVertical: spacing[1] + 2,
   },
   firmaBtnText: {
-    fontFamily: 'Inter_600SemiBold', fontSize: 11, color: cartasBosque.bruma,
+    fontFamily: 'BricolageGrotesque_600SemiBold', fontSize: 11, color: cartasBosque.bruma,
   },
   resetRow: {
     flexDirection: 'row', alignItems: 'center', gap: 4,
     marginTop: spacing[2], alignSelf: 'flex-end',
   },
   resetText: {
-    fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.helecho,
+    fontFamily: 'MonaSans_400Regular', fontSize: 10, color: cartasBosque.helecho,
     textDecorationLine: 'underline',
   },
 });

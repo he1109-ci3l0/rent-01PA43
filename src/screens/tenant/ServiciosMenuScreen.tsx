@@ -132,11 +132,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing[4], paddingTop: spacing[6],
   },
   titulo: {
-    fontFamily: 'Inter_600SemiBold', fontSize: 22, color: cartasBosque.tinta,
+    fontFamily: 'BricolageGrotesque_600SemiBold', fontSize: 22, color: cartasBosque.tinta,
     marginBottom: spacing[1],
   },
   sub: {
-    fontFamily: 'Inter_400Regular', fontSize: 13, color: cartasBosque.helecho,
+    fontFamily: 'BricolageGrotesque_400Regular', fontSize: 13, color: cartasBosque.helecho,
     marginBottom: spacing[5],
   },
   lista: { gap: spacing[2] },
@@ -151,8 +151,8 @@ const styles = StyleSheet.create({
     alignItems: 'center', justifyContent: 'center',
   },
   entradaTexto: { flex: 1 },
-  entradaTitulo: { fontFamily: 'Inter_600SemiBold', fontSize: 14, color: cartasBosque.tinta },
-  entradaSub: { fontFamily: 'Inter_400Regular', fontSize: 11, color: cartasBosque.helecho, marginTop: 1 },
+  entradaTitulo: { fontFamily: 'BricolageGrotesque_600SemiBold', fontSize: 14, color: cartasBosque.tinta },
+  entradaSub: { fontFamily: 'BricolageGrotesque_400Regular', fontSize: 11, color: cartasBosque.helecho, marginTop: 1 },
   // Sub-header para vistas internas
   subHeader: {
     backgroundColor: cartasBosque.bruma,
@@ -160,6 +160,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing[4], paddingBottom: spacing[2],
   },
   backBtn: { flexDirection: 'row', alignItems: 'center', gap: spacing[1], marginBottom: spacing[1] },
-  backLabel: { fontFamily: 'Inter_400Regular', fontSize: 13, color: cartasBosque.tinta },
-  subTitulo: { fontFamily: 'Inter_600SemiBold', fontSize: 18, color: cartasBosque.tinta },
+  backLabel: { fontFamily: 'BricolageGrotesque_400Regular', fontSize: 13, color: cartasBosque.tinta },
+  subTitulo: { fontFamily: 'BricolageGrotesque_600SemiBold', fontSize: 18, color: cartasBosque.tinta },
 });

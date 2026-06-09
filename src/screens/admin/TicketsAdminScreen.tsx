@@ -423,7 +423,7 @@ const styles = StyleSheet.create({
     padding: spacing[4],
   },
   colRightTitulo: {
-    fontFamily: 'SpaceMono_400Regular',
+    fontFamily: 'MonaSans_400Regular',
     fontSize: 10,
     color: cartasBosque.helecho,
     letterSpacing: 1,
@@ -453,12 +453,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 4,
   },
   areaBadgeText: {
-    fontFamily: 'SpaceMono_400Regular',
+    fontFamily: 'MonaSans_400Regular',
     fontSize: 10,
     color: '#FFFFFF',
   },
   areaLabel: {
-    fontFamily: 'Inter_600SemiBold',
+    fontFamily: 'BricolageGrotesque_600SemiBold',
     fontSize: 12,
     color: cartasBosque.tinta,
     marginBottom: 2,
@@ -468,7 +468,7 @@ const styles = StyleSheet.create({
     gap: spacing[3],
   },
   areaMetricText: {
-    fontFamily: 'SpaceMono_400Regular',
+    fontFamily: 'MonaSans_400Regular',
     fontSize: 10,
   },
 
@@ -480,8 +480,8 @@ const styles = StyleSheet.create({
     flex: 1, alignItems: 'center', paddingVertical: spacing[2],
     borderRadius: borderRadius.sm,
   },
-  contadorNum:   { fontFamily: 'Inter_600SemiBold', fontSize: 20 },
-  contadorLabel: { fontFamily: 'SpaceMono_400Regular', fontSize: 9, letterSpacing: 0.3 },
+  contadorNum:   { fontFamily: 'BricolageGrotesque_600SemiBold', fontSize: 20 },
+  contadorLabel: { fontFamily: 'MonaSans_400Regular', fontSize: 9, letterSpacing: 0.3 },
 
   filtroBar: {
     borderTopWidth: 1, borderTopColor: cartasBosque.pergaminoOscuro,
@@ -494,11 +494,11 @@ const styles = StyleSheet.create({
     backgroundColor: cartasBosque.pergamino,
   },
   chipActivo:    { backgroundColor: cartasBosque.bosque, borderColor: cartasBosque.bosque },
-  chipText:      { fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.helecho },
+  chipText:      { fontFamily: 'MonaSans_400Regular', fontSize: 10, color: cartasBosque.helecho },
   chipTextActivo:{ color: cartasBosque.bruma },
 
   vacio:     { flex: 1, alignItems: 'center', justifyContent: 'center', gap: spacing[2] },
-  vacioText: { fontFamily: 'Inter_400Regular', fontSize: 14, color: cartasBosque.helecho },
+  vacioText: { fontFamily: 'BricolageGrotesque_400Regular', fontSize: 14, color: cartasBosque.helecho },
 
   // Modal
   overlay: { flex: 1, backgroundColor: 'rgba(18,42,31,0.35)' },
@@ -508,13 +508,13 @@ const styles = StyleSheet.create({
     padding: spacing[5], paddingBottom: spacing[8],
     maxHeight: '85%',
   },
-  sheetTitulo: { fontFamily: 'Inter_600SemiBold', fontSize: 17, color: cartasBosque.tinta },
+  sheetTitulo: { fontFamily: 'BricolageGrotesque_600SemiBold', fontSize: 17, color: cartasBosque.tinta },
   sheetSub: {
-    fontFamily: 'Inter_400Regular', fontSize: 12, color: cartasBosque.helecho,
+    fontFamily: 'BricolageGrotesque_400Regular', fontSize: 12, color: cartasBosque.helecho,
     marginTop: spacing[1], marginBottom: spacing[3],
   },
   sheetLabel: {
-    fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.helecho,
+    fontFamily: 'MonaSans_400Regular', fontSize: 10, color: cartasBosque.helecho,
     letterSpacing: 0.5, marginBottom: spacing[2],
   },
 
@@ -525,7 +525,7 @@ const styles = StyleSheet.create({
     borderColor: cartasBosque.pergaminoOscuro,
     backgroundColor: cartasBosque.pergamino,
   },
-  estadoBtnText: { fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.helecho },
+  estadoBtnText: { fontFamily: 'MonaSans_400Regular', fontSize: 10, color: cartasBosque.helecho },
 
   etiquetasGrid: {
     flexDirection: 'row', flexWrap: 'wrap', gap: spacing[2], marginBottom: spacing[3],
@@ -537,15 +537,15 @@ const styles = StyleSheet.create({
     borderColor: cartasBosque.pergaminoOscuro,
     backgroundColor: cartasBosque.pergamino,
   },
-  etiquetaBtnText: { fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.tinta },
+  etiquetaBtnText: { fontFamily: 'MonaSans_400Regular', fontSize: 10, color: cartasBosque.tinta },
 
   switchRow:  { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  switchLabel:{ fontFamily: 'Inter_400Regular', fontSize: 13, color: cartasBosque.tinta },
+  switchLabel:{ fontFamily: 'BricolageGrotesque_400Regular', fontSize: 13, color: cartasBosque.tinta },
 
   notasInput: {
     backgroundColor: cartasBosque.pergamino, borderWidth: 1,
     borderColor: cartasBosque.pergaminoOscuro, borderRadius: borderRadius.sm,
-    padding: spacing[3], fontFamily: 'Inter_400Regular', fontSize: 13,
+    padding: spacing[3], fontFamily: 'BricolageGrotesque_400Regular', fontSize: 13,
     color: cartasBosque.tinta, minHeight: 80, textAlignVertical: 'top',
     marginBottom: spacing[3],
   },
@@ -553,5 +553,5 @@ const styles = StyleSheet.create({
     backgroundColor: cartasBosque.bosque, borderRadius: borderRadius.sm,
     paddingVertical: spacing[3], alignItems: 'center',
   },
-  btnGuardarText: { fontFamily: 'Inter_600SemiBold', fontSize: 14, color: cartasBosque.bruma },
+  btnGuardarText: { fontFamily: 'BricolageGrotesque_600SemiBold', fontSize: 14, color: cartasBosque.bruma },
 });

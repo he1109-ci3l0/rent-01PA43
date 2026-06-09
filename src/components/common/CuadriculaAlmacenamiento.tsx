@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
     marginBottom: spacing[2],
   },
   titulo: {
-    fontFamily: 'SpaceMono_400Regular', fontSize: 10,
+    fontFamily: 'MonaSans_400Regular', fontSize: 10,
     color: cartasBosque.helecho, letterSpacing: 0.5,
   },
   grid: {
@@ -126,10 +126,10 @@ const styles = StyleSheet.create({
     alignItems: 'center', justifyContent: 'center',
   },
   num: {
-    fontFamily: 'Inter_600SemiBold', fontSize: 12,
+    fontFamily: 'BricolageGrotesque_600SemiBold', fontSize: 12,
   },
   nombre: {
-    fontFamily: 'SpaceMono_400Regular', fontSize: 9,
+    fontFamily: 'MonaSans_400Regular', fontSize: 9,
     color: cartasBosque.tinta, marginTop: 1,
   },
   leyenda: {
@@ -138,12 +138,12 @@ const styles = StyleSheet.create({
   dotRow: { flexDirection: 'row', alignItems: 'center', gap: spacing[1] },
   dot: { width: 8, height: 8, borderRadius: 2 },
   dotLabel: {
-    fontFamily: 'SpaceMono_400Regular', fontSize: 9, color: cartasBosque.helecho,
+    fontFamily: 'MonaSans_400Regular', fontSize: 9, color: cartasBosque.helecho,
   },
   celdaLibre: {
     alignItems: 'center', justifyContent: 'center', gap: 2,
   },
   celdaLibreText: {
-    fontFamily: 'SpaceMono_400Regular', fontSize: 8, color: '#4A9B6F',
+    fontFamily: 'MonaSans_400Regular', fontSize: 8, color: '#4A9B6F',
   },
 });

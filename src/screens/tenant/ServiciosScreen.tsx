@@ -13,5 +13,5 @@ export default function ServiciosScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: cartasBosque.pergamino, alignItems: 'center', justifyContent: 'center' },
-  text: { fontFamily: 'Inter_400Regular', fontSize: 16, color: cartasBosque.helecho, letterSpacing: spacing[0.5] },
+  text: { fontFamily: 'BricolageGrotesque_400Regular', fontSize: 16, color: cartasBosque.helecho, letterSpacing: spacing[0.5] },
 });

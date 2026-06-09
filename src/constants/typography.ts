@@ -1,12 +1,12 @@
 import { TextStyle } from 'react-native';
 
 export const fonts = {
-  sans:       'Inter_400Regular',
-  sansMedium: 'Inter_500Medium',
-  sansSemi:   'Inter_600SemiBold',
-  sansBold:   'Inter_700Bold',
-  mono:       'SpaceMono_400Regular',
-  monoBold:   'SpaceMono_700Bold',
+  sans:       'BricolageGrotesque_400Regular',
+  sansMedium: 'BricolageGrotesque_400Regular',
+  sansSemi:   'BricolageGrotesque_600SemiBold',
+  sansBold:   'BricolageGrotesque_700Bold',
+  mono:       'MonaSans_400Regular',
+  monoBold:   'MonaSans_600SemiBold',
 } as const;
 
 export const fontSizes = {

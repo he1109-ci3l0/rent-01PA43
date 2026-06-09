@@ -216,15 +216,15 @@ const s = StyleSheet.create({
   content:  { padding: spacing[5], paddingBottom: spacing[10] },
 
   header:  { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: spacing[4] },
-  eyebrow: { fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.helecho, letterSpacing: 1, textTransform: 'uppercase', marginBottom: 2 },
-  title:   { fontFamily: 'Inter_700Bold', fontSize: 26, color: cartasBosque.tinta, letterSpacing: -0.3 },
+  eyebrow: { fontFamily: 'MonaSans_400Regular', fontSize: 10, color: cartasBosque.helecho, letterSpacing: 1, textTransform: 'uppercase', marginBottom: 2 },
+  title:   { fontFamily: 'BricolageGrotesque_700Bold', fontSize: 26, color: cartasBosque.tinta, letterSpacing: -0.3 },
 
   alertaBanner: {
     flexDirection: 'row', alignItems: 'center', gap: spacing[2],
     backgroundColor: cartasBosque.alertaBorde, borderRadius: borderRadius.md,
     padding: spacing[3], marginBottom: spacing[4],
   },
-  alertaBannerText: { fontFamily: 'Inter_500Medium', fontSize: 13, color: '#FFFFFF', flex: 1 },
+  alertaBannerText: { fontFamily: 'BricolageGrotesque_400Regular', fontSize: 13, color: '#FFFFFF', flex: 1 },
 
   metricsGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing[3], marginBottom: spacing[2] },
   metricCard:  {
@@ -235,11 +235,11 @@ const s = StyleSheet.create({
     shadowOpacity: 0.05, shadowRadius: 4, elevation: 1,
   },
   metricIcon:  { width: 36, height: 36, borderRadius: borderRadius.sm, alignItems: 'center', justifyContent: 'center', marginBottom: spacing[2] },
-  metricValue: { fontFamily: 'Inter_700Bold', fontSize: 24, letterSpacing: -0.5 },
-  metricLabel: { fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: cartasBosque.helecho, letterSpacing: 0.5, marginTop: 2 },
-  metricSub:   { fontFamily: 'SpaceMono_400Regular', fontSize: 9, color: cartasBosque.helecho, marginTop: 2 },
+  metricValue: { fontFamily: 'BricolageGrotesque_700Bold', fontSize: 24, letterSpacing: -0.5 },
+  metricLabel: { fontFamily: 'MonaSans_400Regular', fontSize: 10, color: cartasBosque.helecho, letterSpacing: 0.5, marginTop: 2 },
+  metricSub:   { fontFamily: 'MonaSans_400Regular', fontSize: 9, color: cartasBosque.helecho, marginTop: 2 },
 
-  sectionTitle: { fontFamily: 'Inter_600SemiBold', fontSize: 15, color: cartasBosque.tinta, marginTop: spacing[5], marginBottom: spacing[3] },
+  sectionTitle: { fontFamily: 'BricolageGrotesque_600SemiBold', fontSize: 15, color: cartasBosque.tinta, marginTop: spacing[5], marginBottom: spacing[3] },
 
   scoresRow: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing[2] },
   scoreChip: {
@@ -247,8 +247,8 @@ const s = StyleSheet.create({
     paddingHorizontal: spacing[2.5], paddingVertical: spacing[1],
     borderRadius: borderRadius.full, borderWidth: 1,
   },
-  scoreChipNum: { fontFamily: 'Inter_700Bold', fontSize: 13 },
-  scoreChipLbl: { fontFamily: 'SpaceMono_400Regular', fontSize: 10, textTransform: 'capitalize' },
+  scoreChipNum: { fontFamily: 'BricolageGrotesque_700Bold', fontSize: 13 },
+  scoreChipLbl: { fontFamily: 'MonaSans_400Regular', fontSize: 10, textTransform: 'capitalize' },
 
   quickGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing[3] },
   quickCard: {
@@ -258,5 +258,5 @@ const s = StyleSheet.create({
     borderWidth: 1, borderColor: cartasBosque.pergaminoOscuro,
   },
   quickIcon:  { width: 42, height: 42, borderRadius: borderRadius.md, alignItems: 'center', justifyContent: 'center' },
-  quickLabel: { fontFamily: 'Inter_500Medium', fontSize: 13, color: cartasBosque.tinta, textAlign: 'center' },
+  quickLabel: { fontFamily: 'BricolageGrotesque_400Regular', fontSize: 13, color: cartasBosque.tinta, textAlign: 'center' },
 });

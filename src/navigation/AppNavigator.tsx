@@ -341,7 +341,7 @@ const styles = StyleSheet.create({
     overflow: 'visible',
   },
   tabLabel: {
-    fontFamily: 'SpaceMono_400Regular',
+    fontFamily: 'MonaSans_400Regular',
     fontSize: 9,
     letterSpacing: 0.6,
   },
@@ -370,12 +370,12 @@ const sub = StyleSheet.create({
     borderBottomColor: cartasBosque.bosque,
   },
   tabText: {
-    fontFamily: 'SpaceMono_400Regular',
+    fontFamily: 'MonaSans_400Regular',
     fontSize: 11,
     color: cartasBosque.helecho,
   },
   tabTextActivo: {
-    fontFamily: 'Inter_600SemiBold',
+    fontFamily: 'BricolageGrotesque_600SemiBold',
     fontSize: 11,
     color: cartasBosque.bosque,
   },
