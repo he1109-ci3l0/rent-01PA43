@@ -3,6 +3,7 @@ import {
   View, Text, ScrollView, TouchableOpacity,
   StyleSheet, ActivityIndicator, Alert,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { Timestamp } from 'firebase/firestore';
 import { cartasBosque } from '@/constants/colors';
@@ -137,6 +138,7 @@ export default function LavanderiaTenantScreen() {
   }
 
   return (
+    <SafeAreaView edges={['top']} style={{ flex: 1, backgroundColor: cartasBosque.bruma }}>
     <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
       {/* Contador mes */}
       <View style={styles.contadorCard}>
@@ -225,6 +227,7 @@ export default function LavanderiaTenantScreen() {
         <ActivityIndicator color={cartasBosque.bosque} style={{ marginTop: spacing[4] }} />
       )}
     </ScrollView>
+    </SafeAreaView>
   );
 }
 
