@@ -3,6 +3,7 @@ import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
   TextInput, KeyboardAvoidingView, Platform, Alert, ActivityIndicator,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { Timestamp } from 'firebase/firestore';
 import { cartasBosque } from '@/constants/colors';
@@ -136,8 +137,9 @@ export default function HuespedExtraScreen() {
 
   if (step === 'lista') {
     return (
+      <SafeAreaView edges={['top']} style={styles.root}>
       <ScrollView
-        style={styles.root}
+        style={{ flex: 1 }}
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
       >
@@ -237,6 +239,7 @@ export default function HuespedExtraScreen() {
           </Text>
         </TouchableOpacity>
       </ScrollView>
+      </SafeAreaView>
     );
   }
 
@@ -244,7 +247,7 @@ export default function HuespedExtraScreen() {
 
   if (step === 'aviso') {
     return (
-      <View style={styles.root}>
+      <SafeAreaView edges={['top']} style={styles.root}>
         <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
           <TouchableOpacity onPress={() => setStep('lista')} style={styles.backBtn}>
             <Ionicons name="arrow-back" size={20} color={cartasBosque.helecho} />
@@ -276,7 +279,7 @@ export default function HuespedExtraScreen() {
             <Ionicons name="arrow-forward" size={18} color={cartasBosque.bruma} />
           </TouchableOpacity>
         </ScrollView>
-      </View>
+      </SafeAreaView>
     );
   }
 
@@ -284,8 +287,9 @@ export default function HuespedExtraScreen() {
 
   if (step === 'perfil') {
     return (
+      <SafeAreaView edges={['top']} style={styles.root}>
       <KeyboardAvoidingView
-        style={styles.root}
+        style={{ flex: 1 }}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
         <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
@@ -381,6 +385,7 @@ export default function HuespedExtraScreen() {
           </TouchableOpacity>
         </ScrollView>
       </KeyboardAvoidingView>
+      </SafeAreaView>
     );
   }
 
@@ -388,8 +393,9 @@ export default function HuespedExtraScreen() {
 
   if (step === 'promo') {
     return (
+      <SafeAreaView edges={['top']} style={styles.root}>
       <ScrollView
-        style={styles.root}
+        style={{ flex: 1 }}
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
       >
@@ -409,13 +415,14 @@ export default function HuespedExtraScreen() {
           <ActivityIndicator size="large" color={cartasBosque.bosque} style={{ marginTop: 40 }} />
         )}
       </ScrollView>
+      </SafeAreaView>
     );
   }
 
   // ── CONFIRMACIÓN ─────────────────────────────────────────────
 
   return (
-    <View style={[styles.root, styles.centerContent]}>
+    <SafeAreaView edges={['top']} style={[styles.root, styles.centerContent]}>
       <View style={[styles.confirmIcon, confirmOk && styles.confirmIconOk]}>
         <Ionicons
           name={confirmOk ? 'checkmark-circle' : 'time-outline'}
@@ -434,7 +441,7 @@ export default function HuespedExtraScreen() {
       >
         <Text style={styles.btnRegistrarTxt}>Ver mis huéspedes</Text>
       </TouchableOpacity>
-    </View>
+    </SafeAreaView>
   );
 }
 
