@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { cartasBosque } from '@/constants/colors';
 import { spacing, borderRadius } from '@/constants/spacing';
@@ -43,7 +44,7 @@ export default function ServiciosMenuScreen() {
   if (seccion === 'huespedes') {
     return (
       <View style={{ flex: 1 }}>
-        <SafeAreaView style={styles.subHeader}>
+        <SafeAreaView edges={['top']} style={styles.subHeader}>
           <TouchableOpacity onPress={() => setSeccion('menu')} style={styles.backBtn}>
             <Ionicons name="arrow-back" size={20} color={cartasBosque.tinta} />
             <Text style={styles.backLabel}>Servicios</Text>
@@ -58,7 +59,7 @@ export default function ServiciosMenuScreen() {
   if (seccion === 'lavanderia') {
     return (
       <View style={{ flex: 1 }}>
-        <SafeAreaView style={styles.subHeader}>
+        <SafeAreaView edges={['top']} style={styles.subHeader}>
           <TouchableOpacity onPress={() => setSeccion('menu')} style={styles.backBtn}>
             <Ionicons name="arrow-back" size={20} color={cartasBosque.tinta} />
             <Text style={styles.backLabel}>Servicios</Text>
@@ -73,7 +74,7 @@ export default function ServiciosMenuScreen() {
   if (seccion === 'almacenamiento') {
     return (
       <View style={{ flex: 1 }}>
-        <SafeAreaView style={styles.subHeader}>
+        <SafeAreaView edges={['top']} style={styles.subHeader}>
           <TouchableOpacity onPress={() => setSeccion('menu')} style={styles.backBtn}>
             <Ionicons name="arrow-back" size={20} color={cartasBosque.tinta} />
             <Text style={styles.backLabel}>Servicios</Text>
@@ -88,7 +89,7 @@ export default function ServiciosMenuScreen() {
   if (seccion === 'limpieza') {
     return (
       <View style={{ flex: 1 }}>
-        <SafeAreaView style={styles.subHeader}>
+        <SafeAreaView edges={['top']} style={styles.subHeader}>
           <TouchableOpacity onPress={() => setSeccion('menu')} style={styles.backBtn}>
             <Ionicons name="arrow-back" size={20} color={cartasBosque.tinta} />
             <Text style={styles.backLabel}>Servicios</Text>
@@ -101,7 +102,7 @@ export default function ServiciosMenuScreen() {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView edges={['top']} style={styles.container}>
       <Text style={styles.titulo}>Servicios</Text>
       <Text style={styles.sub}>Gestiona tus servicios adicionales</Text>
       <View style={styles.lista}>
