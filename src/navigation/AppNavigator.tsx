@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import {
   View, Text, TouchableOpacity, ScrollView, StyleSheet,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '@/hooks/useAuth';
@@ -201,6 +201,7 @@ function tabIcon(name: IoniconsName, nameFocused: IoniconsName) {
 }
 
 function TenantNavigator() {
+  const insets = useSafeAreaInsets();
   return (
     <TenantTab.Navigator
       initialRouteName="Home"
@@ -208,7 +209,7 @@ function TenantNavigator() {
         headerShown: false,
         tabBarActiveTintColor: ICON_ACTIVE,
         tabBarInactiveTintColor: ICON_INACTIVE,
-        tabBarStyle: styles.tabBar,
+        tabBarStyle: [styles.tabBar, { height: 64 + insets.bottom, paddingBottom: 8 + insets.bottom }],
         tabBarLabelStyle: styles.tabLabel,
       }}
     >
@@ -267,6 +268,7 @@ type AdminTabList = {
 const AdminTab = createBottomTabNavigator<AdminTabList>();
 
 function AdminNavigator() {
+  const insets = useSafeAreaInsets();
   return (
     <AdminTab.Navigator
       initialRouteName="Home"
@@ -274,7 +276,7 @@ function AdminNavigator() {
         headerShown: false,
         tabBarActiveTintColor: ICON_ACTIVE,
         tabBarInactiveTintColor: ICON_INACTIVE,
-        tabBarStyle: styles.tabBar,
+        tabBarStyle: [styles.tabBar, { height: 64 + insets.bottom, paddingBottom: 8 + insets.bottom }],
         tabBarLabelStyle: styles.tabLabel,
       }}
     >
