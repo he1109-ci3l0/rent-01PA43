@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import {
   View, Text, ScrollView, TouchableOpacity,
-  StyleSheet, SafeAreaView, TextInput, ActivityIndicator,
+  StyleSheet, TextInput, ActivityIndicator,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { cartasBosque } from '@/constants/colors';
 import { spacing, borderRadius } from '@/constants/spacing';
@@ -85,7 +86,7 @@ export default function VisitasScreen() {
 
   if (vista === 'checkin') {
     return (
-      <SafeAreaView style={styles.safe}>
+      <SafeAreaView edges={['top']} style={styles.safe}>
         <View style={styles.header}>
           <TouchableOpacity onPress={() => { setVista('lista'); resetForm(); }}>
             <Ionicons name="arrow-back" size={22} color={cartasBosque.tinta} />
