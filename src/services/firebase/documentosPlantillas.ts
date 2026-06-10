@@ -16,9 +16,9 @@ export const PLANTILLAS_META: Array<{
   { tipo: 'contrato',            nombre: 'Contrato de hospedaje',  nombreArchivo: 'contrato_final_v5.docx',      requiereFirma: true,  version: 'v5' },
   { tipo: 'reglamento',          nombre: 'Reglamento interno',     nombreArchivo: 'reglamento_interno_v4.docx',  requiereFirma: true,  version: 'v4' },
   { tipo: 'aviso_privacidad',    nombre: 'Aviso de privacidad',    nombreArchivo: 'aviso_privacidad.docx',       requiereFirma: true,  version: 'v1' },
-  { tipo: 'addendum_servicios',  nombre: 'Addendum de servicios',  nombreArchivo: 'addendum_servicios_v2.docx',  requiereFirma: false, version: 'v2' },
-  { tipo: 'contrato_mobiliario', nombre: 'Contrato de mobiliario', nombreArchivo: 'contrato_mobiliario_v2.docx', requiereFirma: false, version: 'v2' },
-  { tipo: 'clausula_cupones',    nombre: 'Cláusula de cupones',    nombreArchivo: 'clausula_cupones.docx',       requiereFirma: false, version: 'v1' },
+  { tipo: 'addendum_servicios',  nombre: 'Addendum de servicios',  nombreArchivo: 'addendum_servicios_v2.docx',  requiereFirma: true,  version: 'v2' },
+  { tipo: 'contrato_mobiliario', nombre: 'Contrato de mobiliario', nombreArchivo: 'contrato_mobiliario_v2.docx', requiereFirma: true,  version: 'v2' },
+  { tipo: 'clausula_cupones',    nombre: 'Cláusula de cupones',    nombreArchivo: 'clausula_cupones.docx',       requiereFirma: true,  version: 'v1' },
 ];
 
 // ─── Listeners ────────────────────────────────────────────────

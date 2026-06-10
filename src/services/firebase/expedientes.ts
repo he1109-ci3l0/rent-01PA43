@@ -26,9 +26,9 @@ const DOCS_BASE: Array<Omit<DocumentoExpediente, 'id'>> = [
   { tipo: 'CONTRATO',            nombre: 'Contrato de hospedaje',    url: null, estado: 'pendiente', descargas: 0, maxDescargas: 3, subidoEn: null, subidoPor: null, requiereFirma: true,  firmadoEn: null },
   { tipo: 'REGLAMENTO',          nombre: 'Reglamento interno',       url: null, estado: 'pendiente', descargas: 0, maxDescargas: 3, subidoEn: null, subidoPor: null, requiereFirma: true,  firmadoEn: null },
   { tipo: 'AVISO_PRIVACIDAD',    nombre: 'Aviso de privacidad',      url: null, estado: 'pendiente', descargas: 0, maxDescargas: 3, subidoEn: null, subidoPor: null, requiereFirma: true,  firmadoEn: null },
-  { tipo: 'ADDENDUM_SERVICIOS',  nombre: 'Addendum de servicios',    url: null, estado: 'pendiente', descargas: 0, maxDescargas: 3, subidoEn: null, subidoPor: null, requiereFirma: false, firmadoEn: null },
-  { tipo: 'CONTRATO_MOBILIARIO', nombre: 'Contrato de mobiliario',   url: null, estado: 'pendiente', descargas: 0, maxDescargas: 3, subidoEn: null, subidoPor: null, requiereFirma: false, firmadoEn: null },
-  { tipo: 'CLAUSULA_CUPONES',    nombre: 'Cláusula de cupones',      url: null, estado: 'pendiente', descargas: 0, maxDescargas: 3, subidoEn: null, subidoPor: null, requiereFirma: false, firmadoEn: null },
+  { tipo: 'ADDENDUM_SERVICIOS',  nombre: 'Addendum de servicios',    url: null, estado: 'pendiente', descargas: 0, maxDescargas: 3, subidoEn: null, subidoPor: null, requiereFirma: true,  firmadoEn: null },
+  { tipo: 'CONTRATO_MOBILIARIO', nombre: 'Contrato de mobiliario',   url: null, estado: 'pendiente', descargas: 0, maxDescargas: 3, subidoEn: null, subidoPor: null, requiereFirma: true,  firmadoEn: null },
+  { tipo: 'CLAUSULA_CUPONES',    nombre: 'Cláusula de cupones',      url: null, estado: 'pendiente', descargas: 0, maxDescargas: 3, subidoEn: null, subidoPor: null, requiereFirma: true,  firmadoEn: null },
 ];
 
 // ─── Inicialización ───────────────────────────────────────────
