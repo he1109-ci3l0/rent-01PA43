@@ -3,6 +3,7 @@ import {
   View, Text, ScrollView, Modal, TouchableOpacity,
   StyleSheet, ActivityIndicator, Alert, FlatList,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import * as ImagePicker from 'expo-image-picker';
 import { Ionicons } from '@expo/vector-icons';
 import { cartasBosque } from '@/constants/colors';
@@ -381,7 +382,7 @@ export default function LimpiezaTenantScreen() {
   ];
 
   return (
-    <View style={{ flex: 1, backgroundColor: cartasBosque.bruma }}>
+    <SafeAreaView edges={['top']} style={{ flex: 1, backgroundColor: cartasBosque.bruma }}>
 
       {/* ── Tab bar ─────────────────────────────────────────── */}
       <View style={styles.tabBar}>
@@ -607,7 +608,7 @@ export default function LimpiezaTenantScreen() {
         visible={turnoPermuta !== null}
         onClose={() => setTurnoPermuta(null)}
       />
-    </View>
+    </SafeAreaView>
   );
 }
 
