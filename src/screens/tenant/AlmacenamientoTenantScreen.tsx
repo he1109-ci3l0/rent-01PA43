@@ -3,6 +3,7 @@ import {
   View, Text, ScrollView, Modal, TouchableOpacity,
   StyleSheet, ActivityIndicator, Alert,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { cartasBosque } from '@/constants/colors';
 import { spacing, borderRadius } from '@/constants/spacing';
@@ -80,6 +81,7 @@ export default function AlmacenamientoTenantScreen() {
   }
 
   return (
+    <SafeAreaView edges={['top']} style={{ flex: 1, backgroundColor: cartasBosque.bruma }}>
     <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
       {/* Aviso vencimiento */}
       {proxVencer.length > 0 && (
@@ -221,6 +223,7 @@ export default function AlmacenamientoTenantScreen() {
         </View>
       </Modal>
     </ScrollView>
+    </SafeAreaView>
   );
 }
 
