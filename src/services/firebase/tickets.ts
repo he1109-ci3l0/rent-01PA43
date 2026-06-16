@@ -3,8 +3,8 @@ import {
   query, where, orderBy, onSnapshot,
   getDocs, Timestamp, arrayUnion, arrayRemove,
 } from 'firebase/firestore';
-import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { db } from './firestore';
+import { subirImagenCloudinary } from '@/services/cloudinary';
 import type {
   Ticket, CategoriaTicket, SubcategoriaTicket, EstadoTicket, EtiquetaTicket,
 } from '@/types/firestore';
@@ -144,12 +144,7 @@ export async function crearTicket(payload: {
 
   let fotoUrl: string | null = null;
   if (payload.fotoUri) {
-    const storage2 = getStorage();
-    const res  = await fetch(payload.fotoUri);
-    const blob = await res.blob();
-    const r    = ref(storage2, `tickets/${payload.inquilinoId}/${folio}.jpg`);
-    await uploadBytes(r, blob);
-    fotoUrl = await getDownloadURL(r);
+    fotoUrl = await subirImagenCloudinary(payload.fotoUri, 'tickets');
   }
 
   const etiquetaResp = calcularEtiquetaResponsabilidad(payload.categoria, payload.subcategoria);

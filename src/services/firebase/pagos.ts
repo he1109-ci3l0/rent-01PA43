@@ -10,8 +10,8 @@ import {
   Timestamp,
   setDoc,
 } from 'firebase/firestore';
-import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { db, collections } from './firestore';
+import { subirImagenCloudinary } from '@/services/cloudinary';
 import type { Pago, NivelScore, ScoreReputacion, ModalidadPago } from '@/types/firestore';
 
 // ─── Score config ─────────────────────────────────────────────
@@ -108,13 +108,7 @@ export async function registrarComprobante(
   pagoId: string,
   imageUri: string,
 ): Promise<void> {
-  const storage = getStorage();
-  const storageRef = ref(storage, `comprobantes/${pagoId}_${Date.now()}.jpg`);
-
-  const resp = await fetch(imageUri);
-  const blob = await resp.blob();
-  await uploadBytes(storageRef, blob);
-  const url = await getDownloadURL(storageRef);
+  const url = await subirImagenCloudinary(imageUri, 'comprobantes');
 
   await updateDoc(doc(db, 'pagos', pagoId), {
     comprobante: url,
