@@ -136,7 +136,7 @@ function PanelVerificacion({ pago, todos, procesando, onVerificar, onRechazar }:
   const { user } = useAuth();
 
   async function handleDescontarPrenda() {
-    if (!user?.uid) return;
+    if (!pago || !user?.uid) return;
     Alert.alert(
       'Descontar prenda en garantía',
       '¿Confirmas descontar la prenda en garantía de este inquilino? Esta acción es irreversible.',
@@ -154,7 +154,7 @@ function PanelVerificacion({ pago, todos, procesando, onVerificar, onRechazar }:
   }
 
   async function handleSuspenderCuenta() {
-    if (!user?.uid) return;
+    if (!pago || !user?.uid) return;
     Alert.alert(
       'Suspender cuenta',
       '¿Confirmas suspender la cuenta de este inquilino? No podrá iniciar sesión hasta que el admin la reactive.',

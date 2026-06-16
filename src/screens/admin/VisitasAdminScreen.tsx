@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import {
   View, Text, ScrollView, TouchableOpacity,
-  StyleSheet, SafeAreaView, ActivityIndicator, Modal, Platform,
+  StyleSheet, SafeAreaView, ActivityIndicator, Modal, Platform, Alert,
 } from 'react-native';
 import { getDocs } from 'firebase/firestore';
 import { Ionicons } from '@expo/vector-icons';

@@ -206,7 +206,7 @@ function NuevoInquilinoForm({ onDone }: { onDone: () => void }) {
           metodoPago:       null,
           creadoEn:         ahora,
           actualizadoEn:    ahora,
-        });
+        } as any);
       }
 
       Alert.alert(
@@ -1047,7 +1047,7 @@ function PendientesPanel({
         metodoPago:       null,
         creadoEn:         ahora,
         actualizadoEn:    ahora,
-      });
+      } as any);
       setSelec(null);
       setHabitacionId('');
       setRenta('');
