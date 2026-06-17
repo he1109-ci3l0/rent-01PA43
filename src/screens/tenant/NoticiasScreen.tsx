@@ -466,6 +466,8 @@ export default function NoticiasScreen() {
   const [reporteDesc, setReporteDesc] = useState('');
   const [enviandoReporte, setEnviandoReporte] = useState(false);
   const [mostraNuevoChat, setMostraNuevoChat] = useState(false);
+  const [mostraNuevoGrupo, setMostraNuevoGrupo] = useState(false);
+  const [nombreGrupo, setNombreGrupo]           = useState('');
 
   // ── Panel lateral ──────────────────────────────────────────
 
@@ -593,32 +595,23 @@ export default function NoticiasScreen() {
     );
   }
 
-  async function crearGrupo() {
-    if (!Alert.prompt) {
-      Alert.alert('Próximamente', 'La creación de grupos está disponible en iOS 13+.');
-      return;
-    }
-    Alert.prompt(
-      'Nuevo grupo',
-      'Nombre del grupo',
-      async (nombre) => {
-        if (!nombre?.trim()) return;
-        try {
-          const now = Timestamp.now();
-          await addDoc(collection(db, 'chats'), {
-            tipo: 'grupal',
-            nombre: nombre.trim(),
-            participantes: [uid],
-            ultimoMensaje: null, ultimoMensajeEn: null, ultimoMensajePor: null,
-            noLeidosPor: { [uid]: 0 },
-            estado: 'activo',
-            strikeCount: 0, congelado: false, restringidos: [],
-            creadoEn: now, actualizadoEn: now,
-          });
-        } catch { Alert.alert('Error', 'No se pudo crear el grupo.'); }
-      },
-      'plain-text',
-    );
+  async function confirmarCrearGrupo() {
+    if (!nombreGrupo.trim()) return;
+    try {
+      const now = Timestamp.now();
+      await addDoc(collection(db, 'chats'), {
+        tipo: 'grupal',
+        nombre: nombreGrupo.trim(),
+        participantes: [uid],
+        ultimoMensaje: null, ultimoMensajeEn: null, ultimoMensajePor: null,
+        noLeidosPor: { [uid]: 0 },
+        estado: 'activo',
+        strikeCount: 0, congelado: false, restringidos: [],
+        creadoEn: now, actualizadoEn: now,
+      });
+      setMostraNuevoGrupo(false);
+      setNombreGrupo('');
+    } catch { Alert.alert('Error', 'No se pudo crear el grupo.'); }
   }
 
   async function enviarReporteAcoso() {
@@ -828,6 +821,81 @@ export default function NoticiasScreen() {
         </SafeAreaView>
       </Modal>
 
+      {/* Modal nuevo chat */}
+      <Modal
+        visible={mostraNuevoChat}
+        animationType="slide"
+        presentationStyle="pageSheet"
+        onRequestClose={() => setMostraNuevoChat(false)}
+      >
+        <SafeAreaView style={[st.reporteModal, { backgroundColor: cartasBosque.bruma }]}>
+          <View style={st.chatHeader}>
+            <TouchableOpacity onPress={() => setMostraNuevoChat(false)}>
+              <Ionicons name="close" size={22} color={cartasBosque.tinta} />
+            </TouchableOpacity>
+            <Text style={st.chatHeaderNombre}>Nuevo chat</Text>
+            <View style={{ width: 22 }} />
+          </View>
+          <ScrollView contentContainerStyle={st.nuevoModalGrid}>
+            {inquilinos.map(inq => (
+              <ContactoCirculo
+                key={inq.id}
+                inq={inq}
+                onPress={() => {
+                  setMostraNuevoChat(false);
+                  iniciarChatConInquilino(inq);
+                }}
+              />
+            ))}
+          </ScrollView>
+        </SafeAreaView>
+      </Modal>
+
+      {/* Modal nuevo grupo */}
+      <Modal
+        visible={mostraNuevoGrupo}
+        animationType="slide"
+        presentationStyle="pageSheet"
+        onRequestClose={() => { setMostraNuevoGrupo(false); setNombreGrupo(''); }}
+      >
+        <SafeAreaView style={[st.reporteModal, { backgroundColor: cartasBosque.bruma }]}>
+          <View style={st.chatHeader}>
+            <TouchableOpacity onPress={() => { setMostraNuevoGrupo(false); setNombreGrupo(''); }}>
+              <Ionicons name="close" size={22} color={cartasBosque.tinta} />
+            </TouchableOpacity>
+            <Text style={st.chatHeaderNombre}>Nuevo grupo</Text>
+            <View style={{ width: 22 }} />
+          </View>
+          <View style={{ padding: spacing[5], flex: 1 }}>
+            <TextInput
+              style={st.reporteInput}
+              value={nombreGrupo}
+              onChangeText={setNombreGrupo}
+              placeholder="Nombre del grupo…"
+              placeholderTextColor={cartasBosque.niebla}
+              autoFocus
+            />
+          </View>
+          <View style={{ padding: spacing[5], gap: spacing[3] }}>
+            <TouchableOpacity
+              style={[st.reporteEnviarBtn, { backgroundColor: cartasBosque.bosque }, !nombreGrupo.trim() && { opacity: 0.5 }]}
+              onPress={confirmarCrearGrupo}
+              disabled={!nombreGrupo.trim()}
+              activeOpacity={0.85}
+            >
+              <Text style={st.reporteEnviarText}>Crear grupo</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[st.reporteEnviarBtn, { backgroundColor: 'transparent', borderWidth: 1, borderColor: cartasBosque.pergaminoOscuro }]}
+              onPress={() => { setMostraNuevoGrupo(false); setNombreGrupo(''); }}
+              activeOpacity={0.75}
+            >
+              <Text style={[st.reporteEnviarText, { color: cartasBosque.helecho }]}>Cancelar</Text>
+            </TouchableOpacity>
+          </View>
+        </SafeAreaView>
+      </Modal>
+
       {/* Backdrop */}
       <Animated.View style={[st.backdrop, { opacity: backdropOp }]} pointerEvents="none" />
       <Animated.View style={[st.backdropTouch, { opacity: backdropOp }]}>
@@ -862,10 +930,8 @@ export default function NoticiasScreen() {
               chatGeneral={chatGeneral}
               uid={uid}
               onSelect={setChatActivo}
-              onNuevoChat={() => {
-                closePanel();
-              }}
-              onNuevoGrupo={crearGrupo}
+              onNuevoChat={() => setMostraNuevoChat(true)}
+              onNuevoGrupo={() => setMostraNuevoGrupo(true)}
             />
           )}
         </SafeAreaView>
@@ -1112,6 +1178,11 @@ const st = StyleSheet.create({
   encuestaTexto: { fontFamily: 'BricolageGrotesque_400Regular', fontSize: 13, color: cartasBosque.tinta, flex: 1, zIndex: 1 },
   encuestaPct:   { fontFamily: 'MonaSans_400Regular', fontSize: 11, color: cartasBosque.helecho, zIndex: 1 },
   encuestaTotal: { fontFamily: 'MonaSans_400Regular', fontSize: 10, color: cartasBosque.niebla, marginTop: spacing[1] },
+
+  nuevoModalGrid: {
+    flexDirection: 'row', flexWrap: 'wrap',
+    padding: spacing[4], gap: spacing[3],
+  },
 
   // Reporte acoso modal
   reporteModal: { flex: 1 },
