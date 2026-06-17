@@ -757,6 +757,7 @@ export interface DocumentoExpediente {
   subidoPor: string | null;
   requiereFirma?: boolean;
   firmadoEn?: Timestamp | null;
+  firmaDigital?: string | null;
 }
 
 // ─── documentosPlantillas ─────────────────────────────────────

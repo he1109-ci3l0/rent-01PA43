@@ -15,7 +15,6 @@ import { db, collections, configGlobal } from '@/services/firebase/firestore';
 import {
   inicializarExpediente, actualizarNotasAdmin,
   listenDocumentos, registrarDescarga, resetearContador,
-  sincronizarDocumentosDesdePlantillas,
 } from '@/services/firebase/expedientes';
 import {
   PLANTILLAS_META, listenDocumentosPlantillas, actualizarPlantillaUrl,
@@ -783,24 +782,11 @@ function DocCard({ d, uid }: { d: DocumentoExpediente; uid: string }) {
 }
 
 function DocumentosTab({ uid }: { uid: string }) {
-  const [documentos, setDocumentos]   = useState<DocumentoExpediente[]>([]);
-  const [sincronizando, setSincronizando] = useState(false);
+  const [documentos, setDocumentos] = useState<DocumentoExpediente[]>([]);
 
   useEffect(() => {
     return listenDocumentos(uid, setDocumentos);
   }, [uid]);
-
-  async function handleSincronizar() {
-    setSincronizando(true);
-    try {
-      const n = await sincronizarDocumentosDesdePlantillas(uid);
-      Alert.alert('Sincronización completa', `${n} documento${n !== 1 ? 's' : ''} actualizado${n !== 1 ? 's' : ''}.`);
-    } catch {
-      Alert.alert('Error', 'No se pudo sincronizar.');
-    } finally {
-      setSincronizando(false);
-    }
-  }
 
   const docsId     = documentos.filter(d => TIPOS_IDENTIFICACION.includes(d.tipo));
   const docsLegales = documentos.filter(d => TIPOS_LEGALES_DOCS.includes(d.tipo));
@@ -808,18 +794,6 @@ function DocumentosTab({ uid }: { uid: string }) {
   return (
     <View style={ds.container}>
       <Text style={ds.titulo}>DOCUMENTOS DEL EXPEDIENTE</Text>
-
-      <TouchableOpacity
-        style={[ds.btnSync, sincronizando && { opacity: 0.5 }]}
-        onPress={handleSincronizar}
-        disabled={sincronizando}
-        activeOpacity={0.75}
-      >
-        {sincronizando
-          ? <ActivityIndicator size="small" color={cartasBosque.bosque} />
-          : <><Ionicons name="sync-outline" size={13} color={cartasBosque.bosque} /><Text style={ds.btnSyncText}>Sincronizar documentos</Text></>
-        }
-      </TouchableOpacity>
 
       <Text style={ds.seccionHeader}>IDENTIFICACIÓN Y GARANTÍAS</Text>
       {docsId.length === 0
@@ -869,15 +843,6 @@ const ds = StyleSheet.create({
   btnDescargarText: { fontFamily: 'BricolageGrotesque_600SemiBold', fontSize: 12, color: cartasBosque.bosque },
   btnReset:         { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: spacing[2], paddingVertical: spacing[1] + 2 },
   btnResetText:     { fontFamily: 'BricolageGrotesque_400Regular', fontSize: 11, color: cartasBosque.helecho },
-  btnSync: {
-    flexDirection: 'row', alignItems: 'center', gap: 6,
-    alignSelf: 'flex-start',
-    paddingHorizontal: spacing[3], paddingVertical: spacing[1] + 2,
-    borderRadius: borderRadius.sm, borderWidth: 1,
-    borderColor: cartasBosque.pergaminoOscuro, backgroundColor: cartasBosque.pergamino,
-    marginBottom: spacing[3],
-  },
-  btnSyncText: { fontFamily: 'BricolageGrotesque_600SemiBold', fontSize: 12, color: cartasBosque.bosque },
 });
 
 // ─── NotasTab ─────────────────────────────────────────────────

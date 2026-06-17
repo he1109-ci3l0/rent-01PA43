@@ -15,16 +15,18 @@ import DocumentoCard from '@/components/common/DocumentoCard';
 import FacturacionScreen from './FacturacionScreen';
 import {
   listenExpediente, listenDocumentos, inicializarExpediente,
-  guardarFirma, registrarDescarga, firmarDocumento,
+  registrarDescarga, firmarDocumento,
   agregarContactoEmergencia, eliminarContactoEmergencia,
   agregarMascota, eliminarMascota,
 } from '@/services/firebase/expedientes';
+import { listenDocumentosPlantillas } from '@/services/firebase/documentosPlantillas';
 import { listenMisPagos } from '@/services/firebase/pagos';
 import { listenMisSesiones, cerrarSesion } from '@/services/firebase/sesiones';
 import { useSessionManager } from '@/hooks/useSessionManager';
 import type {
   Inquilino, Expediente, DocumentoExpediente, Pago,
   HuespedExtra, ScoreReputacion, ContactoEmergencia, Mascota, Sesion,
+  DocumentoPlantilla,
 } from '@/types/firestore';
 
 // ─── Constantes ───────────────────────────────────────────────
@@ -120,7 +122,8 @@ function getMonthBars(pagos: Pago[]) {
 type Point  = { x: number; y: number };
 type Stroke = Point[];
 
-function FirmaPad({ onGuardar, onCancelar }: {
+function FirmaPad({ titulo, onGuardar, onCancelar }: {
+  titulo: string;
   onGuardar: (json: string) => void;
   onCancelar: () => void;
 }) {
@@ -174,7 +177,7 @@ function FirmaPad({ onGuardar, onCancelar }: {
 
   return (
     <View style={firmaStyles.container}>
-      <Text style={firmaStyles.titulo}>Firma tu contrato</Text>
+      <Text style={firmaStyles.titulo}>{titulo}</Text>
       <Text style={firmaStyles.sub}>Dibuja tu firma en el área de abajo</Text>
       <View style={firmaStyles.canvas} {...panResponder.panHandlers}>
         {allStrokes.map((s, i) => renderStroke(s, i))}
@@ -438,7 +441,7 @@ function Seccion({ label }: { label: string }) {
 // ─── DossierScreen ────────────────────────────────────────────
 
 type Vista    = 'dossier' | 'facturacion';
-type ModalTipo = 'firma' | 'contacto' | 'mascota' | null;
+type ModalTipo = 'contacto' | 'mascota' | null;
 
 export default function DossierScreen() {
   const { user, signOut } = useAuth();
@@ -449,10 +452,12 @@ export default function DossierScreen() {
   const [inquilino, setInquilino]     = useState<Inquilino | null>(null);
   const [expediente, setExpediente]   = useState<Expediente | null>(null);
   const [documentos, setDocumentos]   = useState<DocumentoExpediente[]>([]);
+  const [plantillas, setPlantillas]   = useState<DocumentoPlantilla[]>([]);
   const [huespedes, setHuespedes]     = useState<HuespedExtra[]>([]);
   const [score, setScore]             = useState<ScoreReputacion | null>(null);
   const [pagos, setPagos]             = useState<Pago[]>([]);
   const [sesiones, setSesiones]       = useState<Sesion[]>([]);
+  const [firmandoDoc, setFirmandoDoc] = useState<DocumentoExpediente | null>(null);
   const [cargando, setCargando]       = useState(true);
   const { sesionId, reportarDispositivoPerdido } = useSessionManager();
 
@@ -477,11 +482,12 @@ export default function DossierScreen() {
       }
       setCargando(false);
     });
-    const unsubDocs  = listenDocumentos(uid, setDocumentos);
-    const unsubSes   = listenMisSesiones(uid, setSesiones);
-    const unsubPagos = listenMisPagos(uid, setPagos);
+    const unsubDocs       = listenDocumentos(uid, setDocumentos);
+    const unsubPlantillas = listenDocumentosPlantillas(setPlantillas);
+    const unsubSes        = listenMisSesiones(uid, setSesiones);
+    const unsubPagos      = listenMisPagos(uid, setPagos);
 
-    return () => { unsubInq(); unsubScore(); unsubH(); unsubExp(); unsubDocs(); unsubSes(); unsubPagos(); };
+    return () => { unsubInq(); unsubScore(); unsubH(); unsubExp(); unsubDocs(); unsubPlantillas(); unsubSes(); unsubPagos(); };
   }, [uid]);
 
   if (vista === 'facturacion') {
@@ -492,6 +498,11 @@ export default function DossierScreen() {
   const scoreColor     = score ? (NIVEL_COLOR[score.nivel] ?? cartasBosque.helecho) : cartasBosque.helecho;
   const scoreLabel     = score ? (NIVEL_LABEL[score.nivel] ?? '') : '—';
   const totalExtra     = huespedes.reduce((s, h) => s + (h.montoMensual ?? 0), 0);
+
+  const plantillaMap = new Map<string, { url: string; requiereFirma: boolean }>();
+  plantillas.forEach(p => {
+    if (p.url) plantillaMap.set(p.tipo.toUpperCase(), { url: p.url, requiereFirma: p.requiereFirma });
+  });
 
   const pagosCompletos = pagos.filter(p => p.estado === 'pagado').length;
   const pagosTardios   = pagos.filter(p =>
@@ -540,32 +551,6 @@ export default function DossierScreen() {
 
         {cargando && <ActivityIndicator color={cartasBosque.bosque} style={{ marginVertical: spacing[4] }} />}
 
-        {/* ── Firma digital ── */}
-        <Seccion label="Firma digital" />
-        <TouchableOpacity
-          style={[s.firmaCard, expediente?.firmaDigital && s.firmaCardSigned]}
-          onPress={() => !expediente?.firmaDigital && setModal('firma')}
-          activeOpacity={expediente?.firmaDigital ? 1 : 0.75}
-        >
-          {expediente?.firmaDigital ? (
-            <View>
-              <View style={s.firmaHeaderRow}>
-                <Ionicons name="checkmark-circle" size={18} color="#4A5E48" />
-                <Text style={s.firmaSignedText}>Firmado el {formatFecha(expediente.firmadoEn)}</Text>
-              </View>
-              <View style={s.firmaPreviewBox}>
-                <FirmaPreview json={expediente.firmaDigital} />
-              </View>
-            </View>
-          ) : (
-            <View style={s.firmaVacioRow}>
-              <Ionicons name="create-outline" size={20} color={cartasBosque.bosque} />
-              <Text style={s.firmaVacioText}>Firmar contrato de hospedaje</Text>
-              <Ionicons name="chevron-forward" size={16} color={cartasBosque.niebla} />
-            </View>
-          )}
-        </TouchableOpacity>
-
         {/* ── Documentos ── */}
         <Seccion label={`Documentos (${documentos.filter(d => d.estado === 'subido' || d.estado === 'firmado').length}/${documentos.length})`} />
         {documentos.length === 0 ? (
@@ -573,34 +558,32 @@ export default function DossierScreen() {
             <Text style={s.emptyText}>Los documentos serán cargados por administración</Text>
           </View>
         ) : (
-          documentos.map(d => (
-            <DocumentoCard
-              key={d.id}
-              doc={d}
-              esAdmin={false}
-              onDescargar={async () => {
-                if (d.url) {
-                  await registrarDescarga(uid, d.id).catch(() => {});
-                  Linking.openURL(d.url);
-                }
-              }}
-              onFirmar={async () => {
-                if (!expediente?.firmaDigital) {
-                  Alert.alert(
-                    'Firma requerida',
-                    'Primero registra tu firma digital en la sección "Firma digital" de esta pantalla.',
-                    [{ text: 'Entendido' }],
-                  );
-                  return;
-                }
-                try {
-                  await firmarDocumento(uid, d.id);
-                } catch {
-                  Alert.alert('Error', 'No se pudo registrar la firma. Intenta de nuevo.');
-                }
-              }}
-            />
-          ))
+          documentos.map(d => {
+            const pl = (!d.url && d.estado !== 'firmado') ? plantillaMap.get(d.tipo) : undefined;
+            const ef: DocumentoExpediente = pl
+              ? { ...d, url: pl.url, requiereFirma: pl.requiereFirma, estado: (pl.requiereFirma ? 'pendiente_firma' : 'subido') as DocumentoExpediente['estado'] }
+              : d;
+            return (
+              <View key={d.id}>
+                <DocumentoCard
+                  doc={ef}
+                  esAdmin={false}
+                  onDescargar={async () => {
+                    if (ef.url) {
+                      await registrarDescarga(uid, d.id).catch(() => {});
+                      Linking.openURL(ef.url);
+                    }
+                  }}
+                  onFirmar={() => setFirmandoDoc(ef)}
+                />
+                {ef.estado === 'firmado' && ef.firmaDigital != null && (
+                  <View style={s.firmaPreviewBox}>
+                    <FirmaPreview json={ef.firmaDigital} />
+                  </View>
+                )}
+              </View>
+            );
+          })
         )}
 
         {/* ── REPUTACIÓN ── */}
@@ -870,15 +853,18 @@ export default function DossierScreen() {
       </ScrollView>
 
       {/* ── Modales ── */}
-      <Modal visible={modal === 'firma'} animationType="slide" presentationStyle="pageSheet" onRequestClose={() => setModal(null)}>
+      <Modal visible={firmandoDoc !== null} animationType="slide" presentationStyle="pageSheet" onRequestClose={() => setFirmandoDoc(null)}>
         <SafeAreaView style={{ flex: 1, backgroundColor: cartasBosque.bruma }}>
-          <FirmaPad
-            onGuardar={async (json) => {
-              try { await guardarFirma(uid, json); setModal(null); }
-              catch { Alert.alert('Error', 'No se pudo guardar la firma'); }
-            }}
-            onCancelar={() => setModal(null)}
-          />
+          {firmandoDoc && (
+            <FirmaPad
+              titulo={firmandoDoc.nombre}
+              onGuardar={async (json) => {
+                try { await firmarDocumento(uid, firmandoDoc.id, json); setFirmandoDoc(null); }
+                catch { Alert.alert('Error', 'No se pudo guardar la firma'); }
+              }}
+              onCancelar={() => setFirmandoDoc(null)}
+            />
+          )}
         </SafeAreaView>
       </Modal>
 
