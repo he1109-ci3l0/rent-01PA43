@@ -89,6 +89,38 @@ export async function inicializarExpediente(uid: string, params: {
   await Promise.all(docsToSeed.map(d => addDoc(docsRef, d)));
 }
 
+export async function sincronizarDocumentosDesdePlantillas(uid: string): Promise<number> {
+  const plantillasSnap = await getDocs(collection(db, 'documentosPlantillas'));
+  const plantillaMap = new Map<string, { url: string; requiereFirma: boolean }>();
+  plantillasSnap.docs.forEach(p => {
+    const data = p.data();
+    plantillaMap.set(p.id.toUpperCase(), {
+      url:           data.url as string,
+      requiereFirma: data.requiereFirma as boolean,
+    });
+  });
+
+  const docsRef = collection(db, `inquilinos/${uid}/documentos`);
+  const docsSnap = await getDocs(docsRef);
+
+  const updates: Promise<void>[] = [];
+  docsSnap.docs.forEach(d => {
+    const docData = d.data() as DocumentoExpediente;
+    if (!TIPOS_PLANTILLA.has(docData.tipo)) return;
+    if (docData.estado === 'firmado') return;
+    const plantilla = plantillaMap.get(docData.tipo);
+    if (!plantilla?.url) return;
+    updates.push(updateDoc(doc(db, `inquilinos/${uid}/documentos`, d.id), {
+      url:           plantilla.url,
+      requiereFirma: plantilla.requiereFirma,
+      estado:        (plantilla.requiereFirma ? 'pendiente_firma' : 'subido') as DocumentoExpediente['estado'],
+    }));
+  });
+
+  await Promise.all(updates);
+  return updates.length;
+}
+
 // ─── Listeners ────────────────────────────────────────────────
 
 export function listenExpediente(uid: string, cb: (e: Expediente | null) => void): () => void {

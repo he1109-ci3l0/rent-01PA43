@@ -15,7 +15,7 @@ import { db } from '@/services/firebase/firestore';
 import { cartasBosque } from '@/constants/colors';
 import { spacing, borderRadius } from '@/constants/spacing';
 import { useAuth } from '@/hooks/useAuth';
-import { listenMisPagos, registrarComprobante, listenScore } from '@/services/firebase/pagos';
+import { listenMisPagos, registrarComprobante, listenScore, registrarPagoVoluntario } from '@/services/firebase/pagos';
 import { listenMisVisitas, registrarSalida, calcularHorasActiva } from '@/services/firebase/visitas';
 import { listenMisReservas, CARGAS_INCLUIDAS_MES } from '@/services/firebase/lavanderia';
 import { listenEspacios } from '@/services/firebase/almacenamiento';
@@ -293,13 +293,54 @@ export default function HomeScreen() {
     }
   }
 
-  function onReportarPago() {
-    const pago = pagoActual ?? proxPago;
-    if (!pago) {
-      Alert.alert('Sin pago pendiente', 'No encontramos un pago activo para reportar.');
+  async function subirComprobanteVoluntario(uri: string) {
+    setEnviando(true);
+    try {
+      await registrarPagoVoluntario({
+        inquilinoId:      uid,
+        habitacionId:     inquilino?.habitacionId ?? '',
+        habitacionNumero: hab,
+        inquilinoNombre:  inquilino ? `${inquilino.nombre} ${inquilino.apellido}`.trim() : uid,
+        imageUri:         uri,
+      });
+      Alert.alert('Enviado', 'Tu comprobante está en revisión. Te notificaremos pronto.');
+    } catch {
+      Alert.alert('Error', 'No se pudo enviar el comprobante. Intenta de nuevo.');
+    } finally {
+      setEnviando(false);
+    }
+  }
+
+  async function abrirSelectorVoluntario() {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== 'granted') {
+      Alert.alert('Permiso requerido', 'Necesitamos acceso a tus fotos.');
       return;
     }
-    adjuntarComprobante(pago.id);
+    Alert.alert('Comprobante de pago', '', [
+      {
+        text: 'Cámara', onPress: async () => {
+          const r = await ImagePicker.launchCameraAsync({ quality: 0.8 });
+          if (!r.canceled) await subirComprobanteVoluntario(r.assets[0].uri);
+        },
+      },
+      {
+        text: 'Galería', onPress: async () => {
+          const r = await ImagePicker.launchImageLibraryAsync({ quality: 0.8 });
+          if (!r.canceled) await subirComprobanteVoluntario(r.assets[0].uri);
+        },
+      },
+      { text: 'Cancelar', style: 'cancel' },
+    ]);
+  }
+
+  function onReportarPago() {
+    const pago = pagoActual ?? proxPago;
+    if (pago) {
+      adjuntarComprobante(pago.id);
+      return;
+    }
+    abrirSelectorVoluntario();
   }
 
   function confirmarDejarCorrer() {

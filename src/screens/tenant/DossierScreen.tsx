@@ -304,26 +304,123 @@ function ModalMascota({ onGuardar, onCancelar }: {
   onGuardar: (m: Omit<Mascota, 'id'>) => void;
   onCancelar: () => void;
 }) {
-  const [descripcion, setDescripcion] = useState('');
+  const [nombre,              setNombre]              = useState('');
+  const [especie,             setEspecie]             = useState('');
+  const [raza,                setRaza]                = useState('');
+  const [color,               setColor]               = useState('');
+  const [edad,                setEdad]                = useState('');
+  const [vacunas,             setVacunas]             = useState('');
+  const [curp,                setCurp]                = useState('');
+  const [senasParticulares,   setSenasParticulares]   = useState('');
+  const [comidaFavorita,      setComidaFavorita]      = useState('');
+  const [actividadFavorita,   setActividadFavorita]   = useState('');
+  const [condicionParticular, setCondicionParticular] = useState('');
+  const [temperamento,        setTemperamento]        = useState<'dormilon' | 'activo' | undefined>(undefined);
+  const [nivelRuido,          setNivelRuido]          = useState<'bajo' | 'medio' | 'alto' | undefined>(undefined);
+  const [ritmo,               setRitmo]               = useState<'nocturno' | 'diurno' | undefined>(undefined);
+
+  const valido = nombre.trim() !== '' && especie.trim() !== '';
+
+  function handleGuardar() {
+    onGuardar({
+      nombre:  nombre.trim(),
+      especie: especie.trim(),
+      ...(raza.trim()                && { raza:                raza.trim() }),
+      ...(color.trim()               && { color:               color.trim() }),
+      ...(edad.trim()                && { edad:                edad.trim() }),
+      ...(vacunas.trim()             && { vacunas:             vacunas.trim() }),
+      ...(curp.trim()                && { curp:                curp.trim() }),
+      ...(senasParticulares.trim()   && { senasParticulares:   senasParticulares.trim() }),
+      ...(comidaFavorita.trim()      && { comidaFavorita:      comidaFavorita.trim() }),
+      ...(actividadFavorita.trim()   && { actividadFavorita:   actividadFavorita.trim() }),
+      ...(temperamento               && { temperamento }),
+      ...(nivelRuido                 && { nivelRuido }),
+      ...(ritmo                      && { ritmo }),
+      ...(condicionParticular.trim() && { condicionParticular: condicionParticular.trim() }),
+    });
+  }
+
   return (
     <View style={mStyles.sheet}>
       <Text style={mStyles.titulo}>Registrar mascota</Text>
-      <TextInput
-        style={[mStyles.input, { height: 80, textAlignVertical: 'top' }]}
-        placeholder="Descripción (especie, raza, nombre, color…)"
-        placeholderTextColor={cartasBosque.helecho}
-        value={descripcion}
-        onChangeText={setDescripcion}
-        multiline
-      />
+      <ScrollView style={{ maxHeight: 420 }} nestedScrollEnabled showsVerticalScrollIndicator={false}>
+        {[
+          { label: 'Nombre *',            value: nombre,              onChange: setNombre },
+          { label: 'Especie *',           value: especie,             onChange: setEspecie },
+          { label: 'Raza',                value: raza,                onChange: setRaza },
+          { label: 'Color',               value: color,               onChange: setColor },
+          { label: 'Edad',                value: edad,                onChange: setEdad },
+          { label: 'Vacunas',             value: vacunas,             onChange: setVacunas },
+          { label: 'CURP',                value: curp,                onChange: setCurp },
+          { label: 'Señas particulares',  value: senasParticulares,   onChange: setSenasParticulares },
+          { label: 'Comida favorita',     value: comidaFavorita,      onChange: setComidaFavorita },
+          { label: 'Actividad favorita',  value: actividadFavorita,   onChange: setActividadFavorita },
+          { label: 'Cond. particular',    value: condicionParticular, onChange: setCondicionParticular },
+        ].map(f => (
+          <TextInput
+            key={f.label}
+            style={mStyles.input}
+            placeholder={f.label}
+            placeholderTextColor={cartasBosque.helecho}
+            value={f.value}
+            onChangeText={f.onChange}
+          />
+        ))}
+
+        <Text style={mStyles.chipLabel}>Temperamento</Text>
+        <View style={mStyles.chipRow}>
+          {(['dormilon', 'activo'] as const).map(v => (
+            <TouchableOpacity
+              key={v}
+              style={[mStyles.chip, temperamento === v && mStyles.chipActive]}
+              onPress={() => setTemperamento(temperamento === v ? undefined : v)}
+            >
+              <Text style={[mStyles.chipText, temperamento === v && mStyles.chipTextActive]}>
+                {v === 'dormilon' ? 'Dormilón' : 'Activo'}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+
+        <Text style={mStyles.chipLabel}>Nivel de ruido</Text>
+        <View style={mStyles.chipRow}>
+          {(['bajo', 'medio', 'alto'] as const).map(v => (
+            <TouchableOpacity
+              key={v}
+              style={[mStyles.chip, nivelRuido === v && mStyles.chipActive]}
+              onPress={() => setNivelRuido(nivelRuido === v ? undefined : v)}
+            >
+              <Text style={[mStyles.chipText, nivelRuido === v && mStyles.chipTextActive]}>
+                {v.charAt(0).toUpperCase() + v.slice(1)}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+
+        <Text style={mStyles.chipLabel}>Ritmo</Text>
+        <View style={[mStyles.chipRow, { marginBottom: spacing[2] }]}>
+          {(['nocturno', 'diurno'] as const).map(v => (
+            <TouchableOpacity
+              key={v}
+              style={[mStyles.chip, ritmo === v && mStyles.chipActive]}
+              onPress={() => setRitmo(ritmo === v ? undefined : v)}
+            >
+              <Text style={[mStyles.chipText, ritmo === v && mStyles.chipTextActive]}>
+                {v.charAt(0).toUpperCase() + v.slice(1)}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      </ScrollView>
+
       <View style={mStyles.btnRow}>
         <TouchableOpacity style={mStyles.btnCancel} onPress={onCancelar}>
           <Text style={mStyles.btnCancelText}>Cancelar</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={[mStyles.btnOk, !descripcion.trim() && { opacity: 0.4 }]}
-          disabled={!descripcion.trim()}
-          onPress={() => onGuardar({ descripcion: descripcion.trim() })}
+          style={[mStyles.btnOk, !valido && { opacity: 0.4 }]}
+          disabled={!valido}
+          onPress={handleGuardar}
         >
           <Text style={mStyles.btnOkText}>Guardar</Text>
         </TouchableOpacity>
@@ -640,7 +737,14 @@ export default function DossierScreen() {
           expediente!.mascotas.map(m => (
             <View key={m.id} style={s.mascotaCard}>
               <Text style={s.mascotaEmoji}>🐾</Text>
-              <Text style={s.mascotaDesc}>{m.descripcion}</Text>
+              <View style={{ flex: 1 }}>
+                <Text style={s.mascotaDesc}>{m.nombre ?? m.descripcion ?? '—'}</Text>
+                {(m.especie || m.raza) && (
+                  <Text style={s.mascotaMeta}>
+                    {[m.especie, m.raza].filter(Boolean).join(' · ')}
+                  </Text>
+                )}
+              </View>
               <TouchableOpacity onPress={() => eliminarMascota(uid, m.id)}>
                 <Ionicons name="close-circle-outline" size={18} color={cartasBosque.helecho} />
               </TouchableOpacity>
@@ -950,7 +1054,8 @@ const s = StyleSheet.create({
     borderWidth: 1, borderColor: cartasBosque.pergaminoOscuro, marginBottom: spacing[2],
   },
   mascotaEmoji: { fontSize: 24 },
-  mascotaDesc:  { flex: 1, fontFamily: 'BricolageGrotesque_400Regular', fontSize: 13, color: cartasBosque.tinta },
+  mascotaDesc:  { fontFamily: 'BricolageGrotesque_400Regular', fontSize: 13, color: cartasBosque.tinta },
+  mascotaMeta:  { fontFamily: 'MonaSans_400Regular', fontSize: 10, color: cartasBosque.helecho, marginTop: 1 },
 
   // ── CONTACTO ──
   contactoCard2: {
@@ -1096,4 +1201,17 @@ const mStyles = StyleSheet.create({
     borderRadius: borderRadius.md, backgroundColor: cartasBosque.bosque, alignItems: 'center',
   },
   btnOkText: { fontFamily: 'BricolageGrotesque_600SemiBold', fontSize: 14, color: cartasBosque.bruma },
+  chipLabel: {
+    fontFamily: 'MonaSans_400Regular', fontSize: 10, color: cartasBosque.helecho,
+    marginBottom: spacing[1], marginTop: spacing[1],
+  },
+  chipRow: { flexDirection: 'row', gap: spacing[1] + 1, flexWrap: 'wrap', marginBottom: spacing[2] },
+  chip: {
+    paddingHorizontal: spacing[3], paddingVertical: spacing[1] + 1,
+    borderRadius: borderRadius.sm, borderWidth: 1,
+    borderColor: cartasBosque.pergaminoOscuro, backgroundColor: cartasBosque.pergamino,
+  },
+  chipActive:    { borderColor: cartasBosque.bosque, backgroundColor: cartasBosque.bosque },
+  chipText:      { fontFamily: 'BricolageGrotesque_400Regular', fontSize: 13, color: cartasBosque.helecho },
+  chipTextActive:{ color: cartasBosque.bruma },
 });

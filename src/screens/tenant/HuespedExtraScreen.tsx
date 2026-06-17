@@ -64,8 +64,8 @@ export default function HuespedExtraScreen() {
   }
 
   async function handleRegistrar() {
-    if (!nombre.trim() || !apellido.trim() || !docNumero.trim()) {
-      Alert.alert('Campos incompletos', 'Nombre, apellido y número de documento son obligatorios.');
+    if (!nombre.trim() || !apellido.trim()) {
+      Alert.alert('Campos incompletos', 'Nombre y apellido son obligatorios.');
       return;
     }
     if (!puedeRegistrar) {
@@ -345,7 +345,7 @@ export default function HuespedExtraScreen() {
 
           {/* Número documento */}
           <View style={styles.field}>
-            <Text style={styles.label}>Número de documento *</Text>
+            <Text style={styles.label}>Número de documento</Text>
             <TextInput
               style={styles.input}
               value={docNumero}

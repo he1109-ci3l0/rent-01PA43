@@ -118,6 +118,37 @@ export async function registrarComprobante(
   });
 }
 
+export async function registrarPagoVoluntario(payload: {
+  inquilinoId: string;
+  habitacionId: string;
+  habitacionNumero: string;
+  inquilinoNombre: string;
+  imageUri: string;
+}): Promise<string> {
+  const url = await subirImagenCloudinary(payload.imageUri, 'comprobantes');
+  const modalidad: ModalidadPago = 'mensual';
+  const docRef = await addDoc(collections.pagos, {
+    inquilinoId:         payload.inquilinoId,
+    habitacionId:        payload.habitacionId,
+    habitacionNumero:    payload.habitacionNumero,
+    inquilinoNombre:     payload.inquilinoNombre,
+    facturaId:           null,
+    monto:               0,
+    montoPagado:         0,
+    concepto:            'arriendo',
+    modalidad,
+    fechaVencimiento:    Timestamp.now(),
+    fechaPago:           serverTimestamp(),
+    estado:              'en_revision',
+    metodoPago:          null,
+    comprobante:         url,
+    comprobanteSubidoEn: serverTimestamp(),
+    creadoEn:            serverTimestamp(),
+    actualizadoEn:       serverTimestamp(),
+  } as any);
+  return docRef.id;
+}
+
 // ─── Acciones del admin ───────────────────────────────────────
 
 export async function verificarPago(pagoId: string, adminId: string): Promise<void> {

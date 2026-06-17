@@ -56,7 +56,7 @@ export default function CuadriculaAlmacenamiento({
             e.estado === 'libre' ? COLOR_LIBRE :
             esMio              ? COLOR_MIO    : COLOR_OCUPADO;
           const numColor =
-            e.estado === 'libre' ? cartasBosque.bruma : cartasBosque.tinta;
+            e.estado === 'libre' ? cartasBosque.tinta : cartasBosque.tinta;
 
           return (
             <TouchableOpacity
@@ -69,7 +69,7 @@ export default function CuadriculaAlmacenamiento({
               <Text style={[styles.num, { color: numColor }]}>{e.numero}</Text>
               {e.estado === 'libre' ? (
                 <View style={styles.celdaLibre}>
-                  <Ionicons name="add-circle-outline" size={16} color="#4A9B6F" />
+                  <Ionicons name="add-circle-outline" size={16} color={cartasBosque.tinta} />
                   <Text style={styles.celdaLibreText}>Asignar</Text>
                 </View>
               ) : (showNombres && e.inquilinoNombre ? (
@@ -144,6 +144,6 @@ const styles = StyleSheet.create({
     alignItems: 'center', justifyContent: 'center', gap: 2,
   },
   celdaLibreText: {
-    fontFamily: 'MonaSans_400Regular', fontSize: 8, color: '#4A9B6F',
+    fontFamily: 'MonaSans_400Regular', fontSize: 8, color: cartasBosque.tinta,
   },
 });

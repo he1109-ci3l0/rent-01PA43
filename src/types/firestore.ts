@@ -785,7 +785,21 @@ export interface ContactoEmergencia {
 
 export interface Mascota {
   id: string;
-  descripcion: string;
+  nombre: string;
+  especie: string;
+  raza?: string;
+  color?: string;
+  edad?: string;
+  vacunas?: string;
+  curp?: string;
+  senasParticulares?: string;
+  comidaFavorita?: string;
+  actividadFavorita?: string;
+  temperamento?: 'dormilon' | 'activo';
+  nivelRuido?: 'bajo' | 'medio' | 'alto';
+  ritmo?: 'nocturno' | 'diurno';
+  condicionParticular?: string;
+  descripcion?: string;
 }
 
 export interface Expediente {
