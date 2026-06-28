@@ -8,6 +8,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '@/hooks/useAuth';
 import { cartasBosque } from '@/constants/colors';
 import { spacing } from '@/constants/spacing';
+import BarraSuperior from '@/components/common/BarraSuperior';
 
 // ── Tenant screens ────────────────────────────────────────────
 import DossierScreen         from '@/screens/tenant/DossierScreen';
@@ -59,7 +60,7 @@ function SubTabBar({ tabs, active, onPress }: {
   onPress: (id: string) => void;
 }) {
   return (
-    <SafeAreaView edges={['top']} style={{ backgroundColor: cartasBosque.bruma }}>
+    <SafeAreaView edges={[]} style={{ backgroundColor: cartasBosque.bruma }}>
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
@@ -203,6 +204,8 @@ function tabIcon(name: IoniconsName, nameFocused: IoniconsName) {
 function TenantNavigator() {
   const insets = useSafeAreaInsets();
   return (
+    <View style={{ flex: 1 }}>
+      <BarraSuperior />
     <TenantTab.Navigator
       initialRouteName="Home"
       screenOptions={{
@@ -250,6 +253,7 @@ function TenantNavigator() {
         options={{ tabBarIcon: tabIcon('help-circle-outline', 'help-circle'), tabBarLabel: 'Soporte' }}
       />
     </TenantTab.Navigator>
+    </View>
   );
 }
 
@@ -270,6 +274,8 @@ const AdminTab = createBottomTabNavigator<AdminTabList>();
 function AdminNavigator() {
   const insets = useSafeAreaInsets();
   return (
+    <View style={{ flex: 1 }}>
+      <BarraSuperior />
     <AdminTab.Navigator
       initialRouteName="Home"
       screenOptions={{
@@ -317,6 +323,7 @@ function AdminNavigator() {
         options={{ tabBarIcon: tabIcon('shield-outline', 'shield'), tabBarLabel: 'Admin' }}
       />
     </AdminTab.Navigator>
+    </View>
   );
 }
 

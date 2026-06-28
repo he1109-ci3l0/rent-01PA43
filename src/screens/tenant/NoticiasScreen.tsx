@@ -644,7 +644,7 @@ export default function NoticiasScreen() {
 
   return (
     <View style={st.root} {...panResponder.panHandlers}>
-      <SafeAreaView style={{ flex: 1, backgroundColor: cartasBosque.bruma }} edges={['top'] as any}>
+      <SafeAreaView style={{ flex: 1, backgroundColor: cartasBosque.bruma }} edges={[]}>
 
         {/* HEADER */}
         <View style={st.header}>

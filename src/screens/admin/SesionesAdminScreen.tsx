@@ -195,7 +195,7 @@ export default function SesionesAdminScreen() {
   }
 
   return (
-    <SafeAreaView style={s.safe} edges={['top']}>
+    <SafeAreaView style={s.safe} edges={[]}>
       <View style={s.header}>
         <Text style={s.headerTitulo}>Seguridad</Text>
         {sinVer > 0 && (

@@ -26,7 +26,7 @@ export default function ServiciosAdminScreen() {
 
   return (
     <View style={{ flex: 1, backgroundColor: cartasBosque.bruma }}>
-      <SafeAreaView edges={['top']} style={{ backgroundColor: cartasBosque.bruma, zIndex: 10 }}>
+      <SafeAreaView edges={[]} style={{ backgroundColor: cartasBosque.bruma, zIndex: 10 }}>
       <View style={styles.tabBar}>
         {(Object.keys(TAB_LABELS) as Tab[]).map(t => (
           <TouchableOpacity

@@ -382,7 +382,7 @@ export default function LimpiezaTenantScreen() {
   ];
 
   return (
-    <SafeAreaView edges={['top']} style={{ flex: 1, backgroundColor: cartasBosque.bruma }}>
+    <SafeAreaView edges={[]} style={{ flex: 1, backgroundColor: cartasBosque.bruma }}>
 
       {/* ── Tab bar ─────────────────────────────────────────── */}
       <View style={styles.tabBar}>

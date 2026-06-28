@@ -199,7 +199,7 @@ export default function ChatAdminScreen() {
 
   return (
     <View style={{ flex: 1, backgroundColor: cartasBosque.bruma }}>
-      <SafeAreaView edges={['top']} style={{ backgroundColor: cartasBosque.bruma }}>
+      <SafeAreaView edges={[]} style={{ backgroundColor: cartasBosque.bruma }}>
         {/* Tabs */}
         <View style={styles.tabBar}>
           {(['chats', 'apelaciones', 'noticias'] as Tab[]).map(t => (

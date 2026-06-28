@@ -24,7 +24,7 @@ export default function RootNavigator() {
 
   return (
     <SafeAreaProvider>
-      <StatusBar style="auto" translucent={false} />
+      <StatusBar style="light" translucent={true} />
       <NavigationContainer>
         {loading ? (
           <LoadingView />

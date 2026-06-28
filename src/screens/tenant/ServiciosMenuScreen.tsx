@@ -44,7 +44,7 @@ export default function ServiciosMenuScreen() {
   if (seccion === 'huespedes') {
     return (
       <View style={{ flex: 1 }}>
-        <SafeAreaView edges={['top']} style={styles.subHeader}>
+        <SafeAreaView edges={[]} style={styles.subHeader}>
           <TouchableOpacity onPress={() => setSeccion('menu')} style={styles.backBtn}>
             <Ionicons name="arrow-back" size={20} color={cartasBosque.tinta} />
             <Text style={styles.backLabel}>Servicios</Text>
@@ -59,7 +59,7 @@ export default function ServiciosMenuScreen() {
   if (seccion === 'lavanderia') {
     return (
       <View style={{ flex: 1 }}>
-        <SafeAreaView edges={['top']} style={styles.subHeader}>
+        <SafeAreaView edges={[]} style={styles.subHeader}>
           <TouchableOpacity onPress={() => setSeccion('menu')} style={styles.backBtn}>
             <Ionicons name="arrow-back" size={20} color={cartasBosque.tinta} />
             <Text style={styles.backLabel}>Servicios</Text>
@@ -74,7 +74,7 @@ export default function ServiciosMenuScreen() {
   if (seccion === 'almacenamiento') {
     return (
       <View style={{ flex: 1 }}>
-        <SafeAreaView edges={['top']} style={styles.subHeader}>
+        <SafeAreaView edges={[]} style={styles.subHeader}>
           <TouchableOpacity onPress={() => setSeccion('menu')} style={styles.backBtn}>
             <Ionicons name="arrow-back" size={20} color={cartasBosque.tinta} />
             <Text style={styles.backLabel}>Servicios</Text>
@@ -89,7 +89,7 @@ export default function ServiciosMenuScreen() {
   if (seccion === 'limpieza') {
     return (
       <View style={{ flex: 1 }}>
-        <SafeAreaView edges={['top']} style={styles.subHeader}>
+        <SafeAreaView edges={[]} style={styles.subHeader}>
           <TouchableOpacity onPress={() => setSeccion('menu')} style={styles.backBtn}>
             <Ionicons name="arrow-back" size={20} color={cartasBosque.tinta} />
             <Text style={styles.backLabel}>Servicios</Text>
@@ -102,7 +102,7 @@ export default function ServiciosMenuScreen() {
   }
 
   return (
-    <SafeAreaView edges={['top']} style={styles.container}>
+    <SafeAreaView edges={[]} style={styles.container}>
       <Text style={styles.titulo}>Servicios</Text>
       <Text style={styles.sub}>Gestiona tus servicios adicionales</Text>
       <View style={styles.lista}>

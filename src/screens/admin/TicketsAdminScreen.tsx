@@ -279,7 +279,7 @@ export default function TicketsAdminScreen() {
 
       {/* COLUMNA IZQUIERDA — lista de tickets */}
       <View style={[styles.colLeft, Platform.OS !== 'web' && { flex: 1 }]}>
-        <SafeAreaView edges={['top']} style={{ backgroundColor: cartasBosque.bruma }}>
+        <SafeAreaView edges={[]} style={{ backgroundColor: cartasBosque.bruma }}>
 
           {/* Contadores rápidos */}
           <View style={styles.contadoresRow}>

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import {
   View, Text, ScrollView, TouchableOpacity,
-  StyleSheet, SafeAreaView, TextInput, ActivityIndicator,
+  StyleSheet, TextInput, ActivityIndicator,
   Platform, Linking,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -563,7 +563,7 @@ export default function FacturasAdminScreen() {
 
   // ── Móvil ──────────────────────────────────────────────────
   return (
-    <SafeAreaView style={styles.safe}>
+    <View style={styles.safe}>
       <ColumnaLista
         lista={lista}
         subTab={subTab}
@@ -585,7 +585,7 @@ export default function FacturasAdminScreen() {
           adminUid={user.uid}
         />
       )}
-    </SafeAreaView>
+    </View>
   );
 }
 

@@ -514,7 +514,7 @@ export default function DossierScreen() {
   const historial = pagos.filter(p => p.concepto === 'arriendo').slice(0, 12);
 
   return (
-    <SafeAreaView style={s.safe} edges={['top']}>
+    <SafeAreaView style={s.safe} edges={[]}>
       {/* Header */}
       <View style={s.header}>
         <Text style={s.headerTitulo}>Mi expediente</Text>

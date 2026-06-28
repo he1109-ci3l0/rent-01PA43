@@ -137,7 +137,7 @@ export default function PagosScreen() {
 
   if (loading) {
     return (
-      <SafeAreaView style={s.loadingWrap} edges={['top']}>
+      <SafeAreaView style={s.loadingWrap} edges={[]}>
         <ActivityIndicator color={cartasBosque.bosque} />
       </SafeAreaView>
     );
@@ -147,7 +147,7 @@ export default function PagosScreen() {
   const saludo = hora < 12 ? 'Buenos días' : hora < 19 ? 'Buenas tardes' : 'Buenas noches';
 
   return (
-    <SafeAreaView style={s.safeArea} edges={['top']}>
+    <SafeAreaView style={s.safeArea} edges={[]}>
       <ScrollView
         style={s.root}
         contentContainerStyle={s.content}

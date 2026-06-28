@@ -108,7 +108,7 @@ export default function FacturacionScreen({ onBack }: { onBack: () => void }) {
 
   if (vista === 'nueva') {
     return (
-      <SafeAreaView edges={['top']} style={styles.safe}>
+      <SafeAreaView edges={[]} style={styles.safe}>
         <View style={styles.header}>
           <TouchableOpacity onPress={() => { setVista('lista'); setExito(false); setError(''); }}>
             <Ionicons name="arrow-back" size={22} color={cartasBosque.tinta} />

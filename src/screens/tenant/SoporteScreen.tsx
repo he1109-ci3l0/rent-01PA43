@@ -183,7 +183,7 @@ export default function SoporteScreen() {
   if (paso === 'confirmacion') {
     return (
       <View style={styles.root}>
-        <SafeAreaView edges={['top']} style={{ backgroundColor: cartasBosque.bruma }} />
+        <SafeAreaView edges={[]} style={{ backgroundColor: cartasBosque.bruma }} />
         <ScrollView contentContainerStyle={styles.confirmContainer} showsVerticalScrollIndicator={false}>
 
           <View style={styles.checkCircle}>
@@ -252,7 +252,7 @@ export default function SoporteScreen() {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
         {/* Header */}
-        <SafeAreaView edges={['top']} style={styles.formHeader}>
+        <SafeAreaView edges={[]} style={styles.formHeader}>
           <TouchableOpacity style={styles.backRow} onPress={() => { resetForm(); setPaso('lista'); }}>
             <Ionicons name="arrow-back" size={20} color={cartasBosque.tinta} />
             <Text style={styles.backLabel}>Soporte</Text>
@@ -376,7 +376,7 @@ export default function SoporteScreen() {
   // ── Vista: Lista ──────────────────────────────────────────────
   return (
     <View style={styles.root}>
-      <SafeAreaView edges={['top']} style={{ backgroundColor: cartasBosque.bruma }}>
+      <SafeAreaView edges={[]} style={{ backgroundColor: cartasBosque.bruma }}>
         {/* Header fijo */}
         <View style={styles.listaHeader}>
           <Text style={styles.listaTitulo}>Contactar soporte</Text>

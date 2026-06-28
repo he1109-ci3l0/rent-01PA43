@@ -138,7 +138,7 @@ export default function LavanderiaTenantScreen() {
   }
 
   return (
-    <SafeAreaView edges={['top']} style={{ flex: 1, backgroundColor: cartasBosque.bruma }}>
+    <SafeAreaView edges={[]} style={{ flex: 1, backgroundColor: cartasBosque.bruma }}>
     <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
       {/* Contador mes */}
       <View style={styles.contadorCard}>

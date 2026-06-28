@@ -137,7 +137,7 @@ export default function HuespedExtraScreen() {
 
   if (step === 'lista') {
     return (
-      <SafeAreaView edges={['top']} style={styles.root}>
+      <SafeAreaView edges={[]} style={styles.root}>
       <ScrollView
         style={{ flex: 1 }}
         contentContainerStyle={styles.content}
@@ -247,7 +247,7 @@ export default function HuespedExtraScreen() {
 
   if (step === 'aviso') {
     return (
-      <SafeAreaView edges={['top']} style={styles.root}>
+      <SafeAreaView edges={[]} style={styles.root}>
         <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
           <TouchableOpacity onPress={() => setStep('lista')} style={styles.backBtn}>
             <Ionicons name="arrow-back" size={20} color={cartasBosque.helecho} />
@@ -287,7 +287,7 @@ export default function HuespedExtraScreen() {
 
   if (step === 'perfil') {
     return (
-      <SafeAreaView edges={['top']} style={styles.root}>
+      <SafeAreaView edges={[]} style={styles.root}>
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -393,7 +393,7 @@ export default function HuespedExtraScreen() {
 
   if (step === 'promo') {
     return (
-      <SafeAreaView edges={['top']} style={styles.root}>
+      <SafeAreaView edges={[]} style={styles.root}>
       <ScrollView
         style={{ flex: 1 }}
         contentContainerStyle={styles.content}
@@ -422,7 +422,7 @@ export default function HuespedExtraScreen() {
   // ── CONFIRMACIÓN ─────────────────────────────────────────────
 
   return (
-    <SafeAreaView edges={['top']} style={[styles.root, styles.centerContent]}>
+    <SafeAreaView edges={[]} style={[styles.root, styles.centerContent]}>
       <View style={[styles.confirmIcon, confirmOk && styles.confirmIconOk]}>
         <Ionicons
           name={confirmOk ? 'checkmark-circle' : 'time-outline'}

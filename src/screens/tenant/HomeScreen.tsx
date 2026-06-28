@@ -390,7 +390,7 @@ export default function HomeScreen() {
             HEADER OSCURO
         ══════════════════════════════════════════════════ */}
         <View style={s.header}>
-          <SafeAreaView edges={['top']}>
+          <SafeAreaView edges={[]}>
             <Text style={s.headerHola}>Hola, {nombre}</Text>
             <Text style={s.headerHab}>HABITACIÓN {hab}</Text>
 

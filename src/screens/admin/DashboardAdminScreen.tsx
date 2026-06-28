@@ -72,7 +72,7 @@ export default function DashboardAdminScreen() {
 
   if (loading || !stats) {
     return (
-      <SafeAreaView style={s.safeArea} edges={['top']}>
+      <SafeAreaView style={s.safeArea} edges={[]}>
         <ActivityIndicator color={cartasBosque.bosque} style={{ flex: 1 }} />
       </SafeAreaView>
     );
@@ -85,7 +85,7 @@ export default function DashboardAdminScreen() {
   scores.forEach(sc => { scoreNiveles[sc.nivel] = (scoreNiveles[sc.nivel] ?? 0) + 1; });
 
   return (
-    <SafeAreaView style={s.safeArea} edges={['top']}>
+    <SafeAreaView style={s.safeArea} edges={[]}>
       <ScrollView style={s.root} contentContainerStyle={s.content} showsVerticalScrollIndicator={false}>
 
         {/* Header */}

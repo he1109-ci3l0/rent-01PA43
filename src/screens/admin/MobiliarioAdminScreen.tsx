@@ -187,7 +187,7 @@ export default function MobiliarioAdminScreen() {
 
   if (vista === 'nuevo') {
     return (
-      <SafeAreaView style={s.safe} edges={['top']}>
+      <SafeAreaView style={s.safe} edges={[]}>
         <View style={s.header}>
           <TouchableOpacity onPress={() => { setVista('lista'); setError(''); }}>
             <Ionicons name="arrow-back" size={20} color={cartasBosque.tinta} />
@@ -257,7 +257,7 @@ export default function MobiliarioAdminScreen() {
   const mantenimiento = articulos.filter(a => a.estado === 'mantenimiento');
 
   return (
-    <SafeAreaView style={s.safe} edges={['top']}>
+    <SafeAreaView style={s.safe} edges={[]}>
       <View style={s.header}>
         <Text style={s.headerTitulo}>Mobiliario</Text>
         <TouchableOpacity style={s.btnNuevo} onPress={() => setVista('nuevo')}>

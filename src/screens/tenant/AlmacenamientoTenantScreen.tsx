@@ -81,7 +81,7 @@ export default function AlmacenamientoTenantScreen() {
   }
 
   return (
-    <SafeAreaView edges={['top']} style={{ flex: 1, backgroundColor: cartasBosque.bruma }}>
+    <SafeAreaView edges={[]} style={{ flex: 1, backgroundColor: cartasBosque.bruma }}>
     <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
       {/* Aviso vencimiento */}
       {proxVencer.length > 0 && (
