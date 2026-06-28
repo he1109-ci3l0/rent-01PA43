@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import {
-  View, Text, TouchableOpacity, ScrollView, StyleSheet,
+  View, Text, TouchableOpacity, ScrollView, StyleSheet, ImageBackground,
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -191,6 +191,23 @@ type TenantTabList = {
 
 const TenantTab = createBottomTabNavigator<TenantTabList>();
 
+function HomePill({ focused }: { focused: boolean }) {
+  return (
+    <ImageBackground
+      source={require('../../assets/papel-tapiz.jpg')}
+      resizeMode="cover"
+      imageStyle={{ borderRadius: 28 }}
+      style={[styles.homePill, focused && styles.homePillActive]}
+    >
+      <Ionicons
+        name={focused ? 'home' : 'home-outline'}
+        size={24}
+        color="#FFFFFF"
+      />
+    </ImageBackground>
+  );
+}
+
 function tabIcon(name: IoniconsName, nameFocused: IoniconsName) {
   return ({ focused, size }: { focused: boolean; size: number }) => (
     <Ionicons
@@ -230,15 +247,7 @@ function TenantNavigator() {
         name="Home"
         component={HomeScreen}
         options={{
-          tabBarIcon: ({ focused }) => (
-            <View style={[styles.homePill, focused && styles.homePillActive]}>
-              <Ionicons
-                name={focused ? 'home' : 'home-outline'}
-                size={24}
-                color={focused ? '#122A1F' : cartasBosque.helecho}
-              />
-            </View>
-          ),
+          tabBarIcon: ({ focused }) => <HomePill focused={focused} />,
           tabBarLabel: 'Home',
         }}
       />
@@ -300,15 +309,7 @@ function AdminNavigator() {
         name="Home"
         component={AdminHomeScreen}
         options={{
-          tabBarIcon: ({ focused }) => (
-            <View style={[styles.homePill, focused && styles.homePillActive]}>
-              <Ionicons
-                name={focused ? 'home' : 'home-outline'}
-                size={24}
-                color={focused ? '#122A1F' : cartasBosque.helecho}
-              />
-            </View>
-          ),
+          tabBarIcon: ({ focused }) => <HomePill focused={focused} />,
           tabBarLabel: 'Home',
         }}
       />
@@ -358,13 +359,14 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: 28,
+    overflow: 'hidden',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#2E3C2C',
     marginBottom: 20,
   },
   homePillActive: {
-    backgroundColor: '#CDB29D',
+    borderWidth: 2,
+    borderColor: cartasBosque.arena,
   },
 });
 
