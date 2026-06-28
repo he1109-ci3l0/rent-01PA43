@@ -4,7 +4,7 @@ import {
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useAuth } from '@/hooks/useAuth';
 import { cartasBosque } from '@/constants/colors';
 import { spacing } from '@/constants/spacing';
@@ -46,6 +46,7 @@ import ExpedienteAdminScreen from '@/screens/admin/ExpedienteAdminScreen';
 import ConfigAdminScreen     from '@/screens/admin/ConfigAdminScreen';
 
 type IoniconsName = React.ComponentProps<typeof Ionicons>['name'];
+type MCIName = React.ComponentProps<typeof MaterialCommunityIcons>['name'];
 
 const ICON_ACTIVE   = '#CDB29D';
 const ICON_INACTIVE = '#4A5E48';
@@ -218,6 +219,12 @@ function tabIcon(name: IoniconsName, nameFocused: IoniconsName) {
   );
 }
 
+function mciIcon(name: MCIName) {
+  return ({ color, size }: { color: string; size: number }) => (
+    <MaterialCommunityIcons name={name} size={size} color={color} />
+  );
+}
+
 function TenantNavigator() {
   const insets = useSafeAreaInsets();
   return (
@@ -227,39 +234,36 @@ function TenantNavigator() {
       initialRouteName="Home"
       screenOptions={{
         headerShown: false,
+        tabBarShowLabel: false,
         tabBarActiveTintColor: ICON_ACTIVE,
         tabBarInactiveTintColor: ICON_INACTIVE,
         tabBarStyle: [styles.tabBar, { height: 64 + insets.bottom, paddingBottom: 8 + insets.bottom }],
-        tabBarLabelStyle: styles.tabLabel,
       }}
     >
       <TenantTab.Screen
         name="Dossier"
         component={DossierScreen}
-        options={{ tabBarIcon: tabIcon('document-text-outline', 'document-text') }}
+        options={{ tabBarIcon: mciIcon('card-account-details') }}
       />
       <TenantTab.Screen
         name="Comunidad"
         component={NoticiasScreen}
-        options={{ tabBarIcon: tabIcon('newspaper-outline', 'newspaper'), tabBarLabel: 'Comunidad' }}
+        options={{ tabBarIcon: mciIcon('forum') }}
       />
       <TenantTab.Screen
         name="Home"
         component={HomeScreen}
-        options={{
-          tabBarIcon: ({ focused }) => <HomePill focused={focused} />,
-          tabBarLabel: 'Home',
-        }}
+        options={{ tabBarIcon: ({ focused }) => <HomePill focused={focused} /> }}
       />
       <TenantTab.Screen
         name="Servicios"
         component={ServiciosMenuScreen}
-        options={{ tabBarIcon: tabIcon('grid-outline', 'grid') }}
+        options={{ tabBarIcon: mciIcon('tools') }}
       />
       <TenantTab.Screen
         name="Soporte"
         component={SoporteScreen}
-        options={{ tabBarIcon: tabIcon('help-circle-outline', 'help-circle'), tabBarLabel: 'Soporte' }}
+        options={{ tabBarIcon: mciIcon('headset') }}
       />
     </TenantTab.Navigator>
     </View>
@@ -289,39 +293,36 @@ function AdminNavigator() {
       initialRouteName="Home"
       screenOptions={{
         headerShown: false,
+        tabBarShowLabel: false,
         tabBarActiveTintColor: ICON_ACTIVE,
         tabBarInactiveTintColor: ICON_INACTIVE,
         tabBarStyle: [styles.tabBar, { height: 64 + insets.bottom, paddingBottom: 8 + insets.bottom }],
-        tabBarLabelStyle: styles.tabLabel,
       }}
     >
       <AdminTab.Screen
         name="General"
         component={AdminGeneralScreen}
-        options={{ tabBarIcon: tabIcon('grid-outline', 'grid'), tabBarLabel: 'General' }}
+        options={{ tabBarIcon: mciIcon('flower') }}
       />
       <AdminTab.Screen
         name="Servicios"
         component={AdminServiciosScreen}
-        options={{ tabBarIcon: tabIcon('construct-outline', 'construct'), tabBarLabel: 'Servicios' }}
+        options={{ tabBarIcon: mciIcon('tools') }}
       />
       <AdminTab.Screen
         name="Home"
         component={AdminHomeScreen}
-        options={{
-          tabBarIcon: ({ focused }) => <HomePill focused={focused} />,
-          tabBarLabel: 'Home',
-        }}
+        options={{ tabBarIcon: ({ focused }) => <HomePill focused={focused} /> }}
       />
       <AdminTab.Screen
         name="Finanzas"
         component={AdminFinanzasScreen}
-        options={{ tabBarIcon: tabIcon('bar-chart-outline', 'bar-chart'), tabBarLabel: 'Finanzas' }}
+        options={{ tabBarIcon: mciIcon('chart-bar') }}
       />
       <AdminTab.Screen
         name="Admin"
         component={AdminOperacionesScreen}
-        options={{ tabBarIcon: tabIcon('shield-outline', 'shield'), tabBarLabel: 'Admin' }}
+        options={{ tabBarIcon: mciIcon('shield-account') }}
       />
     </AdminTab.Navigator>
     </View>
