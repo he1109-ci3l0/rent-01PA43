@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   View, TouchableOpacity, ScrollView, StyleSheet, ImageBackground,
 } from 'react-native';
@@ -9,6 +9,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { cartasBosque } from '@/constants/colors';
 
 import BarraSuperior from '@/components/common/BarraSuperior';
+import BarraBusqueda from '@/components/common/BarraBusqueda';
 
 // ── Tenant screens ────────────────────────────────────────────
 import DossierScreen         from '@/screens/tenant/DossierScreen';
@@ -233,18 +234,24 @@ function mciIcon(name: MCIName) {
 }
 
 function TenantNavigator() {
-  const insets = useSafeAreaInsets();
+  const insets   = useSafeAreaInsets();
+  const tabNavRef = useRef<any>(null);
   return (
     <View style={{ flex: 1 }}>
       <BarraSuperior />
+      <BarraBusqueda
+        role="tenant"
+        onNavigate={(tab) => tabNavRef.current?.navigate(tab)}
+      />
     <TenantTab.Navigator
       initialRouteName="Home"
+      screenListeners={({ navigation }) => { tabNavRef.current = navigation; return {}; }}
       screenOptions={{
         headerShown: false,
         tabBarShowLabel: false,
         tabBarActiveTintColor: ICON_ACTIVE,
         tabBarInactiveTintColor: ICON_INACTIVE,
-        tabBarStyle: [styles.tabBar, { height: 64 + insets.bottom, paddingBottom: 8 + insets.bottom }],
+        tabBarStyle: [styles.tabBar, { height: 52 + insets.bottom, paddingBottom: 6 + insets.bottom }],
       }}
     >
       <TenantTab.Screen
@@ -292,18 +299,24 @@ type AdminTabList = {
 const AdminTab = createBottomTabNavigator<AdminTabList>();
 
 function AdminNavigator() {
-  const insets = useSafeAreaInsets();
+  const insets    = useSafeAreaInsets();
+  const tabNavRef = useRef<any>(null);
   return (
     <View style={{ flex: 1 }}>
       <BarraSuperior />
+      <BarraBusqueda
+        role="admin"
+        onNavigate={(tab) => tabNavRef.current?.navigate(tab)}
+      />
     <AdminTab.Navigator
       initialRouteName="Home"
+      screenListeners={({ navigation }) => { tabNavRef.current = navigation; return {}; }}
       screenOptions={{
         headerShown: false,
         tabBarShowLabel: false,
         tabBarActiveTintColor: ICON_ACTIVE,
         tabBarInactiveTintColor: ICON_INACTIVE,
-        tabBarStyle: [styles.tabBar, { height: 64 + insets.bottom, paddingBottom: 8 + insets.bottom }],
+        tabBarStyle: [styles.tabBar, { height: 52 + insets.bottom, paddingBottom: 6 + insets.bottom }],
       }}
     >
       <AdminTab.Screen
@@ -353,9 +366,9 @@ const styles = StyleSheet.create({
     borderTopColor: '#122A1F',
     borderTopWidth: 0,
     elevation: 0,
-    height: 64,
-    paddingBottom: 8,
-    paddingTop: 6,
+    height: 52,
+    paddingBottom: 6,
+    paddingTop: 4,
     overflow: 'visible',
   },
   tabLabel: {
