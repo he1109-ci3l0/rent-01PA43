@@ -9,7 +9,6 @@ import { useAuth } from '@/hooks/useAuth';
 import { cartasBosque } from '@/constants/colors';
 
 import BarraSuperior from '@/components/common/BarraSuperior';
-import BarraBusqueda from '@/components/common/BarraBusqueda';
 
 // ── Tenant screens ────────────────────────────────────────────
 import DossierScreen         from '@/screens/tenant/DossierScreen';
@@ -238,8 +237,7 @@ function TenantNavigator() {
   const tabNavRef = useRef<any>(null);
   return (
     <View style={{ flex: 1 }}>
-      <BarraSuperior />
-      <BarraBusqueda
+      <BarraSuperior
         role="tenant"
         onNavigate={(tab) => tabNavRef.current?.navigate(tab)}
       />
@@ -303,8 +301,7 @@ function AdminNavigator() {
   const tabNavRef = useRef<any>(null);
   return (
     <View style={{ flex: 1 }}>
-      <BarraSuperior />
-      <BarraBusqueda
+      <BarraSuperior
         role="admin"
         onNavigate={(tab) => tabNavRef.current?.navigate(tab)}
       />
