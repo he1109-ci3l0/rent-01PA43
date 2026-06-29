@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import {
-  View, Text, TouchableOpacity, ScrollView, StyleSheet, ImageBackground,
+  View, TouchableOpacity, ScrollView, StyleSheet, ImageBackground,
 } from 'react-native';
-import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useAuth } from '@/hooks/useAuth';
 import { cartasBosque } from '@/constants/colors';
-import { spacing } from '@/constants/spacing';
+
 import BarraSuperior from '@/components/common/BarraSuperior';
 
 // ── Tenant screens ────────────────────────────────────────────
@@ -56,31 +56,30 @@ const ICON_INACTIVE = '#4A5E48';
 // ─────────────────────────────────────────────────────────────
 
 function SubTabBar({ tabs, active, onPress }: {
-  tabs: { id: string; label: string }[];
+  tabs: { id: string; label: string; icon: string }[];
   active: string;
   onPress: (id: string) => void;
 }) {
   return (
-    <SafeAreaView edges={[]} style={{ backgroundColor: cartasBosque.bruma }}>
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        style={{ borderBottomWidth: 1, borderBottomColor: cartasBosque.pergaminoOscuro }}
-        contentContainerStyle={{ flexDirection: 'row' }}
-      >
+    <ImageBackground
+      source={require('../../assets/papel-tapiz.jpg')}
+      resizeMode="cover"
+      style={sub.franja}
+    >
+      <ScrollView showsVerticalScrollIndicator={false}>
         {tabs.map(t => (
-          <TouchableOpacity
-            key={t.id}
-            style={[sub.tab, active === t.id && sub.tabActivo]}
-            onPress={() => onPress(t.id)}
-          >
-            <Text style={[sub.tabText, active === t.id && sub.tabTextActivo]}>
-              {t.label}
-            </Text>
+          <TouchableOpacity key={t.id} style={sub.item} onPress={() => onPress(t.id)}>
+            <View style={[sub.pill, active === t.id && sub.pillActivo]}>
+              <MaterialCommunityIcons
+                name={t.icon as MCIName}
+                size={24}
+                color={cartasBosque.crema}
+              />
+            </View>
           </TouchableOpacity>
         ))}
       </ScrollView>
-    </SafeAreaView>
+    </ImageBackground>
   );
 }
 
@@ -91,19 +90,21 @@ function SubTabBar({ tabs, active, onPress }: {
 function AdminGeneralScreen() {
   const [tab, setTab] = useState('pagos');
   return (
-    <View style={{ flex: 1, backgroundColor: cartasBosque.bruma }}>
+    <View style={{ flex: 1, flexDirection: 'row', backgroundColor: cartasBosque.bruma }}>
       <SubTabBar
         tabs={[
-          { id: 'pagos',        label: 'Pagos' },
-          { id: 'inquilinos',   label: 'Inquilinos' },
-          { id: 'habitaciones', label: 'Habitaciones' },
+          { id: 'pagos',        label: 'Pagos',        icon: 'cash-multiple' },
+          { id: 'inquilinos',   label: 'Inquilinos',   icon: 'account-group' },
+          { id: 'habitaciones', label: 'Habitaciones', icon: 'bed' },
         ]}
         active={tab}
         onPress={setTab}
       />
-      {tab === 'pagos'        && <PagosAdminScreen />}
-      {tab === 'inquilinos'   && <InquilinosWebScreen />}
-      {tab === 'habitaciones' && <HabitacionesScreen />}
+      <View style={{ flex: 1 }}>
+        {tab === 'pagos'        && <PagosAdminScreen />}
+        {tab === 'inquilinos'   && <InquilinosWebScreen />}
+        {tab === 'habitaciones' && <HabitacionesScreen />}
+      </View>
     </View>
   );
 }
@@ -111,23 +112,25 @@ function AdminGeneralScreen() {
 function AdminServiciosScreen() {
   const [tab, setTab] = useState('lavanderia');
   return (
-    <View style={{ flex: 1, backgroundColor: cartasBosque.bruma }}>
+    <View style={{ flex: 1, flexDirection: 'row', backgroundColor: cartasBosque.bruma }}>
       <SubTabBar
         tabs={[
-          { id: 'lavanderia',     label: 'Lavandería' },
-          { id: 'limpieza',       label: 'Limpieza' },
-          { id: 'almacenamiento', label: 'Almacén' },
-          { id: 'mobiliario',     label: 'Mobiliario' },
-          { id: 'huespedes',      label: 'Huéspedes' },
+          { id: 'lavanderia',     label: 'Lavandería',    icon: 'washing-machine' },
+          { id: 'limpieza',       label: 'Limpieza',      icon: 'broom' },
+          { id: 'almacenamiento', label: 'Almacén',       icon: 'package-variant' },
+          { id: 'mobiliario',     label: 'Mobiliario',    icon: 'sofa' },
+          { id: 'huespedes',      label: 'Huéspedes',     icon: 'account-plus' },
         ]}
         active={tab}
         onPress={setTab}
       />
-      {tab === 'lavanderia'     && <LavanderiaAdminScreen />}
-      {tab === 'limpieza'       && <LimpiezaAdminScreen />}
-      {tab === 'almacenamiento' && <AlmacenamientoAdminScreen />}
-      {tab === 'mobiliario'     && <MobiliarioAdminScreen />}
-      {tab === 'huespedes'      && <ServiciosAdminScreen />}
+      <View style={{ flex: 1 }}>
+        {tab === 'lavanderia'     && <LavanderiaAdminScreen />}
+        {tab === 'limpieza'       && <LimpiezaAdminScreen />}
+        {tab === 'almacenamiento' && <AlmacenamientoAdminScreen />}
+        {tab === 'mobiliario'     && <MobiliarioAdminScreen />}
+        {tab === 'huespedes'      && <ServiciosAdminScreen />}
+      </View>
     </View>
   );
 }
@@ -135,19 +138,21 @@ function AdminServiciosScreen() {
 function AdminFinanzasScreen() {
   const [tab, setTab] = useState('facturacion');
   return (
-    <View style={{ flex: 1, backgroundColor: cartasBosque.bruma }}>
+    <View style={{ flex: 1, flexDirection: 'row', backgroundColor: cartasBosque.bruma }}>
       <SubTabBar
         tabs={[
-          { id: 'facturacion', label: 'Facturación' },
-          { id: 'cupones',     label: 'Cupones' },
-          { id: 'estado',      label: 'Estado' },
+          { id: 'facturacion', label: 'Facturación', icon: 'receipt' },
+          { id: 'cupones',     label: 'Cupones',     icon: 'ticket-percent' },
+          { id: 'estado',      label: 'Estado',      icon: 'chart-line' },
         ]}
         active={tab}
         onPress={setTab}
       />
-      {tab === 'facturacion' && <FacturasAdminScreen />}
-      {tab === 'cupones'     && <CuponesAdminScreen />}
-      {tab === 'estado'      && <EstadoFinanzasScreen />}
+      <View style={{ flex: 1 }}>
+        {tab === 'facturacion' && <FacturasAdminScreen />}
+        {tab === 'cupones'     && <CuponesAdminScreen />}
+        {tab === 'estado'      && <EstadoFinanzasScreen />}
+      </View>
     </View>
   );
 }
@@ -155,25 +160,27 @@ function AdminFinanzasScreen() {
 function AdminOperacionesScreen() {
   const [tab, setTab] = useState('visitas');
   return (
-    <View style={{ flex: 1, backgroundColor: cartasBosque.bruma }}>
+    <View style={{ flex: 1, flexDirection: 'row', backgroundColor: cartasBosque.bruma }}>
       <SubTabBar
         tabs={[
-          { id: 'visitas',     label: 'Visitas' },
-          { id: 'tickets',     label: 'Tickets' },
-          { id: 'chat',        label: 'Chat' },
-          { id: 'sesiones',    label: 'Sesiones' },
-          { id: 'expedientes', label: 'Expedientes' },
-          { id: 'config',      label: 'Config' },
+          { id: 'visitas',     label: 'Visitas',      icon: 'calendar-account' },
+          { id: 'tickets',     label: 'Tickets',      icon: 'ticket-confirmation' },
+          { id: 'chat',        label: 'Chat',         icon: 'chat' },
+          { id: 'sesiones',    label: 'Sesiones',     icon: 'cellphone-key' },
+          { id: 'expedientes', label: 'Expedientes',  icon: 'folder-account' },
+          { id: 'config',      label: 'Config',       icon: 'cog' },
         ]}
         active={tab}
         onPress={setTab}
       />
-      {tab === 'visitas'     && <VisitasAdminScreen />}
-      {tab === 'tickets'     && <TicketsAdminScreen />}
-      {tab === 'chat'        && <ChatAdminScreen />}
-      {tab === 'sesiones'    && <SesionesAdminScreen />}
-      {tab === 'expedientes' && <ExpedienteAdminScreen />}
-      {tab === 'config'      && <ConfigAdminScreen />}
+      <View style={{ flex: 1 }}>
+        {tab === 'visitas'     && <VisitasAdminScreen />}
+        {tab === 'tickets'     && <TicketsAdminScreen />}
+        {tab === 'chat'        && <ChatAdminScreen />}
+        {tab === 'sesiones'    && <SesionesAdminScreen />}
+        {tab === 'expedientes' && <ExpedienteAdminScreen />}
+        {tab === 'config'      && <ConfigAdminScreen />}
+      </View>
     </View>
   );
 }
@@ -372,23 +379,23 @@ const styles = StyleSheet.create({
 });
 
 const sub = StyleSheet.create({
-  tab: {
-    paddingHorizontal: spacing[4],
-    paddingVertical: spacing[2] + 2,
-    borderBottomWidth: 2,
-    borderBottomColor: 'transparent',
+  franja: {
+    width: 62,
   },
-  tabActivo: {
-    borderBottomColor: cartasBosque.bosque,
+  item: {
+    alignItems: 'center',
+    paddingVertical: 8,
   },
-  tabText: {
-    fontFamily: 'MonaSans_400Regular',
-    fontSize: 11,
-    color: cartasBosque.helecho,
+  pill: {
+    width: 44,
+    height: 44,
+    borderRadius: 12,
+    backgroundColor: cartasBosque.sidebar,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  tabTextActivo: {
-    fontFamily: 'BricolageGrotesque_600SemiBold',
-    fontSize: 11,
-    color: cartasBosque.bosque,
+  pillActivo: {
+    borderWidth: 2,
+    borderColor: '#F7F7F5',
   },
 });
